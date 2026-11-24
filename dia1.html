@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ML na Prática · Dia 1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/deck.css">
+</head>
+<body>
+<div id="stage">
+<!-- D1COVER -->
+<section class="s" data-b="0" data-notes="CAPA · DIA 1 (3 min). “Quando alguém usa uma IA para escrever um texto ou reconhecer uma imagem, vê só o resultado. Mas como a máquina chegou até ali?” Explique o formato: dois dias de 4 horas. Hoje: dados, regressão e classificação. Amanhã: agrupamento, visão computacional e LLMs. Avise que a turma vai programar no Colab.">
+  <div style="position:absolute;left:96px;top:150px;width:860px">
+    <div class="lbl cy" style="letter-spacing:.3em">Machine Learning na Prática · Dia 1 de 2</div>
+    <h1 style="font-size:96px;line-height:1.02;margin:26px 0 30px">Da primeira reta ao próximo token</h1>
+    <div class="mu" style="font-size:32px;font-style:italic">Hoje: dados, regressão e classificação</div>
+    <div class="row" style="gap:14px;margin-top:56px"><span class="pill cy">Dia 1 de 2</span><span class="pill cy" id="coverDur">4 horas</span><span class="pill cy">Google Colab</span><span class="pill cy">3 notebooks</span></div>
+    <div id="coverMods" style="display:flex;flex-wrap:wrap;gap:10px 24px;margin-top:34px;font-size:18px;color:var(--mu)"></div>
+  </div>
+  <svg id="cover" viewBox="0 0 700 700" style="position:absolute;right:40px;top:110px;width:700px;height:700px"></svg>
+</section>
+
+<!-- 02 -->
+<section class="s" data-b="1" data-notes="SLIDE 02 (4 min). Pergunte: “Quem já usou ChatGPT, Gemini ou outra IA? E quem já treinou um modelo?” Espere respostas. A meta não é só importar uma biblioteca: é entender dados, parâmetros, perda, avaliação e inferência.">
+  <h1 style="font-size:76px;line-height:1.08;margin-top:60px"><span class="mu">Você sabe usar IA.</span> <br>Mas sabe como ela aprende?</h1>
+  <div class="grid3" style="margin-top:80px">
+    <div class="card f" data-f="1"><div class="big cy" style="font-size:46px">dados</div><h3 style="font-size:30px;margin:18px 0 10px">Parâmetros e perda</h3><div class="mu">o que o modelo recebe, e o que ele ajusta</div></div>
+    <div class="card f" data-f="2"><div class="big am" style="font-size:46px">erro</div><h3 style="font-size:30px;margin:18px 0 10px">Treinar e avaliar</h3><div class="mu">medir em dados que o modelo nunca viu</div></div>
+    <div class="card f" data-f="3"><div class="big vi" style="font-size:46px">tokens</div><h3 style="font-size:30px;margin:18px 0 10px">Chegar aos LLMs</h3><div class="mu">a mesma lógica, em escala gigante</div></div>
+  </div>
+</section>
+
+<!-- AGENDA1 -->
+<section class="s" data-b="1" data-id="agenda" data-notes="AGENDA (3 min). Mostre o roteiro do dia: três módulos, cada um abre com uma capa própria e termina num notebook. A cor e a barrinha no canto superior esquerdo indicam sempre o módulo atual. Clique num módulo para pular direto para ele. A tecla M abre o mapa com todos os slides.">
+  <h2>O caminho de hoje</h2>
+  <div class="mu" style="font-size:25px;margin-top:-18px" id="agSub"></div>
+  <svg id="agSvg" viewBox="0 0 1408 600" style="width:1408px;height:600px;margin-top:10px"></svg>
+</section>
+
+<!-- 03 -->
+<section class="s" data-b="1" data-notes="SLIDE 03 (6 min). Proponha: “Se tem a palavra promoção, é spam.” Por que falha? Programação tradicional: nós escrevemos as regras. ML supervisionado: damos exemplos e rótulos e o algoritmo aprende os parâmetros. Treinamento = aprender com exemplos; inferência = prever em dados novos.">
+  <h2>Como detectar spam sem escrever mil regras?</h2>
+  <div class="row" style="gap:48px">
+    <div style="width:520px" class="col">
+      <div class="card mono" style="font-size:28px;border:2px solid var(--am)"><span class="am">if</span> "promoção" <span class="am">in</span> msg:<br>&nbsp;&nbsp;&nbsp;&nbsp;<span class="am">return</span> SPAM</div>
+      <div class="card f" data-f="1" style="font-size:21px"><div>“Sua <b>promoção</b> a gerente foi aprovada” <span class="rd">→ SPAM ✕</span></div><div style="margin-top:10px">“Ganhe R$ 5.000 hoje, clique aqui” <span class="rd">→ OK ✕</span></div></div>
+      <div class="f note" data-f="1" style="font-size:21px">Cada regra nova cria uma exceção nova</div>
+    </div>
+    <svg viewBox="0 0 820 470" style="width:820px;height:470px">
+      <g class="f" data-f="2"><text x="0" y="20" font-size="17" font-weight="700" letter-spacing="3" fill="#8A94B8">PROGRAMAÇÃO TRADICIONAL</text>
+        <rect x="0" y="45" width="170" height="56" rx="12" fill="#1B2442"/><text x="85" y="80" text-anchor="middle" font-size="21">Regras</text>
+        <rect x="0" y="115" width="170" height="56" rx="12" fill="#1B2442"/><text x="85" y="150" text-anchor="middle" font-size="21">Dados</text>
+        <path d="M185 108 H285" stroke="#8A94B8" stroke-width="3" marker-end="url(#ar)"/>
+        <rect x="300" y="68" width="200" height="80" rx="14" fill="#1B2442" stroke="#8A94B8" stroke-width="2"/><text x="400" y="116" text-anchor="middle" font-size="23" font-weight="700">Programa</text>
+        <path d="M515 108 H615" stroke="#8A94B8" stroke-width="3" marker-end="url(#ar)"/>
+        <rect x="630" y="68" width="180" height="80" rx="14" fill="#141B33"/><text x="720" y="116" text-anchor="middle" font-size="22" font-weight="700" fill="#8A94B8">Respostas</text></g>
+      <g class="f" data-f="3"><g transform="translate(0,250)"><text x="0" y="20" font-size="17" font-weight="700" letter-spacing="3" fill="#22D3EE">MACHINE LEARNING SUPERVISIONADO</text>
+        <rect x="0" y="45" width="170" height="56" rx="12" fill="#1B2442"/><text x="85" y="80" text-anchor="middle" font-size="21">Dados</text>
+        <rect x="0" y="115" width="170" height="56" rx="12" fill="#1B2442"/><text x="85" y="150" text-anchor="middle" font-size="21">Rótulos</text>
+        <path d="M185 108 H285" stroke="#22D3EE" stroke-width="3" marker-end="url(#arc)" stroke-dasharray="10 10" style="animation:flow 1s linear infinite"/>
+        <rect x="300" y="68" width="200" height="80" rx="14" fill="#22D3EE" fill-opacity=".2" stroke="#22D3EE" stroke-width="2"/><text x="400" y="116" text-anchor="middle" font-size="23" font-weight="700">Treino</text>
+        <path d="M515 108 H615" stroke="#22D3EE" stroke-width="3" marker-end="url(#arc)"/>
+        <rect x="630" y="68" width="180" height="80" rx="14" fill="#141B33"/><text x="720" y="116" text-anchor="middle" font-size="22" font-weight="700" fill="#22D3EE">Modelo</text></g></g>
+    </svg>
+  </div>
+  <div class="row f" data-f="4" style="margin-top:26px">
+    <div class="card" style="flex:1"><b class="cy">Treinamento</b> <span class="mu">aprende parâmetros com exemplos</span></div>
+    <div class="card" style="flex:1"><b class="vi">Inferência</b> <span class="mu">usa o modelo em mensagens novas</span></div>
+  </div>
+</section>
+
+<!-- 04 -->
+<section class="s" data-b="1" data-notes="SLIDE 04 (5 min). IA é o campo amplo; ML é uma abordagem dentro dele; Deep Learning usa redes neurais profundas; LLMs atuais são Deep Learning aplicado à linguagem. IA generativa não é sinônimo de LLM: há modelos de imagem, áudio e vídeo.">
+  <h2>Onde um LLM se encaixa na IA?</h2>
+  <svg viewBox="0 0 860 620" style="position:absolute;left:70px;top:200px;width:860px;height:620px">
+    <g class="f" data-f="1"><ellipse cx="430" cy="350" rx="420" ry="270" fill="#5A6488" fill-opacity=".1" stroke="#5A6488" stroke-width="2"/><text x="430" y="118" text-anchor="middle" font-size="24" font-weight="700" fill="#8A94B8">Inteligência Artificial</text></g>
+    <g class="f" data-f="2"><ellipse cx="430" cy="400" rx="330" ry="215" fill="#22D3EE" fill-opacity=".1" stroke="#22D3EE" stroke-width="2"/><text x="430" y="225" text-anchor="middle" font-size="24" font-weight="700" fill="#22D3EE">Machine Learning</text></g>
+    <g class="f" data-f="3"><ellipse cx="430" cy="450" rx="235" ry="160" fill="#8B5CF6" fill-opacity=".15" stroke="#8B5CF6" stroke-width="2"/><text x="430" y="330" text-anchor="middle" font-size="24" font-weight="700" fill="#8B5CF6">Deep Learning</text></g>
+    <g class="f" data-f="4"><ellipse cx="430" cy="505" rx="140" ry="98" fill="#F472B6" fill-opacity=".28" stroke="#F472B6" stroke-width="2.5"/><text x="430" y="505" text-anchor="middle" font-size="36" font-weight="700">LLMs</text><text x="430" y="540" text-anchor="middle" font-size="16" fill="#8A94B8" font-family="JetBrains Mono">texto → próximo token</text></g>
+  </svg>
+  <div class="f col" data-f="5" style="position:absolute;right:96px;top:250px;width:520px;gap:14px">
+    <div class="lbl am">IA generativa ≠ LLM</div>
+    <div class="card row" style="justify-content:space-between;padding:20px 26px"><b class="pk">Texto</b><span class="mu">LLMs</span></div>
+    <div class="card row" style="justify-content:space-between;padding:20px 26px"><b>Imagem</b><span class="mu">modelos de difusão</span></div>
+    <div class="card row" style="justify-content:space-between;padding:20px 26px"><b>Áudio</b><span class="mu">fala, música</span></div>
+    <div class="card row" style="justify-content:space-between;padding:20px 26px"><b>Vídeo</b><span class="mu">sequências de quadros</span></div>
+  </div>
+</section>
+
+<!-- 05 -->
+<section class="s" data-b="1" data-notes="SLIDE 05 (7 min). Supervisionado: exemplos com rótulos. Não supervisionado: encontrar grupos sem rótulos. Reforço: uma política aprende com ações e recompensas. Pergunta: “Separar consumidores por perfil sem categorias prontas é qual tipo?” (não supervisionado). Autossupervisão: o próprio texto fornece o rótulo — voltaremos nisso em LLMs.">
+  <h2>Três formas de aprender. Três tipos de sinal</h2>
+  <div class="grid3">
+    <div class="card f" data-f="1"><div class="lbl cy">Supervisionado</div>
+      <svg viewBox="0 0 400 260" style="width:100%;height:260px;margin:14px 0">
+        <line x1="90" y1="10" x2="330" y2="250" stroke="#EAF0FF" stroke-width="2" stroke-dasharray="8 8"/>
+        <g fill="#22D3EE"><circle cx="60" cy="170" r="10"/><circle cx="110" cy="200" r="10"/><circle cx="80" cy="230" r="10"/><circle cx="150" cy="235" r="10"/><circle cx="40" cy="120" r="10"/></g>
+        <g fill="#F59E0B"><circle cx="260" cy="50" r="10"/><circle cx="320" cy="90" r="10"/><circle cx="300" cy="30" r="10"/><circle cx="350" cy="140" r="10"/><circle cx="230" cy="100" r="10"/></g>
+        <text x="40" y="90" fill="#22D3EE" font-weight="700" font-size="19">ok</text><text x="300" y="190" fill="#F59E0B" font-weight="700" font-size="19">spam</text></svg>
+      <div class="mu">sinal: o rótulo certo</div></div>
+    <div class="card f" data-f="2"><div class="lbl gr">Não supervisionado</div>
+      <svg viewBox="0 0 400 260" style="width:100%;height:260px;margin:14px 0">
+        <g fill="#8A94B8"><circle cx="90" cy="80" r="9"/><circle cx="130" cy="60" r="9"/><circle cx="110" cy="115" r="9"/><circle cx="70" cy="110" r="9"/><circle cx="290" cy="180" r="9"/><circle cx="320" cy="210" r="9"/><circle cx="340" cy="170" r="9"/><circle cx="300" cy="225" r="9"/></g>
+        <circle cx="100" cy="92" r="65" fill="none" stroke="#34D399" stroke-width="2.5" stroke-dasharray="9 7" style="animation:pulse 2.4s infinite"/>
+        <circle cx="315" cy="197" r="65" fill="none" stroke="#34D399" stroke-width="2.5" stroke-dasharray="9 7" style="animation:pulse 2.4s infinite .8s"/>
+        <text x="200" y="150" text-anchor="middle" font-size="44" font-weight="700" fill="#34D399">?</text></svg>
+      <div class="mu">sinal: a estrutura dos dados</div></div>
+    <div class="card f" data-f="3"><div class="lbl am">Por reforço</div>
+      <svg viewBox="0 0 400 260" style="width:100%;height:260px;margin:14px 0">
+        <rect x="10" y="95" width="130" height="70" rx="14" fill="#F59E0B" fill-opacity=".2" stroke="#F59E0B" stroke-width="2"/><text x="75" y="138" text-anchor="middle" font-weight="700" font-size="20">Agente</text>
+        <rect x="260" y="95" width="130" height="70" rx="14" fill="#1B2442" stroke="#2A355C" stroke-width="2"/><text x="325" y="138" text-anchor="middle" font-weight="700" font-size="20">Ambiente</text>
+        <path d="M75 90 C100 20 300 20 325 85" fill="none" stroke="#EAF0FF" stroke-width="2.5" marker-end="url(#arw)" stroke-dasharray="10 8" style="animation:flow 1.2s linear infinite"/>
+        <path d="M325 170 C300 240 100 240 75 175" fill="none" stroke="#F59E0B" stroke-width="2.5" marker-end="url(#ara)" stroke-dasharray="10 8" style="animation:flow 1.2s linear infinite"/>
+        <text x="200" y="30" text-anchor="middle" font-size="17">ação</text><text x="200" y="252" text-anchor="middle" font-size="17" fill="#F59E0B">recompensa</text></svg>
+      <div class="mu">sinal: a recompensa</div></div>
+  </div>
+  <div class="f" data-f="4" style="margin-top:30px;font-size:24px"><b class="vi">E os LLMs?</b> <span class="mu">Aprendizado autossupervisionado: o próprio texto fornece o rótulo, o próximo token</span></div>
+</section>
+
+<!-- M01 -->
+<section class="s sec" data-b="2" data-q="O que um modelo realmente recebe para aprender?" data-items="Features e target;Dados bagunçados;EDA: olhar antes de modelar;Encoding e escala;Vazamento e overfitting;Validação cruzada;lab:Lab 00 · 35 min" data-notes="CAPA DO MÓDULO 01 (1 min). Agora começamos a falar de dados. Todo modelo, da regressão ao LLM, depende de como os dados são coletados, limpos, transformados, divididos e avaliados. É o módulo mais longo do dia — e o mais importante na prática."></section>
+
+<!-- DATASETS -->
+<section class="s" data-b="2" data-notes="DATASETS (4 min). Apresente os conjuntos de dados que aparecem ao longo do curso. Cada linha é um exemplo; cada coluna, uma feature. Destaque que imagens e textos também viram tabelas de números (módulos 05 e 06). Iris e Wine são datasets clássicos do Scikit-learn; os sintéticos foram gerados para a aula; MNIST aparece como exemplo nos slides de visão.">
+  <h2>Os datasets que vamos usar hoje</h2>
+  <div id="dsGrid" class="grid3" style="gap:22px"></div>
+  <div class="note f" data-f="1" style="margin-top:24px;font-size:22px">Tabela, imagem ou texto: para o modelo, tudo vira linhas e colunas de números</div>
+</section>
+
+<!-- 06 -->
+<section class="s" data-b="2" data-id="tblx" data-notes="SLIDE 06 (9 min). Feature = informação disponível antes da previsão; target = o que queremos estimar. Numérico vs categórico. Treino ajusta parâmetros; validação orienta escolhas (modelo, hiperparâmetros); teste estima o desempenho final em dados não usados na seleção.">
+  <h2>Uma linha de dados. Uma decisão a tomar</h2>
+  <div class="row" style="gap:70px">
+    <table id="tbl" style="border-collapse:separate;border-spacing:8px 0;font-size:25px;width:680px">
+      <tr><th data-c="0">Horas de estudo<br><small>numérica</small></th><th data-c="0">Faltas<br><small>numérica</small></th><th data-c="0">Turno<br><small>categórica</small></th><th data-c="1">Nota<br><small>alvo</small></th></tr>
+      <tr><td>2</td><td>6</td><td>noite</td><td>4,1</td></tr><tr><td>5</td><td>2</td><td>manhã</td><td>7,3</td></tr>
+      <tr><td>8</td><td>1</td><td>manhã</td><td>8,9</td></tr><tr><td>3</td><td>4</td><td>tarde</td><td>5,2</td></tr>
+      <tr class="new"><td>6</td><td>3</td><td>noite</td><td class="am">?</td></tr>
+    </table>
+    <div style="flex:1">
+      <div class="f" data-f="1" style="font-size:24px;margin-bottom:12px"><b class="cy">features</b> o que se sabe antes da previsão</div>
+      <div class="f" data-f="2" style="font-size:24px;margin-bottom:40px"><b class="am">target</b> o que queremos prever</div>
+      <div class="f" data-f="3"><div class="lbl mu" style="margin-bottom:14px">Como dividir os dados</div>
+        <div id="split" style="display:flex;height:84px;gap:6px;font-weight:700;font-size:19px;color:var(--bg)">
+          <div style="background:var(--cy);flex:70;border-radius:10px 0 0 10px;display:grid;place-items:center">Treino 70%</div>
+          <div style="background:var(--vi);flex:15;display:grid;place-items:center">Val. 15%</div>
+          <div style="background:var(--am);flex:15;border-radius:0 10px 10px 0;display:grid;place-items:center">Teste 15%</div></div>
+        <div class="col" style="gap:10px;margin-top:24px;font-size:22px">
+          <div><b class="cy">Treino</b> ajusta os parâmetros</div><div><b class="vi">Validação</b> orienta as escolhas</div><div><b class="am">Teste</b> estima o desempenho final</div></div>
+        <div class="note" style="margin-top:14px">Proporções ilustrativas</div></div>
+    </div>
+  </div>
+  <style>#tbl th{font-size:19px;padding:12px 8px;border-radius:12px;background:var(--p1);transition:background .4s,color .4s}#tbl th small{font-weight:400;color:var(--mu);font-size:15px}
+  #tbl td{text-align:center;padding:14px 0;border-bottom:1px solid var(--ln);font-family:"JetBrains Mono"}#tbl tr.new td{font-weight:700}
+  #tbl.c0 th[data-c="0"]{background:#22D3EE33;color:var(--cy)}#tbl.c1 th[data-c="1"]{background:#F59E0B33;color:var(--am)}</style>
+</section>
+
+<!-- MESSY -->
+<section class="s" data-b="2" data-id="messy" data-notes="DADOS BAGUNÇADOS (6 min). Dados reais quase nunca chegam limpos. Avance passo a passo: (1) valores faltantes — imputar (ex.: mediana) ou remover; se faltar o alvo, a linha não serve para treino; (2) linhas duplicadas — contam duas vezes e distorcem o modelo; (3) outliers — 80 horas de estudo? Investigue: pode ser erro de digitação (8,0); (4) categorias inconsistentes — “manhã”, “Manhã”, “MANHÃ ” são a mesma coisa para nós e três valores para o computador. Último passo: a tabela limpa. Registre cada decisão de limpeza.">
+  <h2>Dados do mundo real chegam bagunçados</h2>
+  <div class="row" style="gap:40px;align-items:flex-start">
+    <div id="messyTbl" style="width:780px"></div>
+    <div id="messyCards" class="col" style="flex:1;gap:12px"></div>
+  </div>
+  <i class="f" data-f="5"></i>
+</section>
+
+<!-- EDA -->
+<section class="s" data-b="2" data-id="eda" data-notes="EDA (6 min). Antes de modelar, olhe os dados. O histograma mostra as horas de estudo de 200 alunos (sintéticos); o boxplot resume quartis e marca pontos extremos. Clique em “Adicionar outliers”: a média se desloca, a mediana quase não muda — por isso a mediana é boa para imputar faltantes. À direita, horas × nota: a correlação r mede relação linear (de −1 a 1). Correlação não é causalidade.">
+  <h2>Olhe os dados antes de modelar</h2>
+  <div class="row" style="gap:32px">
+    <div class="card" style="width:780px;padding:22px 24px"><div class="row" style="justify-content:space-between;align-items:center"><div class="lbl cy" style="font-size:14px">Horas de estudo por semana · 200 alunos</div><button class="b" id="edaOut">Adicionar outliers</button></div><svg id="edaHist" viewBox="0 0 720 450" style="width:100%;height:450px;margin-top:8px"></svg></div>
+    <div class="col" style="flex:1;gap:18px">
+      <div class="row" style="gap:18px"><div class="card" style="flex:1"><div class="lbl mu" style="font-size:13px">Média</div><div class="big am" id="edaMean" style="font-size:52px;margin-top:6px"></div></div><div class="card" style="flex:1"><div class="lbl mu" style="font-size:13px">Mediana</div><div class="big cy" id="edaMed" style="font-size:52px;margin-top:6px"></div></div></div>
+      <div class="card" style="padding:18px 22px"><div class="row" style="justify-content:space-between"><div class="lbl mu" style="font-size:13px">Horas × nota</div><div class="mono" id="edaR" style="font-size:20px"></div></div><svg id="edaSc" viewBox="0 0 520 250" style="width:100%;height:250px;margin-top:6px"></svg></div>
+      <div class="am" style="font-size:21px;font-weight:700">Correlação não é causalidade</div>
+    </div>
+  </div>
+</section>
+
+<!-- ENC -->
+<section class="s" data-b="2" data-id="enc" data-notes="ENCODING (5 min). Modelos fazem contas, então categorias precisam virar números. Label encoding (noite = 0, manhã = 1, tarde = 2) cria uma ordem falsa: para o modelo, “tarde” seria maior que “manhã”. One-hot cria uma coluna 0/1 por categoria, sem ordem. Quando a ordem é real (fundamental < médio < superior), o encoding ordinal faz sentido. Cuidado com categorias muito numerosas (ex.: CEP): one-hot gera colunas demais.">
+  <h2>Categorias precisam virar números</h2>
+  <div class="row" id="encBtns" style="gap:10px;margin-bottom:28px"><button class="b on" data-m="raw">Original</button><button class="b" data-m="label">Label encoding</button><button class="b" data-m="onehot">One-hot</button><button class="b" data-m="ord">Ordinal</button></div>
+  <div class="row" style="gap:40px;align-items:flex-start"><div id="encTbl" style="width:840px"></div><div id="encMsg" class="col" style="flex:1;gap:14px"></div></div>
+</section>
+
+<!-- SCALE -->
+<section class="s" data-b="2" data-id="scale" data-notes="ESCALA (5 min). Quem é mais parecido com “você” (25 anos, R$ 3.000)? A tem 62 anos e ganha R$ 3.200; B tem 27 anos e ganha R$ 4.500. Sem padronizar, a distância é dominada pela renda (milhares de reais contra dezenas de anos) e A parece mais próxima — absurdo. Clique em Padronizar: z = (x − média) / desvio coloca as features na mesma escala e B passa a ser a mais próxima. Afeta KNN, K-Means, redes neurais e regularização; árvores não ligam para escala. A média e o desvio vêm do treino.">
+  <h2>Quem é mais parecido com você?</h2>
+  <div class="row" style="gap:44px">
+    <div class="col" style="width:560px;gap:16px"><div id="scPeople" class="col" style="gap:12px"></div><div class="row" style="gap:16px;align-items:center;margin-top:6px"><button class="b" id="scBtn">Padronizar</button><span class="formula" style="font-size:24px;padding:12px 18px">z = (x − μ) / σ</span></div></div>
+    <div class="card" style="flex:1"><div class="lbl mu" style="font-size:14px">Distância até você · contribuição de cada feature</div><svg id="scSvg" viewBox="0 0 760 360" style="width:100%;height:360px;margin-top:10px"></svg><div id="scVerdict" class="big" style="font-size:32px;margin-top:6px"></div></div>
+  </div>
+  <div class="note" style="margin-top:22px">Árvores não ligam para escala · KNN, K-Means, redes neurais e regularização ligam</div>
+</section>
+
+<!-- 07 -->
+<section class="s" data-b="2" data-notes="SLIDE 07 (8 min). Padronizar o dataset inteiro antes de separar vaza média e desvio do teste para o treino. Certo: separar; ajustar (fit) o scaler só no treino; transformar treino e teste com ele. O Pipeline do Scikit-learn garante essa ordem, inclusive na validação cruzada. “O teste é uma prova inédita, não uma cola para o estudo.”">
+  <h2>O teste não pode contar o futuro</h2>
+  <svg viewBox="0 0 1408 560" style="width:1408px;height:560px">
+    <g class="f" data-f="1">
+      <rect x="0" y="0" width="1408" height="230" rx="20" fill="#141B33" stroke="#F87171" stroke-width="2"/>
+      <text x="34" y="48" font-size="20" font-weight="700" letter-spacing="3" fill="#F87171">✕  ERRADO</text>
+      <g id="wrongRow"></g>
+      <path id="leak" d="M529 184 C480 236 262 236 200 189" fill="none" stroke="#F59E0B" stroke-width="3" stroke-dasharray="10 8" style="animation:flow 1s linear infinite" marker-end="url(#ara)"/>
+      <text x="420" y="48" font-size="19" font-style="italic" fill="#F59E0B">a média e o desvio do teste vazam para o treino</text>
+    </g>
+    <g class="f" data-f="2"><g transform="translate(0,290)">
+      <rect x="0" y="0" width="1408" height="230" rx="20" fill="#141B33" stroke="#34D399" stroke-width="2"/>
+      <text x="34" y="48" font-size="20" font-weight="700" letter-spacing="3" fill="#34D399">✓  CERTO</text>
+      <g id="rightRow"></g>
+    </g></g>
+  </svg>
+  <div class="f" data-f="3" style="font-size:26px;margin-top:6px"><span class="mono cy" style="font-weight:700">Pipeline(scaler, modelo)</span> <span class="mu">faz isso por você, inclusive dentro da validação cruzada</span></div>
+</section>
+
+<!-- 08 -->
+<section class="s" data-b="2" data-id="fit" data-notes="SLIDE 08 (8 min). Arraste a complexidade (grau do polinômio). Pontos brancos = treino; anéis âmbar = validação. Com grau alto, o erro de treino vai a quase zero e o de validação explode. “Qual curva vocês escolheriam?” A decisão precisa de dados de validação, não do olho.">
+  <h2>Acertar tudo no treino é sempre bom sinal?</h2>
+  <div class="row" style="gap:40px">
+    <svg id="fitPlot" viewBox="0 0 820 560" style="width:820px;height:560px"></svg>
+    <div class="col" style="flex:1;gap:22px">
+      <div class="card"><div class="lbl mu" style="font-size:14px">Complexidade do modelo</div>
+        <div class="row" style="align-items:center;margin-top:10px;gap:18px"><input id="deg" type="range" min="1" max="11" value="1" style="width:300px"><span class="mono big" id="degv" style="font-size:34px">grau 1</span></div>
+        <div id="fitTag" class="big" style="font-size:40px;margin-top:16px">underfitting</div></div>
+      <div class="card"><svg id="fitErr" viewBox="0 0 520 250" style="width:100%;height:250px"></svg></div>
+      <div class="note">Polinômios ajustados ao vivo por mínimos quadrados · dados sintéticos</div>
+    </div>
+  </div>
+</section>
+
+<!-- CV -->
+<section class="s" data-b="2" data-id="cv" data-notes="VALIDAÇÃO CRUZADA (5 min). Um único corte de validação pode dar sorte ou azar. Na validação cruzada k-fold (aqui k = 5), o treino é dividido em 5 partes e cada parte vira validação uma vez. Avance para ver as 5 rodadas. O resultado é a média e o desvio das 5 notas — mais confiável para comparar modelos e escolher hiperparâmetros. O teste continua guardado até o fim. Notas ilustrativas.">
+  <h2>Uma divisão pode dar sorte. Cinco, nem tanto</h2>
+  <svg id="cvSvg" viewBox="0 0 1408 480" style="width:1408px;height:480px"></svg>
+  <div class="row f" data-f="6" style="gap:24px;margin-top:18px;align-items:center"><span class="mono cy" style="font-size:24px;font-weight:700">cross_val_score(pipe, X_treino, y_treino, cv=5)</span><span class="mu" style="font-size:22px">o teste continua guardado</span></div>
+</section>
+
+<!-- LAB00 -->
+<section class="s lab" data-b="2" data-lab="00|Arrume a casa antes de modelar|00_dados_e_datasets.ipynb|35|cy" data-steps="00–08|Carregar e inspecionar: formato, tipos, describe() e faltantes;08–18|Limpar: duplicados, categorias, outliers e faltantes;18–26|Explorar: histogramas, boxplot e correlação;26–35|Preparar: one-hot, padronização, split e Pipeline sem vazamento" data-q="Qual decisão de limpeza que você tomou muda o resultado do modelo?" data-notes="LAB 00 (35 min). Abra notebooks/00_dados_e_datasets.ipynb (versão do aluno). O dataset é gerado dentro do notebook (não depende de download) e reproduz os problemas do slide “dados bagunçados”. O gabarito está em 00_dados_e_datasets_gabarito.ipynb — não mostre antes."></section>
+
+<!-- PAUSE1 -->
+<section class="s" data-b="2" data-pause="10" data-next="Deixe o Notebook 01 aberto" data-nochrome="1" data-notes="PAUSA (10 min). Clique em Iniciar."></section>
+
+<!-- M02 -->
+<section class="s sec" data-b="3" data-q="Como uma reta aprende com os próprios erros?" data-items="ŷ = w·x + b;Resíduos e MSE;Descida do gradiente;Regressão múltipla;Regularização;MAE, MSE e R²;lab:Lab 01 · 25 min" data-notes="CAPA DO MÓDULO 02 (1 min). Primeiro modelo do curso: a regressão linear. A ideia de perda + descida do gradiente vai reaparecer nas redes neurais e nos LLMs amanhã."></section>
+
+<!-- 09 -->
+<section class="s" data-b="3" data-id="line" data-notes="SLIDE 09 (4 min). ŷ = wx + b. w = inclinação, b = intercepto, x = entrada. Mova os controles. Exemplo: x = 6, w = 5, b = 20 → ŷ = 50 (exemplo matemático, não uma escala real de nota). O modelo precisa descobrir w e b a partir dos dados.">
+  <h2>A primeira previsão pode ser uma reta</h2>
+  <div class="row" style="gap:50px">
+    <div class="col" style="width:560px;gap:24px">
+      <div class="mono big" style="font-size:88px"><span class="am">ŷ</span> = <span class="cy">w</span>·x + <span class="vi">b</span></div>
+      <div class="card col" style="gap:14px">
+        <label class="ctl"><span class="mono cy" style="width:60px;font-weight:700">w</span><input id="lw" type="range" min="0" max="10" step="0.5" value="5"><span class="mono" id="lwv">5</span><span class="mu">inclinação</span></label>
+        <label class="ctl"><span class="mono vi" style="width:60px;font-weight:700">b</span><input id="lb" type="range" min="0" max="60" step="1" value="20"><span class="mono" id="lbv">20</span><span class="mu">intercepto</span></label>
+        <label class="ctl"><span class="mono" style="width:60px;font-weight:700">x</span><input id="lx" type="range" min="0" max="10" step="1" value="6"><span class="mono" id="lxv">6</span><span class="mu">entrada</span></label>
+      </div>
+      <div class="formula" id="lcalc">ŷ = 5·6 + 20 = 50</div>
+      <div class="note">Exemplo matemático: o modelo precisa descobrir w e b nos dados</div>
+    </div>
+    <svg id="linePlot" viewBox="0 0 780 560" style="width:780px;height:560px"></svg>
+  </div>
+</section>
+
+<!-- 10 -->
+<section class="s" data-b="3" data-id="resid" data-notes="SLIDE 10 (4 min). A distância vertical entre ponto real e previsão é o resíduo. MSE = média dos quadrados: os quadrados no gráfico são literalmente cada erro ao quadrado. Pergunte: “Se eu deslocar a reta, o erro melhora ou piora?” — e mova os controles. Depois clique em “Ajuste ótimo” (mínimos quadrados).">
+  <h2>Como uma reta sabe que está errada?</h2>
+  <div class="row" style="gap:44px">
+    <svg id="resPlot" viewBox="0 0 820 560" style="width:820px;height:560px"></svg>
+    <div class="col" style="flex:1;gap:22px">
+      <div class="formula f" data-f="2" style="font-size:30px">MSE = <span class="mu">1/n</span> Σ <span class="am">(y − ŷ)²</span></div>
+      <div class="card"><div class="lbl mu" style="font-size:14px">Erro quadrático médio agora</div><div class="big am" id="mseV" style="font-size:84px;margin-top:8px">0</div></div>
+      <div class="card col" style="gap:12px">
+        <label class="ctl"><span class="mono cy" style="width:40px;font-weight:700">w</span><input id="rw" type="range" min="0" max="1.6" step="0.02" value="0.4"><span class="mono" id="rwv"></span></label>
+        <label class="ctl"><span class="mono vi" style="width:40px;font-weight:700">b</span><input id="rb" type="range" min="-2" max="6" step="0.1" value="4"><span class="mono" id="rbv"></span></label>
+        <div class="row" style="gap:12px"><button class="b" id="rOpt">Ajuste ótimo</button><button class="b" id="rRst">Reiniciar</button></div>
+      </div>
+      <div class="f" data-f="1" style="font-size:22px">Um erro <b class="am">2×</b> maior pesa <b class="am">4×</b></div>
+    </div>
+  </div>
+</section>
+
+<!-- 11 -->
+<section class="s" data-b="3" data-id="gd" data-notes="SLIDE 11 (4 min). Gradiente = direção de maior crescimento do erro; a descida vai no sentido contrário: w ← w − α·∂L/∂w. Rode com α pequeno (lento), bom (converge), grande (oscila) e grande demais (diverge). Cada passo aqui é uma atualização; uma época é uma passada por todos os dados de treino.">
+  <h2>Aprender é caminhar ladeira abaixo</h2>
+  <div class="row" style="gap:44px">
+    <svg id="gdPlot" viewBox="0 0 860 560" style="width:860px;height:560px"></svg>
+    <div class="col" style="flex:1;gap:20px">
+      <div class="formula" style="font-size:31px">w ← w − <span class="am">α</span> · <span class="cy">∂L/∂w</span></div>
+      <div class="card col" style="gap:14px"><div class="lbl mu" style="font-size:14px">Taxa de aprendizado α</div>
+        <div class="row" id="gdA" style="gap:10px;flex-wrap:wrap"><button class="b" data-a="0.05">0,05</button><button class="b on" data-a="0.3">0,3</button><button class="b" data-a="0.9">0,9</button><button class="b" data-a="1.05">1,05</button></div>
+        <div class="row" style="gap:10px"><button class="b" id="gdGo">▶ Descer</button><button class="b" id="gdRst">Reiniciar</button></div></div>
+      <div class="card row" style="justify-content:space-between"><div><div class="lbl mu" style="font-size:14px">Passo</div><div class="big mono" id="gdK" style="font-size:52px">0</div></div><div><div class="lbl mu" style="font-size:14px">Perda L(w)</div><div class="big mono am" id="gdL" style="font-size:52px">—</div></div></div>
+      <div id="gdMsg" style="font-size:24px;font-weight:700;min-height:34px"></div>
+    </div>
+  </div>
+</section>
+
+<!-- MREG -->
+<section class="s" data-b="3" data-id="mreg" data-notes="REGRESSÃO MÚLTIPLA (4 min). Com várias features, cada uma ganha seu peso: ŷ = w₁·horas + w₂·faltas + b. Mova os controles: as barras mostram quanto cada termo soma ou subtrai da previsão. Avance: um coeficiente é o efeito de uma feature mantendo as outras fixas; com 2 features o modelo é um plano, com 100 um hiperplano. Coeficientes ilustrativos — e coeficiente não prova causa.">
+  <h2>Mais de uma feature, um peso para cada</h2>
+  <div class="row" style="gap:50px">
+    <div class="col" style="width:600px;gap:22px">
+      <div class="mono big" style="font-size:33px;white-space:nowrap"><span class="am">ŷ</span> = <span class="cy">0,6</span>·horas <span class="rd">− 0,35</span>·faltas + <span class="vi">4,0</span></div>
+      <div class="card col" style="gap:14px">
+        <label class="ctl"><span style="width:90px;font-weight:700" class="cy">horas</span><input id="mrH" type="range" min="0" max="10" step="0.5" value="6"><span class="mono" id="mrHv"></span></label>
+        <label class="ctl"><span style="width:90px;font-weight:700" class="rd">faltas</span><input id="mrF" type="range" min="0" max="10" step="1" value="3"><span class="mono" id="mrFv"></span></label>
+      </div>
+      <div class="formula" id="mrCalc" style="font-size:25px"></div>
+      <div class="f col" data-f="1" style="gap:8px;font-size:21px"><div><b class="cy">Coeficiente</b> <span class="mu">efeito de uma feature com as outras fixas</span></div><div><b class="vi">2 features</b> <span class="mu">um plano · 100 features: um hiperplano</span></div><div><b class="am">Atenção</b> <span class="mu">coeficiente não prova causa</span></div></div>
+    </div>
+    <svg id="mrSvg" viewBox="0 0 740 540" style="width:740px;height:540px"></svg>
+  </div>
+</section>
+
+<!-- REG -->
+<section class="s" data-b="3" data-id="reg" data-notes="REGULARIZAÇÃO (5 min). Mesmos dados do slide de overfitting, agora com um polinômio de grau 11 fixo. A regularização L2 (Ridge) soma à perda uma penalidade λ·Σw²: pesos grandes custam caro. Arraste λ: perto de zero a curva decora o treino; com λ moderado ela suaviza e o erro de validação cai; com λ enorme vira quase uma reta (underfitting). As barras mostram os coeficientes encolhendo. Lasso (L1) pode zerar coeficientes e serve também para selecionar features.">
+  <h2>Regularização: freando um modelo complexo</h2>
+  <div class="row" style="gap:40px">
+    <svg id="regPlot" viewBox="0 0 820 560" style="width:820px;height:560px"></svg>
+    <div class="col" style="flex:1;gap:18px">
+      <div class="formula" style="font-size:26px">Perda = MSE + <span class="am">λ</span>·Σw²</div>
+      <div class="card"><div class="lbl mu" style="font-size:14px">Força da regularização λ</div><div class="row" style="align-items:center;gap:16px;margin-top:10px"><input id="regL" type="range" min="-7" max="2" step="0.1" value="-7" style="width:280px"><span class="mono big am" id="regLv" style="font-size:30px"></span></div><div class="row mono" style="gap:26px;margin-top:14px;font-size:19px"><span>treino <b id="regTr"></b></span><span class="am">validação <b id="regVa"></b></span></div><div id="regTag" class="big" style="font-size:32px;margin-top:12px"></div></div>
+      <div class="card"><div class="lbl mu" style="font-size:14px">Tamanho dos coeficientes |w|</div><svg id="regCoef" viewBox="0 0 520 150" style="width:100%;height:150px;margin-top:8px"></svg></div>
+    </div>
+  </div>
+</section>
+
+<!-- 12 -->
+<section class="s" data-b="3" data-notes="SLIDE 12 (3 min). MAE: erro absoluto médio, na unidade original. MSE: penaliza mais os desvios grandes (unidade ao quadrado). R²: compara com prever sempre a média; 1 é perfeito, 0 é igual à média, pode ser negativo fora do treino. Nunca interprete uma métrica sozinha.">
+  <h2>Um modelo erra. Quanto, e em qual unidade?</h2>
+  <div class="grid3">
+    <div class="card f" data-f="1" style="min-height:470px"><div class="big cy" style="font-size:78px">MAE</div><div class="mono" style="font-size:24px;margin:18px 0 26px">1/n Σ |y − ŷ|</div>
+      <div style="display:flex;align-items:flex-end;gap:16px;height:110px"><i style="width:44px;height:36%;background:var(--cy)"></i><i style="width:44px;height:80%;background:var(--cy)"></i><i style="width:44px;height:27%;background:var(--cy)"></i><i style="width:44px;height:62%;background:var(--cy)"></i></div>
+      <h3 style="font-size:27px;margin-top:26px">Erro médio na unidade original</h3><div class="mu" style="font-style:italic">“erra 0,6 ponto, em média”</div></div>
+    <div class="card f" data-f="2" style="min-height:470px"><div class="big am" style="font-size:78px">MSE</div><div class="mono" style="font-size:24px;margin:18px 0 26px">1/n Σ (y − ŷ)²</div>
+      <div style="display:flex;align-items:flex-end;gap:16px;height:110px"><i style="width:44px;height:13%;background:var(--am)"></i><i style="width:44px;height:64%;background:var(--am)"></i><i style="width:44px;height:7%;background:var(--am)"></i><i style="width:44px;height:38%;background:var(--am)"></i></div>
+      <h3 style="font-size:27px;margin-top:26px">Penaliza erros grandes</h3><div class="mu" style="font-style:italic">unidade ao quadrado</div></div>
+    <div class="card f" data-f="3" style="min-height:470px"><div class="big vi" style="font-size:78px">R²</div><div class="mono" style="font-size:24px;margin:18px 0 26px">1 − SS<sub>res</sub> / SS<sub>tot</sub></div>
+      <div style="height:110px;display:flex;flex-direction:column;justify-content:center"><div style="height:26px;border-radius:13px;background:var(--ln)"><div style="width:82%;height:100%;border-radius:13px;background:var(--vi)"></div></div><div class="mono mu" style="display:flex;justify-content:space-between;font-size:16px;margin-top:8px"><span>0</span><span>0,82</span><span>1</span></div></div>
+      <h3 style="font-size:27px;margin-top:26px">Comparado a prever a média</h3><div class="mu" style="font-style:italic">pode ser negativo fora do treino</div></div>
+  </div>
+  <div class="f note" data-f="4" style="margin-top:28px;font-size:22px">Uma métrica sozinha não conta a história: olhe o problema</div>
+</section>
+
+<!-- 13 LAB01 -->
+<section class="s lab" data-b="3" data-lab="01|Faça a reta aprender|01_regressao_linear.ipynb|25|am" data-steps="00–05|Ler o dataset sintético e visualizar os pontos;05–15|Ajustar com NumPy, acompanhar a MSE e comparar com LinearRegression;15–20|Prever valores novos e avaliar MAE, MSE e R²;20–25|Mudar a taxa de aprendizado: convergência e divergência" data-q="O modelo aprende com o número de épocas, ou com a atualização guiada pelo erro?" data-notes="SLIDE 13 — LAB 01 (25 min). Abra 01_regressao_linear.ipynb (versão do aluno). Não mostre o gabarito antes da atividade."></section>
+
+<!-- PAUSE2 -->
+<section class="s" data-b="3" data-pause="10" data-next="Deixe o Notebook 02 aberto" data-nochrome="1" data-notes="PAUSA (10 min). Clique em Iniciar."></section>
+
+<!-- M03 -->
+<section class="s sec" data-b="4" data-q="Como decidir a classe de algo que nunca vimos?" data-items="KNN e distâncias;Árvore de decisão e Gini;Random Forest;Matriz de confusão;Precision × recall e limiar;lab:Lab 02 · 25 min" data-notes="CAPA DO MÓDULO 03 (1 min). Classificação: o KNN decide pela vizinhança; as árvores fazem perguntas; a Random Forest junta várias árvores. Depois, como medir se a classificação está boa de verdade — e como escolher o limiar."></section>
+
+<!-- 14 -->
+<section class="s" data-b="4" data-id="knn" data-notes="SLIDE 14 (4 min). Clique no gráfico para mover o ponto novo; troque K. As cores de fundo mostram como cada região seria classificada. K pequeno é sensível a ruído (fronteira recortada); K grande suaviza. Normalizar muda as distâncias. O KNN não ajusta pesos: ele guarda os exemplos e compara.">
+  <h2>Seus vizinhos podem decidir quem você é</h2>
+  <div class="row" style="gap:40px">
+    <svg id="knnPlot" viewBox="0 0 860 560" style="width:860px;height:560px;cursor:crosshair"></svg>
+    <div class="col" style="flex:1;gap:20px">
+      <div class="card"><div class="lbl mu" style="font-size:14px">Número de vizinhos K</div><div class="row" id="knnK" style="gap:10px;margin-top:12px"><button class="b" data-k="1">1</button><button class="b on" data-k="3">3</button><button class="b" data-k="5">5</button><button class="b" data-k="9">9</button><button class="b" data-k="15">15</button></div></div>
+      <div class="card"><div class="lbl mu" style="font-size:14px">Votação</div><div id="knnVote" style="font-size:28px;margin-top:10px"></div><div id="knnRes" class="big" style="font-size:44px;margin-top:10px"></div></div>
+      <div class="col" style="gap:8px;font-size:21px"><div><b class="cy">K pequeno</b> sensível a ruído</div><div><b class="cy">Escala</b> normalizar muda as distâncias</div><div><b class="cy">Sem pesos</b> guarda os exemplos e compara</div></div>
+      <div class="note">Clique no gráfico para mover o ponto ★</div>
+    </div>
+  </div>
+</section>
+
+<!-- DIST -->
+<section class="s" data-b="4" data-id="dist" data-notes="DISTÂNCIAS (4 min). O KNN depende de como medimos “perto”. Clique no gráfico para mover o ponto B. Euclidiana = linha reta (Pitágoras); Manhattan = soma dos deslocamentos em cada eixo, como andar por quarteirões. Troque a métrica e veja a região de raio 3 ao redor de A: na Manhattan ela vira um losango — e os pontos considerados vizinhos mudam. Para textos e embeddings usamos muito a similaridade do cosseno, que compara direções (dia 2).">
+  <h2>“Perto” depende de como você mede</h2>
+  <div class="row" style="gap:40px">
+    <svg id="distSvg" viewBox="0 0 760 560" style="width:760px;height:560px;cursor:crosshair"></svg>
+    <div class="col" style="flex:1;gap:18px">
+      <div class="row" id="distM" style="gap:10px"><button class="b on" data-m="e">Euclidiana</button><button class="b" data-m="m">Manhattan</button></div>
+      <div class="card"><div class="lbl cy" style="font-size:14px">Euclidiana</div><div class="mono" style="font-size:22px;margin-top:6px">√(Δx² + Δy²) = <b class="cy" id="dE"></b></div></div>
+      <div class="card"><div class="lbl am" style="font-size:14px">Manhattan</div><div class="mono" style="font-size:22px;margin-top:6px">|Δx| + |Δy| = <b class="am" id="dM"></b></div></div>
+      <div class="card"><div class="lbl vi" style="font-size:14px">Cosseno · dia 2</div><div class="mu" style="font-size:19px;margin-top:6px">compara a direção dos vetores: usado em textos e embeddings</div></div>
+      <div class="mono" id="dCnt" style="font-size:21px"></div>
+      <div class="note">Clique para mover B · região = até 3 unidades de A</div>
+    </div>
+  </div>
+</section>
+
+<!-- 15 -->
+<section class="s" data-b="4" data-id="tree" data-notes="SLIDE 15 (4 min). Avance: cada divisão procura grupos mais homogêneos; o Gini (calculado ao vivo nos pontos do gráfico) cai a cada pergunta. 0 = nó puro. Árvore profunda demais decora o treino (overfitting). Dados sintéticos no estilo Iris; regras didáticas.">
+  <h2>Que pergunta separa melhor estas flores?</h2>
+  <div class="row" style="gap:36px">
+    <svg id="treePlot" viewBox="0 0 700 560" style="width:700px;height:560px"></svg>
+    <svg id="treeDiag" viewBox="0 0 680 560" style="width:680px;height:560px"></svg>
+  </div>
+</section>
+
+<!-- 16 -->
+<section class="s" data-b="4" data-id="forest" data-notes="SLIDE 16 (3 min). Random Forest: muitas árvores, cada uma treinada com amostras e features sorteadas. Avance para ver a votação. A combinação tende a reduzir a variância em relação a uma árvore só, mas não garante acerto. Troca: perde-se interpretabilidade.">
+  <h2>E se várias árvores votassem juntas?</h2>
+  <svg id="forestSvg" viewBox="0 0 1408 480" style="width:1408px;height:480px"></svg>
+  <div class="row" style="justify-content:space-between;font-size:23px;margin-top:20px"><div><b class="cy">1 árvore</b> <span class="mu">fácil de ler, alta variância</span></div><div><b class="gr">Floresta</b> <span class="mu">menor variância, menos interpretável</span></div></div>
+</section>
+
+<!-- 17 -->
+<section class="s" data-b="4" data-notes="SLIDE 17 (4 min). Matriz ilustrativa: 95 negativos corretos, 5 positivos perdidos, nenhum positivo previsto. Acurácia 95%, mas recall positivo = 0. Precisão positiva é indefinida (0/0). A classe minoritária pode importar mais que o percentual total. Precision: dos que previ positivos, quantos eram? Recall: dos positivos reais, quantos achei? F1: média harmônica.">
+  <h2>95% de acurácia pode ser péssimo</h2>
+  <div class="row" style="gap:60px;align-items:flex-start">
+    <div style="width:440px"><div class="big" style="font-size:170px">95%</div><div class="mu" style="font-size:26px">de acurácia</div>
+      <div class="f" data-f="2"><div class="big rd" style="font-size:130px;margin-top:40px">0%</div><div class="mu" style="font-size:26px">de recall na classe positiva</div></div></div>
+    <div class="f" data-f="1" style="position:relative">
+      <div class="lbl mu" style="text-align:center;margin-left:80px;font-size:14px">Previsto</div>
+      <div style="display:grid;grid-template-columns:80px 200px 200px;gap:10px;align-items:center;margin-top:10px;text-align:center">
+        <span></span><span class="mu" style="font-size:18px">negativo</span><span class="mu" style="font-size:18px">positivo</span>
+        <span class="mu" style="font-size:18px">real neg.</span><div class="cell" style="background:#34D39955"><b>95</b><small>VN</small></div><div class="cell"><b>0</b><small>FP</small></div>
+        <span class="mu" style="font-size:18px">real pos.</span><div class="cell" style="background:#F8717166"><b>5</b><small>FN</small></div><div class="cell"><b>0</b><small>VP</small></div></div></div>
+    <div class="col f" data-f="3" style="flex:1;gap:16px">
+      <div class="card"><b class="cy" style="font-size:24px">Precision</b><div class="mu" style="font-size:18px">dos que previ ✓, quantos eram?</div><div class="mono" style="font-size:20px;margin-top:6px">0/0 → indefinida</div></div>
+      <div class="card"><b class="rd" style="font-size:24px">Recall</b><div class="mu" style="font-size:18px">dos ✓ reais, quantos achei?</div><div class="mono" style="font-size:20px;margin-top:6px">0/5 = 0%</div></div>
+      <div class="card"><b class="vi" style="font-size:24px">F1</b><div class="mu" style="font-size:18px">equilíbrio entre os dois</div><div class="mono" style="font-size:20px;margin-top:6px">média harmônica</div></div></div>
+  </div>
+  <style>.cell{height:190px;border-radius:16px;background:var(--p2);display:flex;flex-direction:column;justify-content:center}.cell b{font:700 64px "Space Grotesk"}.cell small{font:16px "JetBrains Mono";color:var(--tx)}</style>
+</section>
+
+<!-- THR -->
+<section class="s" data-b="4" data-id="thr" data-notes="LIMIAR (5 min). Um classificador costuma devolver uma probabilidade; nós escolhemos o limiar a partir do qual dizemos “positivo”. Cada ponto é um paciente (ilustrativo): na linha de cima, os realmente positivos; embaixo, os negativos; a posição horizontal é o score do modelo. Arraste o limiar: baixando, o recall sobe (achamos mais positivos), mas a precision cai (mais alarmes falsos); subindo, o contrário. Não existe limiar certo: depende do custo de cada erro (triagem de câncer × filtro de spam).">
+  <h2>Precision × recall: quem escolhe é o limiar</h2>
+  <svg id="thrSvg" viewBox="0 0 1408 320" style="width:1408px;height:320px"></svg>
+  <div class="row" style="gap:24px;margin-top:6px;align-items:center"><span class="lbl mu" style="font-size:14px">Limiar</span><input id="thrT" type="range" min="0.02" max="0.98" step="0.01" value="0.5" style="width:460px"><span class="big mono" id="thrTv" style="font-size:40px"></span></div>
+  <div class="row" style="gap:20px;margin-top:22px" id="thrStats"></div>
+</section>
+
+<!-- 18 LAB02 -->
+<section class="s lab" data-b="4" data-lab="02|Mesmos dados. Três algoritmos|02_classificacao.ipynb|25|pk" data-steps="00–05|Explorar o Iris e separar treino/teste com estratificação;05–13|KNN × Árvore × Random Forest com validação cruzada no treino (pipeline ao padronizar);13–20|Variar K e profundidade: qualidade e variância;20–25|Avaliar o escolhido no teste: matriz de confusão e métricas" data-q="O modelo que foi melhor no treino deve necessariamente ser o escolhido?" data-notes="SLIDE 18 — LAB 02 (25 min). Abra 02_classificacao.ipynb. Não mostre o gabarito antes."></section>
+
+<!-- D1END -->
+<section class="s" data-b="4" data-nochrome="1" data-notes="FIM DO DIA 1 (5 min). Recapitule em uma frase cada módulo e pergunte o que ficou mais claro e o que ficou confuso. Amanhã: aprender sem rótulos, visão computacional e LLMs. Peça que salvem os notebooks no Drive.">
+  <div class="lbl cy" style="letter-spacing:.4em;margin-top:30px">Fim do dia 1</div>
+  <h1 style="font-size:72px;line-height:1.06;margin:18px 0 44px">Hoje a máquina aprendeu <span class="mu">com respostas.</span><br>Amanhã, <span class="vi">sem elas.</span></h1>
+  <div id="d1recap" class="grid3"></div>
+  <div id="d1next" class="row" style="gap:14px;margin-top:40px;align-items:center;flex-wrap:wrap"></div>
+</section>
+<svg width="0" height="0" style="position:absolute"><defs>
+  <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#8A94B8"/></marker>
+  <marker id="arc" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#22D3EE"/></marker>
+  <marker id="arw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#EAF0FF"/></marker>
+  <marker id="ara" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#F59E0B"/></marker>
+  <marker id="arv" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#8B5CF6"/></marker>
+  <clipPath id="clipFit"><rect x="70" y="20" width="730" height="470"/></clipPath>
+</defs></svg>
+</div>
+
+<div id="bar"><i></i></div>
+<div id="notes"></div>
+<div id="help">← → navegar · M mapa · N notas · F tela cheia</div>
+<div id="nav"><a id="bHome" href="index.html" aria-label="Início">⌂</a><button id="bPrev" aria-label="Anterior">←</button><button id="bMap">Mapa</button><button id="bNotes">Notas</button><button id="bFull">Tela cheia</button><button id="bNext" aria-label="Próximo">→</button></div>
+<script>window.DECK={day:1}</script>
+<script src="assets/deck.js"></script>
+</body>
+</html>
