@@ -1,0 +1,312 @@
+============================================================================================
+ROTEIRO · MACHINE LEARNING NA PRÁTICA · DIA 2 DE 2
+Sem rótulos, visão e linguagem
+============================================================================================
+
+ANTES DE COMEÇAR
+  - Abrir dia2.html no navegador (F = tela cheia, N = notas, M = mapa de slides).
+  - Deixar no Colab: 03_clustering, 05_llms e 04_desafio_final.
+  - Combinar a formação dos grupos para o desafio final.
+
+
+--------------------------------------------------------------------------------------------
+INTRODUÇÃO
+--------------------------------------------------------------------------------------------
+
+[01] Dos grupos às imagens e à linguagem
+     Fala: Boas-vindas ao segundo dia. Ontem a máquina aprendeu com respostas (rótulos).
+     Hoje: aprender sem rótulos, enxergar imagens e chegar aos LLMs — e ver como tudo de
+     ontem reaparece dentro deles.
+
+[02] Ontem, em uma linha
+     Fala: Relembre o fluxo do dia 1 e faça as três perguntas, uma de cada vez, antes de
+     revelar a resposta (avance). Respostas: (1) para não vazar informação do teste para o
+     treino; (2) não — olhe o recall da classe que importa; (3) fica sensível a ruído:
+     overfitting.
+
+[03] O caminho de hoje
+     Fala: Roteiro do dia 2: quatro módulos e o desafio final. Clique num módulo para pular;
+     tecla M abre o mapa de slides.
+
+--------------------------------------------------------------------------------------------
+MÓDULO 04 · K-MEANS & CLUSTERING
+--------------------------------------------------------------------------------------------
+
+[04] Capa do módulo 04 · K-Means & Clustering
+     Tópicos:
+       1. K-Means passo a passo
+       2. Cotovelo e silhouette
+       3. Quando o K-Means falha
+       4. DBSCAN e hierárquico
+       5. PCA: reduzir dimensões
+       6. Lab 03
+     Pergunta-guia: Dá para encontrar grupos sem ninguém dizer quais são?
+     Fala: Mudamos de tipo de aprendizado: agora não há rótulos. O K-Means descobre grupos
+     pela distância — a mesma ideia de distância do KNN de ontem.
+
+[05] E se ninguém soubesse as respostas?
+     Fala: Use “Passo” para alternar: (1) cada ponto vai ao centroide mais próximo, (2) cada
+     centroide vira a média do seu grupo. Repita até estabilizar. Sorteie de novo para
+     mostrar que a inicialização importa. O cluster não recebe significado automaticamente:
+     a interpretação vem depois.
+
+[06] Quantos grupos realmente existem?
+     Fala: Calculado ao vivo nos mesmos dados do slide anterior. A inércia sempre cai quando
+     K cresce (com K = n ela é zero), então o cotovelo é uma heurística, não uma prova.
+     Silhouette (−1 a 1) compara coesão e separação. Escala, formato e densidade dos grupos
+     influenciam os dois.
+
+[07] Quando o K-Means falha
+     Fala: O K-Means supõe grupos “redondos”, de tamanho parecido, e usa a média. Troque o
+     conjunto: em bolhas ele vai bem; em luas e anéis corta os grupos ao meio; com
+     densidades diferentes erra a fronteira. À direita, o DBSCAN agrupa por densidade:
+     pontos com vizinhos suficientes dentro de um raio ε formam grupos, e pontos isolados
+     viram ruído (cinza). Ele não precisa de K, mas precisa de ε.
+
+[08] Juntar os mais próximos, passo a passo
+     Fala: Começa com cada ponto sozinho e vai juntando os dois grupos mais próximos, passo
+     a passo. O dendrograma registra essas fusões: a altura é a distância em que os grupos
+     se juntaram. Arraste a linha de corte: a altura do corte define quantos grupos você
+     quer, sem rodar de novo. Útil para ver a estrutura em vários níveis (taxonomias, perfis
+     de clientes).
+
+[09] Muitas features? Procure as direções que importam
+     Fala: Dados com muitas features são difíceis de visualizar e de agrupar. A PCA procura
+     as direções de maior variância. Gire o eixo: cada ponto é projetado nele (traços) e a
+     barra mostra quanto da variância total sobra na projeção. Clique em “Encontrar PC1”
+     para ir à melhor direção. Com as 13 features do Wine, as 2 primeiras componentes já
+     permitem um gráfico 2D. Como o K-Means, a PCA é não supervisionada e precisa de dados
+     padronizados.
+
+[10] Lab 03 · Encontre perfis de consumo
+     Notebook: 03_clustering.ipynb
+     Passos:
+       1. Explorar os dados sintéticos de consumo e sua variação
+       2. Padronizar e aplicar o K-Means
+       3. Comparar K pelo cotovelo e pela silhouette
+       4. Testar sem padronização e interpretar centroides e perfis
+     Para discutir: O cluster é útil para uma decisão real, ou só visualmente convincente?
+     Fala: Abra 03_clustering.ipynb.
+
+[11] Pausa
+     Na tela: A seguir: visão computacional
+     Fala: Clique em Iniciar.
+
+--------------------------------------------------------------------------------------------
+MÓDULO 05 · VISÃO COMPUTACIONAL
+--------------------------------------------------------------------------------------------
+
+[12] Capa do módulo 05 · Visão Computacional
+     Tópicos:
+       1. Do neurônio à rede
+       2. Imagem = tabela de números
+       3. Convolução e CNNs
+       4. Data augmentation
+       5. Transfer learning
+       6. Tarefas de visão
+     Pergunta-guia: Como uma máquina enxerga?
+     Fala: Para enxergar, precisamos de redes neurais. Começamos pelo neurônio (a nossa reta
+     de ontem com uma ativação) e chegamos às redes convolucionais e ao transfer learning.
+
+[13] Da primeira reta a uma rede inteira
+     Fala: Base para visão e linguagem. Avance: a reta vira um neurônio (várias entradas,
+     soma ponderada, ativação). Depois troque a ativação no gráfico da direita: é a MESMA
+     rede de 12 neurônios com pesos fixos. Com ativação linear, ela inteira vira uma reta;
+     com ReLU ou sigmoide, curvas. É a não linearidade que dá poder às camadas. Evite dizer
+     que redes são “apenas regressões agrupadas”.
+
+[14] A rede aprende com o mesmo princípio
+     Fala: Propagação direta: a rede calcula a previsão. A perda mede o erro.
+     Retropropagação: calcula os gradientes de todos os pesos (regra da cadeia). O
+     otimizador atualiza os parâmetros — a mesma descida do gradiente do módulo de
+     regressão, com milhões ou bilhões de parâmetros.
+
+[15] Para a máquina, uma imagem é uma tabela de números
+     Fala: Desenhe no grid arrastando o mouse (Shift + arrastar apaga). Cada quadradinho é
+     um pixel: um número de 0 (preto) a 255 (branco). Uma imagem 14×14 em tons de cinza é
+     uma tabela com 196 números; colorida, são 3 canais (R, G, B). Avance para “achatar” a
+     imagem em uma linha: é exatamente uma linha de dataset do módulo 01, com 196 features.
+     O desenho feito aqui é usado nos dois próximos slides.
+
+[16] Um filtro que desliza pela imagem
+     Fala: A imagem do slide anterior (o que vocês desenharam!) passa por um filtro 3×3. Em
+     cada posição: multiplica cada pixel pelo peso correspondente e soma. Troque o filtro:
+     borda vertical, horizontal, desfoque, realce. Clique em Deslizar para ver a janela
+     percorrendo a imagem. Ciano = resposta positiva, âmbar = negativa. Avance para o ponto-
+     chave: numa CNN ninguém escolhe esses pesos — eles são aprendidos com descida do
+     gradiente, como o w da regressão.
+
+[17] De bordas a objetos: camadas que enxergam
+     Fala: Uma rede convolucional empilha camadas de convolução (filtros aprendidos), ReLU e
+     pooling (reduz o tamanho guardando o valor mais forte). Avance: as primeiras camadas
+     respondem a bordas e traços; as do meio, a curvas e formas; no fim, uma camada densa
+     combina tudo e gera probabilidades por classe. Os mapas mostrados são calculados a
+     partir do dígito desenhado; as probabilidades são ilustrativas.
+
+[18] Mais exemplos sem novos rótulos
+     Fala: Rótulos custam caro; variações custam quase nada. A partir do dígito desenhado
+     (slide de pixels), geramos versões deslocadas, giradas, com zoom, ruído e contraste
+     diferentes — todas continuam sendo um 7. Assim a rede aprende a ignorar o que não
+     importa (posição, iluminação). Clique em “Novas variações”. Cuidado com transformações
+     que mudam o rótulo: um 7 espelhado não é um 7; já um gato espelhado continua gato.
+
+[19] Transfer learning: aproveitar quem já aprendeu
+     Fala: Treinar uma CNN do zero exige muitas imagens rotuladas. Avance: uma rede pré-
+     treinada (ex.: no ImageNet, ~1,2 milhão de imagens e 1.000 classes) já aprendeu bordas,
+     texturas e partes. Congelamos essas camadas e trocamos só a “cabeça” final pelas nossas
+     classes — poucas centenas de imagens podem bastar. É o mesmo padrão dos LLMs: pré-
+     treino caro uma vez, ajuste fino barato muitas vezes.
+
+[20] O que dá para fazer quando a máquina enxerga?
+     Fala: Quatro tarefas clássicas: classificar (o que há na imagem), detectar (onde está
+     cada objeto, com caixas), segmentar (a que objeto pertence cada pixel) e ler texto
+     (OCR). Avance para conectar com o que já vimos: KNN em pixels crus funciona em dígitos
+     simples, mas quebra com deslocamento, iluminação e fundo; K-Means agrupa cores para uma
+     segmentação simples sem rótulos; e as CNNs aprendem as próprias features.
+
+[21] Pausa
+     Na tela: A seguir: modelos de linguagem
+     Fala: Clique em Iniciar.
+
+--------------------------------------------------------------------------------------------
+MÓDULO 06 · MODELOS DE LINGUAGEM (LLMS)
+--------------------------------------------------------------------------------------------
+
+[22] Capa do módulo 06 · Modelos de Linguagem (LLMs)
+     Tópicos:
+       1. Próximo token e tokens
+       2. Embeddings e atenção
+       3. Temperatura
+       4. Treino em três estágios
+       5. Alucinação e RAG
+       6. Imagem vira token
+       7. Lab 05
+     Pergunta-guia: Como tudo isso vira um modelo que conversa?
+     Fala: Chegamos aos LLMs. Vamos ver que eles reaproveitam tudo o que vimos: dados, perda
+     e gradiente, vizinhos, grupos e até a visão computacional.
+
+[23] Complete a frase
+     Fala: Projete “O céu hoje está ___” e peça palpites ANTES de avançar. Probabilidades
+     ilustrativas. No pré-treinamento, LLMs autorregressivos aprendem a prever o próximo
+     token em grandes quantidades de texto — aprendizado autossupervisionado. O pós-
+     treinamento (instruções, preferências) é outro estágio.
+
+[24] Texto não entra como texto
+     Fala: Digite qualquer frase no campo. Texto vira tokens, cada token vira um ID, cada ID
+     é mapeado para um vetor (embedding), e a posição também entra. O “tokenizador” aqui é
+     ilustrativo (corta palavras longas em pedaços); modelos reais usam BPE ou similares e
+     cada um tokeniza de um jeito.
+
+[25] Palavras vizinhas: o KNN de volta
+     Fala: Cada token vira um vetor: o embedding. Palavras usadas em contextos parecidos
+     ficam próximas. Clique numa palavra: os 3 vizinhos mais próximos são exatamente o KNN
+     do módulo 03 — é a base da busca semântica e do RAG. Clique em “Agrupar com K-Means”
+     para rodar o K-Means do módulo 04 nesses vetores. Clique em “laranja”: os vizinhos
+     misturam cor, céu e fruta — um vetor por palavra mistura sentidos; é a atenção, no
+     próximo slide, que usa o contexto para decidir. Mapa 2D ilustrativo: embeddings reais
+     têm centenas ou milhares de dimensões.
+
+[26] A palavra “ele” aponta para quem?
+     Fala: Clique em qualquer palavra para ver para onde ela “olha”. Self-attention mistura
+     informação do contexto. Q = consultas, K = chaves, V = valores. Em modelos
+     autorregressivos, a máscara causal impede olhar tokens futuros (apagados). Pesos
+     ilustrativos, não de um LLM real.
+
+[27] O Transformer transforma contexto em previsão
+     Fala: Clique em “Gerar próximo token” várias vezes. Fluxo: tokens e posições →
+     embeddings → N blocos Transformer → logits → softmax → escolha. O token escolhido volta
+     ao contexto e o ciclo se repete (laço autorregressivo). Cada bloco tem atenção, MLP,
+     conexões residuais e normalização. Probabilidades ilustrativas.
+
+[28] Uma pergunta. Muitas respostas possíveis
+     Fala: Arraste a temperatura: ela divide os logits antes do softmax e muda a
+     concentração da distribuição, sem retreinar. Baixa: previsível. Alta: probabilidade
+     espalhada. Amostre algumas vezes em cada temperatura. Mais variedade NÃO é mais
+     precisão factual: relacione a alucinações e verificação externa.
+
+[29] Como um LLM é treinado: três estágios
+     Fala: Avance estágio por estágio. 1) Pré-treino: prever o próximo token em quantidades
+     enormes de texto (autossupervisionado) — gera um modelo base, que só continua textos.
+     2) Ajuste por instruções: exemplos de pergunta → boa resposta, aprendizado
+     supervisionado como no dia 1. 3) Alinhamento por preferências (ex.: RLHF): pessoas
+     comparam respostas e o modelo é ajustado para preferir as melhores — aprendizado por
+     reforço, o terceiro tipo do slide de abertura. Exemplo ilustrativo embaixo.
+
+[30] Plausível não é verdadeiro
+     Fala: O LLM é treinado para produzir texto plausível, não para checar fatos. Quando
+     falta informação, ele completa com o que “soa certo”: datas, citações e referências
+     inventadas. Avance para as causas e as mitigações. Temperatura baixa deixa a resposta
+     mais previsível, mas não a torna verdadeira. Mitigações: RAG (dar fontes), pedir
+     citações verificáveis, ferramentas (busca, código) e revisão humana.
+
+[31] RAG: o LLM consulta antes de responder
+     Fala: Retrieval-Augmented Generation: em vez de confiar só na memória do modelo,
+     buscamos trechos relevantes numa base de documentos e os colocamos no prompt. Avance:
+     (1) os documentos são quebrados em trechos e viram embeddings; (2) a pergunta também
+     vira embedding; (3) buscamos os vizinhos mais próximos — o KNN do dia 1; (4) o LLM
+     responde usando os trechos e cita a fonte. Documentos e resposta fictícios.
+
+[32] Imagem também vira token
+     Fala: Aqui os módulos 05 e 06 se encontram. Avance: a imagem é cortada em pedaços
+     (patches); cada pedaço vira um vetor, como se fosse um token (ideia do Vision
+     Transformer). Esses “tokens de imagem” entram na mesma sequência dos tokens de texto e
+     o Transformer aplica atenção sobre tudo junto. A resposta sai pelo mesmo laço
+     autorregressivo. Fluxo simplificado: cada modelo implementa de um jeito.
+
+[33] O que um LLM herdou de cada módulo
+     Fala: Feche o arco: cada módulo do dia aparece dentro de um LLM. Dados: o pré-treino
+     usa quantidades enormes de texto, e qualidade, viés e vazamento continuam importando.
+     Regressão: perda + descida do gradiente, agora com bilhões de parâmetros. KNN: vizinhos
+     em embeddings (busca semântica, RAG). K-Means: agrupar embeddings. Visão: imagens viram
+     tokens. A escala muda; a lógica não.
+
+[34] Lab 05 · Brinque com o próximo token
+     Notebook: 05_llms.ipynb
+     Passos:
+       1. Logits → softmax → probabilidades
+       2. Mudar a temperatura e comparar as distribuições
+       3. Amostrar tokens com semente fixa
+       4. DistilGPT2 real: opcional, não depende do download
+     Para discutir: Por que a mesma pergunta pode gerar respostas diferentes?
+     Fala: Abra 05_llms.ipynb. Logits, softmax e temperatura funcionam localmente. O
+     DistilGPT2 é opcional e não deve comprometer a aula se o download falhar.
+
+--------------------------------------------------------------------------------------------
+MÓDULO 07 · DESAFIO FINAL
+--------------------------------------------------------------------------------------------
+
+[35] Capa do módulo 07 · Desafio Final
+     Tópicos:
+       1. Explorar o Wine Dataset
+       2. Pipelines sem vazamento
+       3. Comparar com validação cruzada
+       4. Avaliar no teste e justificar
+       5. Apresentar para a turma
+       6. Desafio 04
+     Pergunta-guia: Agora é com vocês.
+     Fala: Hora de juntar tudo dos dois dias: dados, pipeline, comparação de modelos,
+     avaliação honesta no teste — e explicar a escolha para a turma.
+
+[36] Desafio 04 · Sua missão: construir um modelo
+     Notebook: 04_desafio_final.ipynb
+     Passos:
+       1. Explorar features, target e classes (Wine Dataset)
+       2. Separar treino/teste e montar dois pipelines sem vazamento
+       3. Comparar os modelos com validação cruzada no treino
+       4. Avaliar o escolhido no teste e preparar 2 minutos de apresentação
+     Para discutir: O pré-processamento está no pipeline? O teste foi usado para escolher
+     hiperparâmetros?
+     Fala: Abra 04_desafio_final.ipynb (Wine Dataset). NÃO revele o gabarito. Dicas
+     pontuais: “O pré-processamento está dentro do pipeline?”, “O teste foi usado para
+     escolher hiperparâmetros?”. Se houver atraso, não sacrifique este desafio.
+
+[37] Apresentação
+     Na tela: modelo escolhido · métrica no teste · um erro interessante · próximo passo
+     Fala: Cada grupo tem 2 minutos: qual modelo escolheu, a métrica no teste, um erro
+     interessante do modelo e o que faria com mais tempo. Reinicie o cronômetro para cada
+     grupo.
+
+[38] Não é magia. É aprendizagem medida
+     Fala: Discuta: (1) Que padrão seu modelo aprendeu? (2) Onde errou e por quê? (3) O que
+     essa lógica tem em comum com os LLMs? Reforce: dados → previsão → erro → ajuste →
+     avaliação → generalização. Convide a turma a continuar experimentando os notebooks.
