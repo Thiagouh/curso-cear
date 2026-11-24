@@ -124,7 +124,7 @@ if($('#coverDur'))$('#coverDur').textContent='~'+hm(TOT);
 if($('#agSvg')){const seq=[];slides.forEach((s,i)=>{if(s.classList.contains('sec'))seq.push({b:+s.dataset.b,i});else if(isBreak(s))seq.push({p:+s.dataset.pause,i})});
  const n=seq.filter(x=>x.b).length,W=1408/n;let h='',k=0;
  h+=`<line x1="${W/2}" y1="150" x2="${1408-W/2}" y2="150" stroke="${COL.ln}" stroke-width="6" stroke-linecap="round"/>`;
- seq.forEach(x=>{if(x.p){const px=k*W;h+=`<rect x="${px-58}" y="62" width="116" height="32" rx="16" fill="${COL.p2}" stroke="${COL.ln}"/><text x="${px}" y="84" text-anchor="middle" font-size="15" fill="${COL.mu}">☕ pausa ${x.p} min</text><line x1="${px}" y1="94" x2="${px}" y2="140" stroke="${COL.ln}" stroke-width="2" stroke-dasharray="4 4"/>`;return}
+ seq.forEach(x=>{if(x.p){const px=k*W;h+=`<rect x="${px-76}" y="62" width="152" height="32" rx="16" fill="${COL.p2}" stroke="${COL.ln}"/><text x="${px}" y="84" text-anchor="middle" font-size="15" fill="${COL.mu}">☕ pausa ${x.p} min</text><line x1="${px}" y1="94" x2="${px}" y2="140" stroke="${COL.ln}" stroke-width="2" stroke-dasharray="4 4"/>`;return}
   const B=BLK[x.b],c=COL[B[2]],cx=k*W+W/2,sec=slides[x.i],items=sec.dataset.items.split(';');k++;
   h+=`<g class="st" data-go="${x.i}"><rect x="${cx-W/2+8}" y="0" width="${W-16}" height="600" rx="20" fill="transparent"/>
    <svg x="${cx-70}" y="0" width="140" height="84" viewBox="0 0 400 240">${ill(x.b)}</svg>
