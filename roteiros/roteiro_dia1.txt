@@ -1,0 +1,283 @@
+============================================================================================
+ROTEIRO · MACHINE LEARNING NA PRÁTICA · DIA 1 DE 2
+Fundamentos e aprendizado supervisionado
+============================================================================================
+
+ANTES DE COMEÇAR
+  - Abrir dia1.html no navegador (F = tela cheia, N = notas, M = mapa de slides).
+  - Deixar no Colab: 00_dados_e_datasets, 01_regressao_linear e 02_classificacao.
+  - Testar projetor e os slides interativos (sliders e botões) antes de começar.
+
+
+--------------------------------------------------------------------------------------------
+INTRODUÇÃO
+--------------------------------------------------------------------------------------------
+
+[01] Da primeira reta ao próximo token
+     Fala: “Quando alguém usa uma IA para escrever um texto ou reconhecer uma imagem, vê só
+     o resultado. Mas como a máquina chegou até ali?” Explique o formato: dois dias de 4
+     horas. Hoje: dados, regressão e classificação. Amanhã: agrupamento, visão computacional
+     e LLMs. Avise que a turma vai programar no Colab.
+
+[02] Você sabe usar IA. Mas sabe como ela aprende?
+     Fala: Pergunte: “Quem já usou ChatGPT, Gemini ou outra IA? E quem já treinou um
+     modelo?” Espere respostas. A meta não é só importar uma biblioteca: é entender dados,
+     parâmetros, perda, avaliação e inferência.
+
+[03] O caminho de hoje
+     Fala: Mostre o roteiro do dia: três módulos, cada um abre com uma capa própria e
+     termina num notebook. A cor e a barrinha no canto superior esquerdo indicam sempre o
+     módulo atual. Clique num módulo para pular direto para ele. A tecla M abre o mapa com
+     todos os slides.
+
+[04] Como detectar spam sem escrever mil regras?
+     Fala: Proponha: “Se tem a palavra promoção, é spam.” Por que falha? Programação
+     tradicional: nós escrevemos as regras. ML supervisionado: damos exemplos e rótulos e o
+     algoritmo aprende os parâmetros. Treinamento = aprender com exemplos; inferência =
+     prever em dados novos.
+
+[05] Onde um LLM se encaixa na IA?
+     Fala: IA é o campo amplo; ML é uma abordagem dentro dele; Deep Learning usa redes
+     neurais profundas; LLMs atuais são Deep Learning aplicado à linguagem. IA generativa
+     não é sinônimo de LLM: há modelos de imagem, áudio e vídeo.
+
+[06] Três formas de aprender. Três tipos de sinal
+     Fala: Supervisionado: exemplos com rótulos. Não supervisionado: encontrar grupos sem
+     rótulos. Reforço: uma política aprende com ações e recompensas. Pergunta: “Separar
+     consumidores por perfil sem categorias prontas é qual tipo?” (não supervisionado).
+     Autossupervisão: o próprio texto fornece o rótulo — voltaremos nisso em LLMs.
+
+--------------------------------------------------------------------------------------------
+MÓDULO 01 · DADOS & DATASETS
+--------------------------------------------------------------------------------------------
+
+[07] Capa do módulo 01 · Dados & Datasets
+     Tópicos:
+       1. Features e target
+       2. Dados bagunçados
+       3. EDA: olhar antes de modelar
+       4. Encoding e escala
+       5. Vazamento e overfitting
+       6. Validação cruzada
+       7. Lab 00
+     Pergunta-guia: O que um modelo realmente recebe para aprender?
+     Fala: Agora começamos a falar de dados. Todo modelo, da regressão ao LLM, depende de
+     como os dados são coletados, limpos, transformados, divididos e avaliados. É o módulo
+     mais longo do dia — e o mais importante na prática.
+
+[08] Os datasets que vamos usar hoje
+     Fala: Apresente os conjuntos de dados que aparecem ao longo do curso. Cada linha é um
+     exemplo; cada coluna, uma feature. Destaque que imagens e textos também viram tabelas
+     de números (módulos 05 e 06). Iris e Wine são datasets clássicos do Scikit-learn; os
+     sintéticos foram gerados para a aula; MNIST aparece como exemplo nos slides de visão.
+
+[09] Uma linha de dados. Uma decisão a tomar
+     Fala: Feature = informação disponível antes da previsão; target = o que queremos
+     estimar. Numérico vs categórico. Treino ajusta parâmetros; validação orienta escolhas
+     (modelo, hiperparâmetros); teste estima o desempenho final em dados não usados na
+     seleção.
+
+[10] Dados do mundo real chegam bagunçados
+     Fala: Dados reais quase nunca chegam limpos. Avance passo a passo: (1) valores
+     faltantes — imputar (ex.: mediana) ou remover; se faltar o alvo, a linha não serve para
+     treino; (2) linhas duplicadas — contam duas vezes e distorcem o modelo; (3) outliers —
+     80 horas de estudo? Investigue: pode ser erro de digitação (8,0); (4) categorias
+     inconsistentes — “manhã”, “Manhã”, “MANHÃ ” são a mesma coisa para nós e três valores
+     para o computador. Último passo: a tabela limpa. Registre cada decisão de limpeza.
+
+[11] Olhe os dados antes de modelar
+     Fala: Antes de modelar, olhe os dados. O histograma mostra as horas de estudo de 200
+     alunos (sintéticos); o boxplot resume quartis e marca pontos extremos. Clique em
+     “Adicionar outliers”: a média se desloca, a mediana quase não muda — por isso a mediana
+     é boa para imputar faltantes. À direita, horas × nota: a correlação r mede relação
+     linear (de −1 a 1). Correlação não é causalidade.
+
+[12] Categorias precisam virar números
+     Fala: Modelos fazem contas, então categorias precisam virar números. Label encoding
+     (noite = 0, manhã = 1, tarde = 2) cria uma ordem falsa: para o modelo, “tarde” seria
+     maior que “manhã”. One-hot cria uma coluna 0/1 por categoria, sem ordem. Quando a ordem
+     é real (fundamental < médio < superior), o encoding ordinal faz sentido. Cuidado com
+     categorias muito numerosas (ex.: CEP): one-hot gera colunas demais.
+
+[13] Quem é mais parecido com você?
+     Fala: Quem é mais parecido com “você” (25 anos, R$ 3.000)? A tem 62 anos e ganha R$
+     3.200; B tem 27 anos e ganha R$ 4.500. Sem padronizar, a distância é dominada pela
+     renda (milhares de reais contra dezenas de anos) e A parece mais próxima — absurdo.
+     Clique em Padronizar: z = (x − média) / desvio coloca as features na mesma escala e B
+     passa a ser a mais próxima. Afeta KNN, K-Means, redes neurais e regularização; árvores
+     não ligam para escala. A média e o desvio vêm do treino.
+
+[14] O teste não pode contar o futuro
+     Fala: Padronizar o dataset inteiro antes de separar vaza média e desvio do teste para o
+     treino. Certo: separar; ajustar (fit) o scaler só no treino; transformar treino e teste
+     com ele. O Pipeline do Scikit-learn garante essa ordem, inclusive na validação cruzada.
+     “O teste é uma prova inédita, não uma cola para o estudo.”
+
+[15] Acertar tudo no treino é sempre bom sinal?
+     Fala: Arraste a complexidade (grau do polinômio). Pontos brancos = treino; anéis âmbar
+     = validação. Com grau alto, o erro de treino vai a quase zero e o de validação explode.
+     “Qual curva vocês escolheriam?” A decisão precisa de dados de validação, não do olho.
+
+[16] Uma divisão pode dar sorte. Cinco, nem tanto
+     Fala: Um único corte de validação pode dar sorte ou azar. Na validação cruzada k-fold
+     (aqui k = 5), o treino é dividido em 5 partes e cada parte vira validação uma vez.
+     Avance para ver as 5 rodadas. O resultado é a média e o desvio das 5 notas — mais
+     confiável para comparar modelos e escolher hiperparâmetros. O teste continua guardado
+     até o fim. Notas ilustrativas.
+
+[17] Lab 00 · Arrume a casa antes de modelar
+     Notebook: 00_dados_e_datasets.ipynb
+     Passos:
+       1. Carregar e inspecionar: formato, tipos, describe() e faltantes
+       2. Limpar: duplicados, categorias, outliers e faltantes
+       3. Explorar: histogramas, boxplot e correlação
+       4. Preparar: one-hot, padronização, split e Pipeline sem vazamento
+     Para discutir: Qual decisão de limpeza que você tomou muda o resultado do modelo?
+     Fala: Abra notebooks/00_dados_e_datasets.ipynb (versão do aluno). O dataset é gerado
+     dentro do notebook (não depende de download) e reproduz os problemas do slide “dados
+     bagunçados”. O gabarito está em 00_dados_e_datasets_gabarito.ipynb — não mostre antes.
+
+[18] Pausa
+     Na tela: Deixe o Notebook 01 aberto
+     Fala: Clique em Iniciar.
+
+--------------------------------------------------------------------------------------------
+MÓDULO 02 · REGRESSÃO LINEAR
+--------------------------------------------------------------------------------------------
+
+[19] Capa do módulo 02 · Regressão Linear
+     Tópicos:
+       1. ŷ = w·x + b
+       2. Resíduos e MSE
+       3. Descida do gradiente
+       4. Regressão múltipla
+       5. Regularização
+       6. MAE, MSE e R²
+       7. Lab 01
+     Pergunta-guia: Como uma reta aprende com os próprios erros?
+     Fala: Primeiro modelo do curso: a regressão linear. A ideia de perda + descida do
+     gradiente vai reaparecer nas redes neurais e nos LLMs amanhã.
+
+[20] A primeira previsão pode ser uma reta
+     Fala: ŷ = wx + b. w = inclinação, b = intercepto, x = entrada. Mova os controles.
+     Exemplo: x = 6, w = 5, b = 20 → ŷ = 50 (exemplo matemático, não uma escala real de
+     nota). O modelo precisa descobrir w e b a partir dos dados.
+
+[21] Como uma reta sabe que está errada?
+     Fala: A distância vertical entre ponto real e previsão é o resíduo. MSE = média dos
+     quadrados: os quadrados no gráfico são literalmente cada erro ao quadrado. Pergunte:
+     “Se eu deslocar a reta, o erro melhora ou piora?” — e mova os controles. Depois clique
+     em “Ajuste ótimo” (mínimos quadrados).
+
+[22] Aprender é caminhar ladeira abaixo
+     Fala: Gradiente = direção de maior crescimento do erro; a descida vai no sentido
+     contrário: w ← w − α·∂L/∂w. Rode com α pequeno (lento), bom (converge), grande (oscila)
+     e grande demais (diverge). Cada passo aqui é uma atualização; uma época é uma passada
+     por todos os dados de treino.
+
+[23] Mais de uma feature, um peso para cada
+     Fala: Com várias features, cada uma ganha seu peso: ŷ = w₁·horas + w₂·faltas + b. Mova
+     os controles: as barras mostram quanto cada termo soma ou subtrai da previsão. Avance:
+     um coeficiente é o efeito de uma feature mantendo as outras fixas; com 2 features o
+     modelo é um plano, com 100 um hiperplano. Coeficientes ilustrativos — e coeficiente não
+     prova causa.
+
+[24] Regularização: freando um modelo complexo
+     Fala: Mesmos dados do slide de overfitting, agora com um polinômio de grau 11 fixo. A
+     regularização L2 (Ridge) soma à perda uma penalidade λ·Σw²: pesos grandes custam caro.
+     Arraste λ: perto de zero a curva decora o treino; com λ moderado ela suaviza e o erro
+     de validação cai; com λ enorme vira quase uma reta (underfitting). As barras mostram os
+     coeficientes encolhendo. Lasso (L1) pode zerar coeficientes e serve também para
+     selecionar features.
+
+[25] Um modelo erra. Quanto, e em qual unidade?
+     Fala: MAE: erro absoluto médio, na unidade original. MSE: penaliza mais os desvios
+     grandes (unidade ao quadrado). R²: compara com prever sempre a média; 1 é perfeito, 0 é
+     igual à média, pode ser negativo fora do treino. Nunca interprete uma métrica sozinha.
+
+[26] Lab 01 · Faça a reta aprender
+     Notebook: 01_regressao_linear.ipynb
+     Passos:
+       1. Ler o dataset sintético e visualizar os pontos
+       2. Ajustar com NumPy, acompanhar a MSE e comparar com LinearRegression
+       3. Prever valores novos e avaliar MAE, MSE e R²
+       4. Mudar a taxa de aprendizado: convergência e divergência
+     Para discutir: O modelo aprende com o número de épocas, ou com a atualização guiada
+     pelo erro?
+     Fala: Abra 01_regressao_linear.ipynb (versão do aluno). Não mostre o gabarito antes da
+     atividade.
+
+[27] Pausa
+     Na tela: Deixe o Notebook 02 aberto
+     Fala: Clique em Iniciar.
+
+--------------------------------------------------------------------------------------------
+MÓDULO 03 · KNN, ÁRVORES & RANDOM FOREST
+--------------------------------------------------------------------------------------------
+
+[28] Capa do módulo 03 · KNN, Árvores & Random Forest
+     Tópicos:
+       1. KNN e distâncias
+       2. Árvore de decisão e Gini
+       3. Random Forest
+       4. Matriz de confusão
+       5. Precision × recall e limiar
+       6. Lab 02
+     Pergunta-guia: Como decidir a classe de algo que nunca vimos?
+     Fala: Classificação: o KNN decide pela vizinhança; as árvores fazem perguntas; a Random
+     Forest junta várias árvores. Depois, como medir se a classificação está boa de verdade
+     — e como escolher o limiar.
+
+[29] Seus vizinhos podem decidir quem você é
+     Fala: Clique no gráfico para mover o ponto novo; troque K. As cores de fundo mostram
+     como cada região seria classificada. K pequeno é sensível a ruído (fronteira
+     recortada); K grande suaviza. Normalizar muda as distâncias. O KNN não ajusta pesos:
+     ele guarda os exemplos e compara.
+
+[30] “Perto” depende de como você mede
+     Fala: O KNN depende de como medimos “perto”. Clique no gráfico para mover o ponto B.
+     Euclidiana = linha reta (Pitágoras); Manhattan = soma dos deslocamentos em cada eixo,
+     como andar por quarteirões. Troque a métrica e veja a região de raio 3 ao redor de A:
+     na Manhattan ela vira um losango — e os pontos considerados vizinhos mudam. Para textos
+     e embeddings usamos muito a similaridade do cosseno, que compara direções (dia 2).
+
+[31] Que pergunta separa melhor estas flores?
+     Fala: Avance: cada divisão procura grupos mais homogêneos; o Gini (calculado ao vivo
+     nos pontos do gráfico) cai a cada pergunta. 0 = nó puro. Árvore profunda demais decora
+     o treino (overfitting). Dados sintéticos no estilo Iris; regras didáticas.
+
+[32] E se várias árvores votassem juntas?
+     Fala: Random Forest: muitas árvores, cada uma treinada com amostras e features
+     sorteadas. Avance para ver a votação. A combinação tende a reduzir a variância em
+     relação a uma árvore só, mas não garante acerto. Troca: perde-se interpretabilidade.
+
+[33] 95% de acurácia pode ser péssimo
+     Fala: Matriz ilustrativa: 95 negativos corretos, 5 positivos perdidos, nenhum positivo
+     previsto. Acurácia 95%, mas recall positivo = 0. Precisão positiva é indefinida (0/0).
+     A classe minoritária pode importar mais que o percentual total. Precision: dos que
+     previ positivos, quantos eram? Recall: dos positivos reais, quantos achei? F1: média
+     harmônica.
+
+[34] Precision × recall: quem escolhe é o limiar
+     Fala: Um classificador costuma devolver uma probabilidade; nós escolhemos o limiar a
+     partir do qual dizemos “positivo”. Cada ponto é um paciente (ilustrativo): na linha de
+     cima, os realmente positivos; embaixo, os negativos; a posição horizontal é o score do
+     modelo. Arraste o limiar: baixando, o recall sobe (achamos mais positivos), mas a
+     precision cai (mais alarmes falsos); subindo, o contrário. Não existe limiar certo:
+     depende do custo de cada erro (triagem de câncer × filtro de spam).
+
+[35] Lab 02 · Mesmos dados. Três algoritmos
+     Notebook: 02_classificacao.ipynb
+     Passos:
+       1. Explorar o Iris e separar treino/teste com estratificação
+       2. KNN × Árvore × Random Forest com validação cruzada no treino (pipeline ao
+          padronizar)
+       3. Variar K e profundidade: qualidade e variância
+       4. Avaliar o escolhido no teste: matriz de confusão e métricas
+     Para discutir: O modelo que foi melhor no treino deve necessariamente ser o escolhido?
+     Fala: Abra 02_classificacao.ipynb. Não mostre o gabarito antes.
+
+[36] Hoje a máquina aprendeu com respostas. Amanhã, sem elas.
+     Fala: Recapitule em uma frase cada módulo e pergunte o que ficou mais claro e o que
+     ficou confuso. Amanhã: aprender sem rótulos, visão computacional e LLMs. Peça que
+     salvem os notebooks no Drive.

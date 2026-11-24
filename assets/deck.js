@@ -63,8 +63,8 @@ slides.forEach((s,i)=>{
   const n=document.createElement('div');n.className='num';n.textContent=String(i+1).padStart(2,'0');s.append(n);
   if(s.dataset.lab){const [num,name,file,mins,c]=s.dataset.lab.split('|');const col=COL[c];
     const steps=s.dataset.steps.split(';').map(x=>x.split('|'));
-    s.insertAdjacentHTML('beforeend',`<div class="side" style="background:${col}"><div class="lbl" style="letter-spacing:.4em">${num==='04'?'Desafio':'Lab'}</div><div class="n">${num}</div><h3>${name}</h3><div class="file" style="color:${col}">${file}</div><div class="t">${mins} min · Google Colab</div></div>
-    <div class="steps" style="color:${col}"><div class="rail" style="background:${col}"></div>${steps.map((st,k)=>`<div class="st f" data-f="${k+1}"><span class="o"></span><b>${st[0]}</b><span style="color:var(--tx)">${st[1]}</span></div>`).join('')}</div>
+    s.insertAdjacentHTML('beforeend',`<div class="side" style="background:${col}"><div class="lbl" style="letter-spacing:.4em">${num==='04'?'Desafio':'Lab'}</div><div class="n">${num}</div><h3>${name}</h3><div class="file" style="color:${col}">${file}</div><div class="t">Google Colab</div></div>
+    <div class="steps" style="color:${col}"><div class="rail" style="background:${col}"></div>${steps.map((st,k)=>`<div class="st f" data-f="${k+1}"><span class="o"></span><b>${String(k+1).padStart(2,'0')}</b><span style="color:var(--tx)">${st[1]}</span></div>`).join('')}</div>
     <div class="q f" data-f="${steps.length+1}" style="border-color:${col}"><div class="lbl" style="color:${col}">Para discutir</div><p>${s.dataset.q}</p></div>`)}
 });
 
@@ -95,9 +95,9 @@ $('#bNext').onclick=next;$('#bPrev').onclick=prev;$('#bNotes').onclick=()=>$('#n
 /* ---------- overview map ---------- */
 const ov=document.createElement('div');ov.id='ov';document.body.append(ov);
 const titleOf=s=>s.classList.contains('sec')?'Capa do módulo':s.dataset.lab?(s.dataset.lab.split('|')[0]==='04'?'Desafio: ':'Lab: ')+s.dataset.lab.split('|')[1]:s.dataset.pause?(s.dataset.label||'Pausa'):(($('h2',s)||$('h1',s)||{}).textContent||'').replace(/\s+/g,' ').trim();
-function buildOv(){let h=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px"><b style="font:700 28px 'Space Grotesk',Inter,sans-serif">Mapa da aula</b><span style="color:#8A94B8">clique para ir · M ou Esc fecha</span></div><div class="g">`;
+function buildOv(){let h=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px"><b style="font:700 28px 'Space Grotesk'">Mapa da aula</b><span style="color:#8A94B8">clique para ir · M ou Esc fecha</span></div><div class="g">`;
   for(let b=1;b<=8;b++){if(!(b in modMin))continue;const B=BLK[b],c=COL[B[2]];h+=`<div><h4 style="color:${c}">${B[0]} · ${B[3]}</h4>`;
-    slides.forEach((s,i)=>{const sb=+s.dataset.b;if(sb!==b&&!(b===1&&sb===0))return;h+=`<button data-i="${i}" class="${i===cur?'cur':''}" style="--c:${c}"><span style="color:#5A6488;font-family:'JetBrains Mono',monospace">${String(i+1).padStart(2,'0')}</span><span>${titleOf(s)}</span></button>`});h+='</div>'}
+    slides.forEach((s,i)=>{const sb=+s.dataset.b;if(sb!==b&&!(b===1&&sb===0))return;h+=`<button data-i="${i}" class="${i===cur?'cur':''}" style="--c:${c}"><span style="color:#5A6488;font-family:'JetBrains Mono'">${String(i+1).padStart(2,'0')}</span><span>${titleOf(s)}</span></button>`});h+='</div>'}
   ov.innerHTML=h+'</div>';$$('button',ov).forEach(x=>x.onclick=()=>{go(+x.dataset.i);ov.classList.remove('on')})}
 function toggleOv(){if(!ov.classList.contains('on'))buildOv();ov.classList.toggle('on')}
 $('#bMap').onclick=toggleOv;
@@ -119,12 +119,11 @@ if($('#cover')){const pts=[[60,560],[110,500],[160,530],[210,440],[250,470],[300
 if($('#coverMods'))$('#coverMods').innerHTML=MODS.map(b=>`<span style="display:flex;align-items:center;gap:8px;${DAYMODS.includes(b)?'color:var(--tx);font-weight:700':'opacity:.55'}"><i style="width:10px;height:10px;border-radius:50%;background:${COL[BLK[b][2]]}"></i>${BLK[b][3]}</span>`).join('');
 const TOT=Object.values(modMin).reduce((a,v)=>a+v,0)+breakMin,hm=v=>`${Math.floor(v/60)}h${String(v%60).padStart(2,'0')}`;
 
-
 /* ---------- agenda (módulos do dia, pausas e tópicos) ---------- */
 if($('#agSvg')){const seq=[];slides.forEach((s,i)=>{if(s.classList.contains('sec'))seq.push({b:+s.dataset.b,i});else if(isBreak(s))seq.push({p:+s.dataset.pause,i})});
  const n=seq.filter(x=>x.b).length,W=1408/n;let h='',k=0;
  h+=`<line x1="${W/2}" y1="150" x2="${1408-W/2}" y2="150" stroke="${COL.ln}" stroke-width="6" stroke-linecap="round"/>`;
- seq.forEach(x=>{if(x.p){const px=k*W;h+=`<rect x="${px-76}" y="62" width="152" height="32" rx="16" fill="${COL.p2}" stroke="${COL.ln}"/><text x="${px}" y="84" text-anchor="middle" font-size="15" fill="${COL.mu}">☕ pausa ${x.p} min</text><line x1="${px}" y1="94" x2="${px}" y2="140" stroke="${COL.ln}" stroke-width="2" stroke-dasharray="4 4"/>`;return}
+ seq.forEach(x=>{if(x.p){const px=k*W;h+=`<rect x="${px-58}" y="62" width="116" height="32" rx="16" fill="${COL.p2}" stroke="${COL.ln}"/><text x="${px}" y="84" text-anchor="middle" font-size="15" fill="${COL.mu}">☕ pausa</text><line x1="${px}" y1="94" x2="${px}" y2="140" stroke="${COL.ln}" stroke-width="2" stroke-dasharray="4 4"/>`;return}
   const B=BLK[x.b],c=COL[B[2]],cx=k*W+W/2,sec=slides[x.i],items=sec.dataset.items.split(';');k++;
   h+=`<g class="st" data-go="${x.i}"><rect x="${cx-W/2+8}" y="0" width="${W-16}" height="600" rx="20" fill="transparent"/>
    <svg x="${cx-70}" y="0" width="140" height="84" viewBox="0 0 400 240">${ill(x.b)}</svg>
