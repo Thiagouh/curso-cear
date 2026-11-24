@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ML na Prática · Dia 2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/deck.css">
+</head>
+<body>
+<div id="stage">
+<!-- D2COVER -->
+<section class="s" data-b="0" data-notes="CAPA · DIA 2 (2 min). Boas-vindas ao segundo dia. Ontem a máquina aprendeu com respostas (rótulos). Hoje: aprender sem rótulos, enxergar imagens e chegar aos LLMs — e ver como tudo de ontem reaparece dentro deles.">
+  <div style="position:absolute;left:96px;top:150px;width:860px">
+    <div class="lbl vi" style="letter-spacing:.3em">Machine Learning na Prática · Dia 2 de 2</div>
+    <h1 style="font-size:96px;line-height:1.02;margin:26px 0 30px">Dos grupos às imagens e à linguagem</h1>
+    <div class="mu" style="font-size:32px;font-style:italic">Hoje: agrupamento, visão computacional e LLMs</div>
+    <div class="row" style="gap:14px;margin-top:56px"><span class="pill vi">Dia 2 de 2</span><span class="pill vi" id="coverDur">4 horas</span><span class="pill vi">Google Colab</span><span class="pill vi">3 notebooks</span></div>
+    <div id="coverMods" style="display:flex;flex-wrap:wrap;gap:10px 24px;margin-top:34px;font-size:18px;color:var(--mu)"></div>
+  </div>
+  <svg id="cover" viewBox="0 0 700 700" style="position:absolute;right:40px;top:110px;width:700px;height:700px"></svg>
+</section>
+
+<!-- RECAP -->
+<section class="s" data-b="1" data-notes="ONTEM (5 min). Relembre o fluxo do dia 1 e faça as três perguntas, uma de cada vez, antes de revelar a resposta (avance). Respostas: (1) para não vazar informação do teste para o treino; (2) não — olhe o recall da classe que importa; (3) fica sensível a ruído: overfitting.">
+  <h2>Ontem, em uma linha</h2>
+  <div id="recapChain" class="row" style="justify-content:space-between;margin:10px 0 50px"></div>
+  <div class="grid3">
+    <div class="card" style="border-top:4px solid var(--cy)"><div class="lbl cy" style="font-size:14px">Pergunta 1</div><b style="font-size:25px;display:block;margin:12px 0 16px">Por que o scaler é ajustado só no treino?</b><div class="f mu" data-f="1" style="font-size:21px">Para não vazar a média e o desvio do teste.</div></div>
+    <div class="card" style="border-top:4px solid var(--pk)"><div class="lbl pk" style="font-size:14px">Pergunta 2</div><b style="font-size:25px;display:block;margin:12px 0 16px">95% de acurácia é sempre um bom modelo?</b><div class="f mu" data-f="2" style="font-size:21px">Não: olhe o recall da classe que importa.</div></div>
+    <div class="card" style="border-top:4px solid var(--am)"><div class="lbl am" style="font-size:14px">Pergunta 3</div><b style="font-size:25px;display:block;margin:12px 0 16px">O que acontece com K = 1 no KNN?</b><div class="f mu" data-f="3" style="font-size:21px">Fica sensível a ruído: overfitting.</div></div>
+  </div>
+</section>
+
+<!-- AGENDA2 -->
+<section class="s" data-b="1" data-id="agenda" data-notes="AGENDA (2 min). Roteiro do dia 2: quatro módulos e o desafio final. Clique num módulo para pular; tecla M abre o mapa de slides.">
+  <h2>O caminho de hoje</h2>
+  <div class="mu" style="font-size:25px;margin-top:-18px" id="agSub"></div>
+  <svg id="agSvg" viewBox="0 0 1408 600" style="width:1408px;height:600px;margin-top:10px"></svg>
+</section>
+
+<!-- M04 -->
+<section class="s sec" data-b="5" data-q="Dá para encontrar grupos sem ninguém dizer quais são?" data-items="K-Means passo a passo;Cotovelo e silhouette;Quando o K-Means falha;DBSCAN e hierárquico;PCA: reduzir dimensões;lab:Lab 03 · 20 min" data-notes="CAPA DO MÓDULO 04 (1 min). Mudamos de tipo de aprendizado: agora não há rótulos. O K-Means descobre grupos pela distância — a mesma ideia de distância do KNN de ontem."></section>
+
+<!-- 20 -->
+<section class="s" data-b="5" data-id="km" data-notes="SLIDE 20 (5 min). Use “Passo” para alternar: (1) cada ponto vai ao centroide mais próximo, (2) cada centroide vira a média do seu grupo. Repita até estabilizar. Sorteie de novo para mostrar que a inicialização importa. O cluster não recebe significado automaticamente: a interpretação vem depois.">
+  <h2>E se ninguém soubesse as respostas?</h2>
+  <div class="row" style="gap:40px">
+    <svg id="kmPlot" viewBox="0 0 760 560" style="width:760px;height:560px"></svg>
+    <div class="col" style="flex:1;gap:18px">
+      <div class="card col" style="gap:12px">
+        <div class="row" style="gap:10px;flex-wrap:wrap"><button class="b" id="kmInit">Sortear centroides</button><button class="b" id="kmStep">Passo ▸</button><button class="b" id="kmRun">▶ Rodar</button></div>
+        <div class="row" style="gap:10px;align-items:center;font-size:19px">K = <button class="b" data-k="2">2</button><button class="b on" data-k="3">3</button><button class="b" data-k="4">4</button><button class="b" data-k="5">5</button></div></div>
+      <div class="card"><div class="lbl mu" style="font-size:14px">Agora</div><div id="kmPhase" style="font-size:28px;font-weight:700;margin-top:8px;min-height:80px"></div><div class="mono mu" id="kmIt" style="font-size:19px"></div></div>
+      <div class="col" style="gap:6px;font-size:21px"><div><b class="gr">1</b> escolher K e sortear centroides</div><div><b class="gr">2</b> cada ponto vai ao centroide mais próximo</div><div><b class="gr">3</b> centroide vira a média do grupo</div><div><b class="gr">4</b> repetir até estabilizar</div></div>
+      <div class="note">O significado de cada grupo é interpretação humana</div>
+    </div>
+  </div>
+</section>
+
+<!-- 21 -->
+<section class="s" data-b="5" data-id="elbow" data-notes="SLIDE 21 (5 min). Calculado ao vivo nos mesmos dados do slide anterior. A inércia sempre cai quando K cresce (com K = n ela é zero), então o cotovelo é uma heurística, não uma prova. Silhouette (−1 a 1) compara coesão e separação. Escala, formato e densidade dos grupos influenciam os dois.">
+  <h2>Quantos grupos realmente existem?</h2>
+  <div class="row" style="gap:32px">
+    <div class="card" style="flex:1"><div class="lbl gr">Inércia × K</div><svg id="elbowSvg" viewBox="0 0 620 420" style="width:100%;height:420px;margin-top:10px"></svg><div class="note" style="font-size:19px">Cotovelo: heurística, não prova</div></div>
+    <div class="card f" data-f="1" style="flex:1"><div class="lbl cy">Silhouette × K</div><svg id="silSvg" viewBox="0 0 620 420" style="width:100%;height:420px;margin-top:10px"></svg><div class="note" style="font-size:19px">Mais alto = grupos coesos e separados</div></div>
+  </div>
+</section>
+
+<!-- KMFAIL -->
+<section class="s" data-b="5" data-id="kmfail" data-notes="QUANDO O K-MEANS FALHA (5 min). O K-Means supõe grupos “redondos”, de tamanho parecido, e usa a média. Troque o conjunto: em bolhas ele vai bem; em luas e anéis corta os grupos ao meio; com densidades diferentes erra a fronteira. À direita, o DBSCAN agrupa por densidade: pontos com vizinhos suficientes dentro de um raio ε formam grupos, e pontos isolados viram ruído (cinza). Ele não precisa de K, mas precisa de ε.">
+  <h2>Quando o K-Means falha</h2>
+  <div class="row" id="kfSet" style="gap:10px;margin-bottom:18px"><button class="b on" data-d="blobs">Bolhas</button><button class="b" data-d="moons">Luas</button><button class="b" data-d="rings">Anéis</button><button class="b" data-d="dens">Densidades diferentes</button></div>
+  <div class="row" style="gap:28px">
+    <div class="card" style="flex:1;padding:18px 22px"><div class="lbl gr" style="font-size:14px">K-Means · K = <span id="kfK"></span></div><svg id="kfKm" viewBox="0 0 640 440" style="width:100%;height:440px"></svg></div>
+    <div class="card" style="flex:1;padding:18px 22px"><div class="lbl cy" style="font-size:14px">DBSCAN · por densidade</div><svg id="kfDb" viewBox="0 0 640 440" style="width:100%;height:440px"></svg></div>
+  </div>
+</section>
+
+<!-- DENDRO -->
+<section class="s" data-b="5" data-id="dendro" data-notes="AGRUPAMENTO HIERÁRQUICO (4 min). Começa com cada ponto sozinho e vai juntando os dois grupos mais próximos, passo a passo. O dendrograma registra essas fusões: a altura é a distância em que os grupos se juntaram. Arraste a linha de corte: a altura do corte define quantos grupos você quer, sem rodar de novo. Útil para ver a estrutura em vários níveis (taxonomias, perfis de clientes).">
+  <h2>Juntar os mais próximos, passo a passo</h2>
+  <div class="row" style="gap:36px">
+    <svg id="dgPts" viewBox="0 0 540 520" style="width:540px;height:520px"></svg>
+    <div class="col" style="flex:1;gap:14px"><svg id="dgTree" viewBox="0 0 830 440" style="width:100%;height:440px"></svg>
+      <div class="row" style="gap:16px;align-items:center"><span class="lbl mu" style="font-size:14px">Altura do corte</span><input id="dgCut" type="range" min="0.02" max="1" step="0.01" value="0.45" style="width:360px"><span class="big gr" id="dgK" style="font-size:34px"></span></div></div>
+  </div>
+</section>
+
+<!-- PCA -->
+<section class="s" data-b="5" data-id="pca" data-notes="PCA (5 min). Dados com muitas features são difíceis de visualizar e de agrupar. A PCA procura as direções de maior variância. Gire o eixo: cada ponto é projetado nele (traços) e a barra mostra quanto da variância total sobra na projeção. Clique em “Encontrar PC1” para ir à melhor direção. Com as 13 features do Wine, as 2 primeiras componentes já permitem um gráfico 2D. Como o K-Means, a PCA é não supervisionada e precisa de dados padronizados.">
+  <h2>Muitas features? Procure as direções que importam</h2>
+  <div class="row" style="gap:40px">
+    <svg id="pcaSvg" viewBox="0 0 760 560" style="width:760px;height:560px"></svg>
+    <div class="col" style="flex:1;gap:18px">
+      <div class="card"><div class="lbl mu" style="font-size:14px">Ângulo do eixo</div><div class="row" style="align-items:center;gap:16px;margin-top:10px"><input id="pcaA" type="range" min="0" max="179" step="1" value="120" style="width:300px"><span class="mono big" id="pcaAv" style="font-size:30px"></span></div><button class="b" id="pcaGo" style="margin-top:14px">Encontrar PC1</button></div>
+      <div class="card"><div class="lbl mu" style="font-size:14px">Variância preservada</div><div class="big gr" id="pcaV" style="font-size:72px;margin-top:6px"></div><div style="height:18px;border-radius:9px;background:var(--ln);margin-top:12px"><div id="pcaBar" style="height:100%;border-radius:9px;background:var(--gr);width:0"></div></div></div>
+      <div class="col" style="gap:8px;font-size:21px"><div><b class="gr">PC1</b> <span class="mu">direção de maior variância</span></div><div><b class="gr">PC2</b> <span class="mu">a próxima, perpendicular à PC1</span></div><div><b class="gr">Uso</b> <span class="mu">visualizar, comprimir, acelerar modelos</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 22 LAB03 -->
+<section class="s lab" data-b="5" data-lab="03|Encontre perfis de consumo|03_clustering.ipynb|20|gr" data-steps="00–05|Explorar os dados sintéticos de consumo e sua variação;05–10|Padronizar e aplicar o K-Means;10–15|Comparar K pelo cotovelo e pela silhouette;15–20|Testar sem padronização e interpretar centroides e perfis" data-q="O cluster é útil para uma decisão real, ou só visualmente convincente?" data-notes="SLIDE 22 — LAB 03 (20 min). Abra 03_clustering.ipynb."></section>
+
+<!-- PAUSE3 -->
+<section class="s" data-b="5" data-pause="10" data-next="A seguir: visão computacional" data-nochrome="1" data-notes="PAUSA (10 min). Clique em Iniciar."></section>
+
+<!-- M05 -->
+<section class="s sec" data-b="6" data-q="Como uma máquina enxerga?" data-items="Do neurônio à rede;Imagem = tabela de números;Convolução e CNNs;Data augmentation;Transfer learning;Tarefas de visão" data-notes="CAPA DO MÓDULO 05 (1 min). Para enxergar, precisamos de redes neurais. Começamos pelo neurônio (a nossa reta de ontem com uma ativação) e chegamos às redes convolucionais e ao transfer learning."></section>
+
+<!-- 23 -->
+<section class="s" data-b="6" data-id="neuron" data-notes="SLIDE 23 (5 min). Base para visão e linguagem. Avance: a reta vira um neurônio (várias entradas, soma ponderada, ativação). Depois troque a ativação no gráfico da direita: é a MESMA rede de 12 neurônios com pesos fixos. Com ativação linear, ela inteira vira uma reta; com ReLU ou sigmoide, curvas. É a não linearidade que dá poder às camadas. Evite dizer que redes são “apenas regressões agrupadas”.">
+  <h2>Da primeira reta a uma rede inteira</h2>
+  <div class="row" style="gap:30px">
+    <svg viewBox="0 0 860 600" style="width:860px;height:600px">
+      <g class="f" data-f="0" style="opacity:1;transform:none"><rect x="0" y="40" width="240" height="220" rx="18" fill="#141B33"/><line x1="30" y1="210" x2="210" y2="80" stroke="#22D3EE" stroke-width="5"/><text x="120" y="245" text-anchor="middle" font-family="JetBrains Mono" font-weight="700" font-size="22" fill="#22D3EE">w·x + b</text></g>
+      <g class="f" data-f="1">
+        <path d="M255 150 H300" stroke="#8A94B8" stroke-width="3" marker-end="url(#arw)"/>
+        <g font-family="JetBrains Mono" font-size="20">
+        <circle cx="350" cy="60" r="30" fill="#1B2442" stroke="#22D3EE" stroke-width="2.5"/><text x="350" y="67" text-anchor="middle">x₁</text>
+        <circle cx="350" cy="150" r="30" fill="#1B2442" stroke="#22D3EE" stroke-width="2.5"/><text x="350" y="157" text-anchor="middle">x₂</text>
+        <circle cx="350" cy="240" r="30" fill="#1B2442" stroke="#22D3EE" stroke-width="2.5"/><text x="350" y="247" text-anchor="middle">x₃</text>
+        <path d="M380 60 L510 145 M380 150 L510 150 M380 240 L510 155" stroke="#22D3EE" stroke-width="2.5" stroke-dasharray="8 7" style="animation:flow 1s linear infinite"/>
+        <text x="430" y="85" fill="#22D3EE" font-size="17">w₁</text><text x="430" y="142" fill="#22D3EE" font-size="17">w₂</text><text x="430" y="222" fill="#22D3EE" font-size="17">w₃</text>
+        <circle cx="565" cy="150" r="55" fill="#8B5CF6" fill-opacity=".25" stroke="#8B5CF6" stroke-width="3"/><text x="565" y="158" text-anchor="middle" font-weight="700" font-size="24">Σ | σ</text>
+        <path d="M620 150 H690" stroke="#8B5CF6" stroke-width="3" marker-end="url(#arv)"/><text x="705" y="160" font-size="30" font-weight="700" fill="#8B5CF6">a</text></g>
+        <rect x="270" y="320" width="520" height="70" rx="14" fill="#141B33"/><text x="530" y="364" text-anchor="middle" font-family="JetBrains Mono" font-weight="700" font-size="22">a = <tspan fill="#8B5CF6">σ</tspan>(w₁x₁ + w₂x₂ + w₃x₃ + b)</text></g>
+      <g class="f" data-f="2"><g id="netSmall" transform="translate(0,430)"></g></g>
+    </svg>
+    <div class="card f" data-f="3" style="flex:1"><div class="lbl vi">Mesma rede, outra ativação</div>
+      <svg id="actPlot" viewBox="0 0 480 330" style="width:100%;height:330px;margin:12px 0"></svg>
+      <div class="row" id="actBtns" style="gap:10px"><button class="b" data-a="lin">linear</button><button class="b on" data-a="relu">ReLU</button><button class="b" data-a="sig">sigmoide</button></div>
+      <div id="actMsg" style="font-size:20px;margin-top:14px;min-height:56px"></div></div>
+  </div>
+</section>
+
+<!-- 24 -->
+<section class="s" data-b="6" data-notes="SLIDE 24 (4 min). Propagação direta: a rede calcula a previsão. A perda mede o erro. Retropropagação: calcula os gradientes de todos os pesos (regra da cadeia). O otimizador atualiza os parâmetros — a mesma descida do gradiente do módulo de regressão, com milhões ou bilhões de parâmetros.">
+  <h2>A rede aprende com o mesmo princípio</h2>
+  <div class="row" style="gap:40px">
+    <svg viewBox="0 0 760 580" style="width:760px;height:580px">
+      <circle id="loopC" cx="380" cy="290" r="210" fill="none" stroke="#2A355C" stroke-width="3" stroke-dasharray="12 10"/>
+      <circle r="13" fill="#F59E0B"><animateMotion dur="5s" repeatCount="indefinite" path="M380 80 A210 210 0 1 1 379.9 80"/></circle>
+      <g font-size="23" font-weight="700" text-anchor="middle">
+        <rect x="230" y="40" width="300" height="84" rx="16" fill="#141B33" stroke="#22D3EE" stroke-width="2.5"/><text x="380" y="78" fill="#22D3EE">Propagação direta</text><text x="380" y="106" font-size="17" font-weight="400" fill="#8A94B8">calcula a previsão</text>
+        <rect x="500" y="248" width="250" height="84" rx="16" fill="#141B33" stroke="#F59E0B" stroke-width="2.5"/><text x="625" y="286" fill="#F59E0B">Perda</text><text x="625" y="314" font-size="17" font-weight="400" fill="#8A94B8">mede o erro</text>
+        <rect x="230" y="456" width="300" height="84" rx="16" fill="#141B33" stroke="#8B5CF6" stroke-width="2.5"/><text x="380" y="494" fill="#8B5CF6">Retropropagação</text><text x="380" y="522" font-size="17" font-weight="400" fill="#8A94B8">calcula os gradientes</text>
+        <rect x="10" y="248" width="250" height="84" rx="16" fill="#141B33" stroke="#34D399" stroke-width="2.5"/><text x="135" y="286" fill="#34D399">Otimizador</text><text x="135" y="314" font-size="17" font-weight="400" fill="#8A94B8">atualiza os pesos</text>
+        <text x="380" y="298" font-size="22" font-family="JetBrains Mono" font-weight="400" fill="#5A6488">1 passo</text></g>
+    </svg>
+    <div class="card" style="flex:1"><div class="lbl am">Lembra do módulo 02?</div>
+      <svg viewBox="0 0 520 260" style="width:100%;height:260px;margin:18px 0"><path d="M20 20 Q260 460 500 20" fill="none" stroke="#22D3EE" stroke-width="4"/>
+        <g fill="#F59E0B"><circle cx="60" cy="72" r="9"/><circle cx="140" cy="150" r="9"/><circle cx="200" cy="190" r="9"/><circle cx="240" cy="205" r="9"/></g></svg>
+      <div class="mono" style="font-size:30px;font-weight:700;text-align:center">w ← w − α · ∂L/∂w</div>
+      <div class="mu" style="text-align:center;margin-top:12px">mesma regra, aplicada a todos os pesos da rede</div></div>
+  </div>
+</section>
+
+<!-- VC 1: pixels -->
+<section class="s" data-b="6" data-id="px" data-notes="PIXELS (5 min). Desenhe no grid arrastando o mouse (Shift + arrastar apaga). Cada quadradinho é um pixel: um número de 0 (preto) a 255 (branco). Uma imagem 14×14 em tons de cinza é uma tabela com 196 números; colorida, são 3 canais (R, G, B). Avance para “achatar” a imagem em uma linha: é exatamente uma linha de dataset do módulo 01, com 196 features. O desenho feito aqui é usado nos dois próximos slides.">
+  <h2>Para a máquina, uma imagem é uma tabela de números</h2>
+  <div class="row" style="gap:56px">
+    <svg id="pxGrid" viewBox="-1 -1 506 506" style="width:560px;height:560px;cursor:crosshair;touch-action:none"></svg>
+    <div class="col" style="flex:1;gap:20px">
+      <div class="row" style="gap:10px;flex-wrap:wrap"><button class="b" id="pxEx">Exemplo: 7</button><button class="b" id="pxClr">Limpar</button><button class="b on" id="pxNum">Números</button></div>
+      <div class="card"><div class="big or" style="font-size:68px">14 × 14 = 196</div><div class="mu" style="margin-top:10px">números entre 0 (preto) e 255 (branco)</div></div>
+      <div class="card"><b>Uma foto colorida Full HD</b><div class="mono" style="font-size:24px;margin-top:8px">1920 × 1080 × 3 <span class="mu">canais RGB</span></div><div class="mono or" style="font-size:24px;font-weight:700">≈ 6,2 milhões de números</div></div>
+      <div class="f" data-f="1"><div class="lbl mu" style="font-size:14px;margin-bottom:10px">Achatando a imagem: uma linha do dataset</div><svg id="pxVec" viewBox="0 0 760 62" style="width:100%;height:62px"></svg><div class="mu" style="font-size:19px;margin-top:8px">196 features → serve para KNN, árvore, rede neural…</div></div>
+    </div>
+  </div>
+  <div class="note" style="position:absolute;bottom:40px">Arraste no grid para desenhar · Shift + arrastar apaga</div>
+</section>
+
+<!-- VC 2: convolução -->
+<section class="s" data-b="6" data-id="conv" data-notes="CONVOLUÇÃO (6 min). A imagem do slide anterior (o que vocês desenharam!) passa por um filtro 3×3. Em cada posição: multiplica cada pixel pelo peso correspondente e soma. Troque o filtro: borda vertical, horizontal, desfoque, realce. Clique em Deslizar para ver a janela percorrendo a imagem. Ciano = resposta positiva, âmbar = negativa. Avance para o ponto-chave: numa CNN ninguém escolhe esses pesos — eles são aprendidos com descida do gradiente, como o w da regressão.">
+  <h2>Um filtro que desliza pela imagem</h2>
+  <svg id="convSvg" viewBox="0 0 1408 430" style="width:1408px;height:430px"></svg>
+  <div class="row" style="gap:16px;align-items:center;margin-top:22px;flex-wrap:wrap">
+    <div class="row" id="convK" style="gap:10px"><button class="b on" data-k="v">Borda vertical</button><button class="b" data-k="h">Borda horizontal</button><button class="b" data-k="blur">Desfoque</button><button class="b" data-k="sharp">Realce</button></div>
+    <button class="b" id="convGo">▶ Deslizar</button>
+    <div id="convCalc" class="mono" style="font-size:21px;margin-left:12px"></div>
+  </div>
+  <div class="f" data-f="1" style="margin-top:24px;font-size:25px"><b class="or">Numa CNN, os pesos do filtro não são escolhidos à mão:</b> <span class="mu">são aprendidos com descida do gradiente</span></div>
+</section>
+
+<!-- VC 3: CNN -->
+<section class="s" data-b="6" data-id="cnn" data-notes="CNN (5 min). Uma rede convolucional empilha camadas de convolução (filtros aprendidos), ReLU e pooling (reduz o tamanho guardando o valor mais forte). Avance: as primeiras camadas respondem a bordas e traços; as do meio, a curvas e formas; no fim, uma camada densa combina tudo e gera probabilidades por classe. Os mapas mostrados são calculados a partir do dígito desenhado; as probabilidades são ilustrativas.">
+  <h2>De bordas a objetos: camadas que enxergam</h2>
+  <svg id="cnnSvg" viewBox="0 0 1408 500" style="width:1408px;height:500px"></svg>
+  <div class="note" style="position:absolute;bottom:40px">Mapas calculados a partir do seu desenho · filtros da 2ª camada e probabilidades ilustrativos</div>
+</section>
+
+<!-- AUG -->
+<section class="s" data-b="6" data-id="aug" data-notes="DATA AUGMENTATION (4 min). Rótulos custam caro; variações custam quase nada. A partir do dígito desenhado (slide de pixels), geramos versões deslocadas, giradas, com zoom, ruído e contraste diferentes — todas continuam sendo um 7. Assim a rede aprende a ignorar o que não importa (posição, iluminação). Clique em “Novas variações”. Cuidado com transformações que mudam o rótulo: um 7 espelhado não é um 7; já um gato espelhado continua gato.">
+  <h2>Mais exemplos sem novos rótulos</h2>
+  <div class="row" style="gap:44px">
+    <div class="col" style="width:320px;gap:14px"><div class="lbl mu" style="font-size:14px">Original (seu desenho)</div><svg id="augOrig" viewBox="0 0 280 280" style="width:300px;height:300px"></svg><button class="b" id="augGo">Novas variações</button><div class="mu" style="font-size:20px">Cada variação continua sendo um <b class="tx">7</b>: o rótulo vem de graça</div></div>
+    <div id="augGrid" style="flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:18px"></div>
+  </div>
+</section>
+
+<!-- TRANSFER -->
+<section class="s" data-b="6" data-notes="TRANSFER LEARNING (4 min). Treinar uma CNN do zero exige muitas imagens rotuladas. Avance: uma rede pré-treinada (ex.: no ImageNet, ~1,2 milhão de imagens e 1.000 classes) já aprendeu bordas, texturas e partes. Congelamos essas camadas e trocamos só a “cabeça” final pelas nossas classes — poucas centenas de imagens podem bastar. É o mesmo padrão dos LLMs: pré-treino caro uma vez, ajuste fino barato muitas vezes.">
+  <h2>Transfer learning: aproveitar quem já aprendeu</h2>
+  <svg id="tlSvg" viewBox="0 0 1408 470" style="width:1408px;height:470px"></svg>
+  <div class="f" data-f="3" style="font-size:25px;margin-top:14px"><b class="vi">Mesmo padrão dos LLMs:</b> <span class="mu">pré-treino caro uma vez, ajuste fino barato muitas vezes</span></div>
+</section>
+
+<!-- VC 4: tarefas -->
+<section class="s" data-b="6" data-notes="TAREFAS DE VISÃO (4 min). Quatro tarefas clássicas: classificar (o que há na imagem), detectar (onde está cada objeto, com caixas), segmentar (a que objeto pertence cada pixel) e ler texto (OCR). Avance para conectar com o que já vimos: KNN em pixels crus funciona em dígitos simples, mas quebra com deslocamento, iluminação e fundo; K-Means agrupa cores para uma segmentação simples sem rótulos; e as CNNs aprendem as próprias features.">
+  <h2>O que dá para fazer quando a máquina enxerga?</h2>
+  <div id="vcTasks" style="display:grid;grid-template-columns:repeat(4,1fr);gap:22px"></div>
+  <div class="row f" data-f="1" style="gap:22px;margin-top:26px">
+    <div class="card" style="flex:1;border-left:4px solid var(--pk)"><b class="pk">KNN em pixels</b><div class="mu" style="font-size:19px;margin-top:6px">funciona em dígitos simples, mas quebra com deslocamento, luz e fundo</div></div>
+    <div class="card" style="flex:1;border-left:4px solid var(--gr)"><b class="gr">K-Means em cores</b><div class="mu" style="font-size:19px;margin-top:6px">agrupa pixels parecidos: uma segmentação simples, sem rótulos</div></div>
+    <div class="card" style="flex:1;border-left:4px solid var(--or)"><b class="or">CNNs</b><div class="mu" style="font-size:19px;margin-top:6px">aprendem as próprias features, em vez de usar pixels crus</div></div>
+  </div>
+</section>
+
+<!-- PAUSE4 -->
+<section class="s" data-b="6" data-pause="10" data-next="A seguir: modelos de linguagem" data-nochrome="1" data-notes="PAUSA (10 min). Clique em Iniciar."></section>
+
+<!-- M06 -->
+<section class="s sec" data-b="7" data-q="Como tudo isso vira um modelo que conversa?" data-items="Próximo token e tokens;Embeddings e atenção;Temperatura;Treino em três estágios;Alucinação e RAG;Imagem vira token;lab:Lab 05 · 10 min" data-notes="CAPA DO MÓDULO 06 (1 min). Chegamos aos LLMs. Vamos ver que eles reaproveitam tudo o que vimos: dados, perda e gradiente, vizinhos, grupos e até a visão computacional."></section>
+
+<!-- 25 -->
+<section class="s" data-b="7" data-notes="SLIDE 25 (4 min). Projete “O céu hoje está ___” e peça palpites ANTES de avançar. Probabilidades ilustrativas. No pré-treinamento, LLMs autorregressivos aprendem a prever o próximo token em grandes quantidades de texto — aprendizado autossupervisionado. O pós-treinamento (instruções, preferências) é outro estágio.">
+  <h2>Complete a frase</h2>
+  <div class="big" style="font-size:84px;margin:10px 0 50px">O céu hoje está <span class="vi" style="border-bottom:6px solid var(--vi)">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></div>
+  <div class="row" style="gap:50px">
+    <div id="ntBars" class="col f" data-f="1" style="flex:1;gap:14px"></div>
+    <div class="col f" data-f="2" style="width:440px;gap:18px">
+      <div class="card"><div class="lbl vi" style="font-size:15px">Pré-treino</div><div style="margin-top:8px;font-size:21px">prever o próximo token; o rótulo vem do próprio texto</div></div>
+      <div class="card"><div class="lbl mu" style="font-size:15px">Pós-treino</div><div class="mu" style="margin-top:8px;font-size:21px">outro estágio: instruções e preferências</div></div></div>
+  </div>
+  <div class="note" style="position:absolute;bottom:40px">Probabilidades ilustrativas</div>
+</section>
+
+<!-- 26 -->
+<section class="s" data-b="7" data-id="tok"data-notes="SLIDE 26 (4 min). Digite qualquer frase no campo. Texto vira tokens, cada token vira um ID, cada ID é mapeado para um vetor (embedding), e a posição também entra. O “tokenizador” aqui é ilustrativo (corta palavras longas em pedaços); modelos reais usam BPE ou similares e cada um tokeniza de um jeito.">
+  <h2>Texto não entra como texto</h2>
+  <input id="tokIn" value="O céu hoje está" aria-label="Frase" style="font:700 34px 'JetBrains Mono';width:100%;background:var(--p1);color:var(--tx);border:2px solid var(--ln);border-radius:14px;padding:16px 22px">
+  <div id="tokOut" style="margin-top:36px"></div>
+  <div class="note" style="position:absolute;bottom:40px">Tokens, IDs e vetores ilustrativos: cada modelo tokeniza diferente</div>
+</section>
+
+<!-- EMBEDDINGS -->
+<section class="s" data-b="7" data-id="emb" data-notes="EMBEDDINGS (5 min). Cada token vira um vetor: o embedding. Palavras usadas em contextos parecidos ficam próximas. Clique numa palavra: os 3 vizinhos mais próximos são exatamente o KNN do módulo 03 — é a base da busca semântica e do RAG. Clique em “Agrupar com K-Means” para rodar o K-Means do módulo 04 nesses vetores. Clique em “laranja”: os vizinhos misturam cor, céu e fruta — um vetor por palavra mistura sentidos; é a atenção, no próximo slide, que usa o contexto para decidir. Mapa 2D ilustrativo: embeddings reais têm centenas ou milhares de dimensões.">
+  <h2>Palavras vizinhas: o KNN de volta</h2>
+  <div class="row" style="gap:40px">
+    <svg id="embSvg" viewBox="0 0 860 560" style="width:860px;height:560px"></svg>
+    <div class="col" style="flex:1;gap:18px">
+      <div class="card"><div class="lbl mu" style="font-size:14px">3 vizinhos mais próximos de</div><div id="embQ" class="big vi" style="font-size:52px;margin:10px 0 14px"></div><div id="embNN" class="col mono" style="gap:6px;font-size:22px"></div></div>
+      <div class="row" style="gap:10px;flex-wrap:wrap"><button class="b" id="embKm">Agrupar com K-Means</button><button class="b" id="embRst">Limpar</button></div>
+      <div class="col" style="gap:8px;font-size:21px"><div><b class="pk">KNN</b> <span class="mu">→ busca semântica e RAG</span></div><div><b class="gr">K-Means</b> <span class="mu">→ organizar e deduplicar textos</span></div></div>
+      <div class="note">Clique numa palavra · mapa 2D ilustrativo</div>
+    </div>
+  </div>
+</section>
+
+<!-- 27 -->
+<section class="s" data-b="7" data-id="att" data-notes="SLIDE 27 (5 min). Clique em qualquer palavra para ver para onde ela “olha”. Self-attention mistura informação do contexto. Q = consultas, K = chaves, V = valores. Em modelos autorregressivos, a máscara causal impede olhar tokens futuros (apagados). Pesos ilustrativos, não de um LLM real.">
+  <h2>A palavra “ele” aponta para quem?</h2>
+  <svg id="attSvg" viewBox="0 0 1408 380" style="width:1408px;height:380px"></svg>
+  <div class="row" style="gap:30px;margin-top:20px">
+    <div class="formula" style="font-size:28px;flex:1">Attention(Q,K,V) = softmax( QKᵀ / √d<sub>k</sub> ) V
+      <div style="font:500 19px Inter;margin-top:12px" class="mu"><b class="cy">Q</b> consultas &nbsp; <b class="am">K</b> chaves &nbsp; <b class="gr">V</b> valores</div></div>
+    <div class="card row" style="gap:24px;align-items:center"><svg id="maskSvg" viewBox="0 0 170 170" style="width:170px;height:170px"></svg><div style="width:220px"><div class="lbl vi" style="font-size:14px">Máscara causal</div><div class="mu" style="font-size:19px;margin-top:6px">cada token só vê o passado</div></div></div>
+  </div>
+  <div class="note" style="position:absolute;bottom:40px">Clique numa palavra · pesos ilustrativos</div>
+</section>
+
+<!-- 28 -->
+<section class="s" data-b="7" data-id="gen" data-notes="SLIDE 28 (4 min). Clique em “Gerar próximo token” várias vezes. Fluxo: tokens e posições → embeddings → N blocos Transformer → logits → softmax → escolha. O token escolhido volta ao contexto e o ciclo se repete (laço autorregressivo). Cada bloco tem atenção, MLP, conexões residuais e normalização. Probabilidades ilustrativas.">
+  <h2>O Transformer transforma contexto em previsão</h2>
+  <div id="genCtx" class="mono" style="font-size:38px;min-height:60px;margin-bottom:28px"></div>
+  <svg id="genSvg" viewBox="0 0 1408 300" style="width:1408px;height:300px"></svg>
+  <div class="row" style="gap:20px;align-items:center;margin-top:18px">
+    <button class="b" id="genGo">Gerar próximo token ▸</button><button class="b" id="genRst">Reiniciar</button>
+    <div id="genTop" class="mono" style="font-size:20px;margin-left:20px"></div></div>
+  <div class="row" style="gap:14px;margin-top:26px;align-items:center"><span class="lbl vi" style="font-size:14px">Dentro de cada bloco</span><span class="pill vi">Self-attention</span><span class="pill vi">MLP</span><span class="pill vi">Residual</span><span class="pill vi">Normalização</span></div>
+</section>
+
+<!-- 29 -->
+<section class="s" data-b="7" data-id="temp" data-notes="SLIDE 29 (4 min). Arraste a temperatura: ela divide os logits antes do softmax e muda a concentração da distribuição, sem retreinar. Baixa: previsível. Alta: probabilidade espalhada. Amostre algumas vezes em cada temperatura. Mais variedade NÃO é mais precisão factual: relacione a alucinações e verificação externa.">
+  <h2>Uma pergunta. Muitas respostas possíveis</h2>
+  <div class="row" style="gap:44px">
+    <div style="flex:1"><div class="big" style="font-size:40px;margin-bottom:20px">O céu hoje está …</div><div id="tBars" class="col" style="gap:12px"></div></div>
+    <div class="col" style="width:520px;gap:18px">
+      <div class="card"><div class="lbl mu" style="font-size:14px">Temperatura</div><div class="row" style="align-items:center;gap:16px;margin-top:8px"><input id="tT" type="range" min="0.1" max="2.5" step="0.05" value="1" style="width:300px"><span class="big mono am" id="tTv" style="font-size:48px">1,00</span></div></div>
+      <div class="card"><div class="row" style="gap:10px"><button class="b" id="tS">Amostrar ×10</button><button class="b" id="tR">Limpar</button></div><div id="tOut" class="mono" style="font-size:20px;margin-top:14px;min-height:120px;line-height:1.6"></div></div>
+      <div class="mono" style="font-size:22px;font-weight:700">softmax(logits / T)</div>
+      <div class="am" style="font-size:22px;font-weight:700">Mais variedade ≠ mais verdade</div></div>
+  </div>
+</section>
+
+<!-- STAGES -->
+<section class="s" data-b="7" data-notes="COMO UM LLM É TREINADO (5 min). Avance estágio por estágio. 1) Pré-treino: prever o próximo token em quantidades enormes de texto (autossupervisionado) — gera um modelo base, que só continua textos. 2) Ajuste por instruções: exemplos de pergunta → boa resposta, aprendizado supervisionado como no dia 1. 3) Alinhamento por preferências (ex.: RLHF): pessoas comparam respostas e o modelo é ajustado para preferir as melhores — aprendizado por reforço, o terceiro tipo do slide de abertura. Exemplo ilustrativo embaixo.">
+  <h2>Como um LLM é treinado: três estágios</h2>
+  <div class="row" style="gap:22px;align-items:stretch">
+    <div class="card f" data-f="1" style="flex:1;border-top:4px solid var(--vi)"><div class="mono big vi" style="font-size:44px">1</div><b style="font-size:27px;display:block;margin:10px 0 8px">Pré-treino</b><div class="mu" style="font-size:20px">prever o próximo token em trilhões de tokens de texto</div><div class="pill vi" style="margin-top:16px;font-size:15px">autossupervisionado</div></div>
+    <div class="card f" data-f="2" style="flex:1;border-top:4px solid var(--cy)"><div class="mono big cy" style="font-size:44px">2</div><b style="font-size:27px;display:block;margin:10px 0 8px">Ajuste por instruções</b><div class="mu" style="font-size:20px">milhares de exemplos de pergunta → boa resposta</div><div class="pill cy" style="margin-top:16px;font-size:15px">supervisionado</div></div>
+    <div class="card f" data-f="3" style="flex:1;border-top:4px solid var(--am)"><div class="mono big am" style="font-size:44px">3</div><b style="font-size:27px;display:block;margin:10px 0 8px">Preferências humanas</b><div class="mu" style="font-size:20px">pessoas comparam respostas; o modelo aprende a preferir as melhores</div><div class="pill am" style="margin-top:16px;font-size:15px">reforço (ex.: RLHF)</div></div>
+  </div>
+  <div class="row f" data-f="4" style="gap:22px;margin-top:24px">
+    <div class="card" style="flex:1"><div class="lbl mu" style="font-size:13px">Modelo base · “Qual é a capital da França?”</div><div class="mono" style="font-size:20px;margin-top:8px;color:var(--rd)">Qual é a capital da Alemanha? Qual é a capital da Itália? Qual…</div></div>
+    <div class="card" style="flex:1"><div class="lbl mu" style="font-size:13px">Depois dos estágios 2 e 3</div><div class="mono" style="font-size:20px;margin-top:8px;color:var(--gr)">A capital da França é Paris.</div></div>
+  </div>
+</section>
+
+<!-- HALLUC -->
+<section class="s" data-b="7" data-notes="ALUCINAÇÃO (4 min). O LLM é treinado para produzir texto plausível, não para checar fatos. Quando falta informação, ele completa com o que “soa certo”: datas, citações e referências inventadas. Avance para as causas e as mitigações. Temperatura baixa deixa a resposta mais previsível, mas não a torna verdadeira. Mitigações: RAG (dar fontes), pedir citações verificáveis, ferramentas (busca, código) e revisão humana.">
+  <h2>Plausível não é verdadeiro</h2>
+  <div class="row" style="gap:40px;align-items:flex-start">
+    <div class="col" style="width:660px;gap:16px">
+      <div class="card" style="border-left:4px solid var(--vi)"><div class="lbl mu" style="font-size:13px">Pergunta</div><div style="font-size:25px;margin-top:8px">Qual estudo de 2019 provou que gatos entendem português?</div></div>
+      <div class="card" style="border-left:4px solid var(--rd)"><div class="lbl rd" style="font-size:13px">Resposta plausível, mas inventada</div><div style="font-size:23px;margin-top:8px">“O estudo de Silva &amp; Costa (2019), publicado na <i>Revista Brasileira de Etologia</i>, mostrou que gatos reconhecem…”</div></div>
+      <div class="note">Exemplo ilustrativo: estudo, autores e revista não existem</div>
+    </div>
+    <div class="col" style="flex:1;gap:16px">
+      <div class="card f" data-f="1"><b class="am" style="font-size:24px">Por que acontece</b><div class="mu" style="font-size:20px;margin-top:8px">o objetivo é prever o próximo token provável · não há consulta a uma base de fatos · lacunas viram o padrão mais comum</div></div>
+      <div class="card f" data-f="2"><b class="gr" style="font-size:24px">Como reduzir</b><div class="mu" style="font-size:20px;margin-top:8px">RAG com fontes · citações verificáveis · ferramentas (busca, código) · revisão humana</div></div>
+      <div class="f am" data-f="3" style="font-size:22px;font-weight:700">Temperatura baixa = mais previsível, não mais verdadeiro</div>
+    </div>
+  </div>
+</section>
+
+<!-- RAG -->
+<section class="s" data-b="7" data-notes="RAG (5 min). Retrieval-Augmented Generation: em vez de confiar só na memória do modelo, buscamos trechos relevantes numa base de documentos e os colocamos no prompt. Avance: (1) os documentos são quebrados em trechos e viram embeddings; (2) a pergunta também vira embedding; (3) buscamos os vizinhos mais próximos — o KNN do dia 1; (4) o LLM responde usando os trechos e cita a fonte. Documentos e resposta fictícios.">
+  <h2>RAG: o LLM consulta antes de responder</h2>
+  <svg id="ragSvg" viewBox="0 0 1408 560" style="width:1408px;height:560px"></svg>
+</section>
+
+<!-- MULTIMODAL -->
+<section class="s" data-b="7" data-notes="MULTIMODAL (4 min). Aqui os módulos 05 e 06 se encontram. Avance: a imagem é cortada em pedaços (patches); cada pedaço vira um vetor, como se fosse um token (ideia do Vision Transformer). Esses “tokens de imagem” entram na mesma sequência dos tokens de texto e o Transformer aplica atenção sobre tudo junto. A resposta sai pelo mesmo laço autorregressivo. Fluxo simplificado: cada modelo implementa de um jeito.">
+  <h2>Imagem também vira token</h2>
+  <svg id="multiSvg" viewBox="0 0 1408 540" style="width:1408px;height:540px"></svg>
+</section>
+
+<!-- SÍNTESE -->
+<section class="s" data-b="7" data-notes="SÍNTESE (4 min). Feche o arco: cada módulo do dia aparece dentro de um LLM. Dados: o pré-treino usa quantidades enormes de texto, e qualidade, viés e vazamento continuam importando. Regressão: perda + descida do gradiente, agora com bilhões de parâmetros. KNN: vizinhos em embeddings (busca semântica, RAG). K-Means: agrupar embeddings. Visão: imagens viram tokens. A escala muda; a lógica não.">
+  <h2>O que um LLM herdou de cada módulo</h2>
+  <div id="synRows" class="col" style="gap:14px"></div>
+  <div class="f big" data-f="6" style="font-size:38px;margin-top:30px"><span class="mu">A escala muda.</span> A lógica é a mesma.</div>
+</section>
+
+<!-- 30 LAB05 -->
+<section class="s lab" data-b="7"data-lab="05|Brinque com o próximo token|05_llms.ipynb|10|vi" data-steps="passo 1|Logits → softmax → probabilidades;passo 2|Mudar a temperatura e comparar as distribuições;passo 3|Amostrar tokens com semente fixa;extra|DistilGPT2 real: opcional, não depende do download" data-q="Por que a mesma pergunta pode gerar respostas diferentes?" data-notes="SLIDE 30 — LAB 05 (10 min). Abra 05_llms.ipynb. Logits, softmax e temperatura funcionam localmente. O DistilGPT2 é opcional e não deve comprometer a aula se o download falhar."></section>
+
+<!-- M07 -->
+<section class="s sec" data-b="8" data-q="Agora é com vocês." data-items="Explorar o Wine Dataset;Pipelines sem vazamento;Comparar com validação cruzada;Avaliar no teste e justificar;Apresentar para a turma;lab:Desafio 04 · 40 min" data-notes="CAPA DO DESAFIO (1 min). Hora de juntar tudo dos dois dias: dados, pipeline, comparação de modelos, avaliação honesta no teste — e explicar a escolha para a turma."></section>
+
+<!-- 31 -->
+<section class="s lab" data-b="8" data-lab="04|Sua missão: construir um modelo|04_desafio_final.ipynb|40|ye" data-steps="00–08|Explorar features, target e classes (Wine Dataset);08–18|Separar treino/teste e montar dois pipelines sem vazamento;18–30|Comparar os modelos com validação cruzada no treino;30–40|Avaliar o escolhido no teste e preparar 2 minutos de apresentação" data-q="O pré-processamento está no pipeline? O teste foi usado para escolher hiperparâmetros?" data-notes="SLIDE 31 — DESAFIO FINAL (40 min). Abra 04_desafio_final.ipynb (Wine Dataset). NÃO revele o gabarito. Dicas pontuais: “O pré-processamento está dentro do pipeline?”, “O teste foi usado para escolher hiperparâmetros?”. Se houver atraso, não sacrifique este desafio."></section>
+
+<!-- TIMER -->
+<section class="s" data-b="8" data-pause="2" data-label="Apresentação" data-next="modelo escolhido · métrica no teste · um erro interessante · próximo passo" data-nochrome="1" data-notes="APRESENTAÇÃO DOS GRUPOS (12 min). Cada grupo tem 2 minutos: qual modelo escolheu, a métrica no teste, um erro interessante do modelo e o que faria com mais tempo. Reinicie o cronômetro para cada grupo."></section>
+
+<!-- 32 -->
+<section class="s" data-b="8" data-notes="SLIDE 32 (10 min). Discuta: (1) Que padrão seu modelo aprendeu? (2) Onde errou e por quê? (3) O que essa lógica tem em comum com os LLMs? Reforce: dados → previsão → erro → ajuste → avaliação → generalização. Convide a turma a continuar experimentando os notebooks.">
+  <h1 style="font-size:76px;line-height:1.08;margin-top:40px"><span class="mu">Não é magia.</span><br>É aprendizagem medida</h1>
+  <div id="chain" class="row" style="gap:0;margin-top:70px;justify-content:space-between"></div>
+  <div class="grid3 f" data-f="7" style="margin-top:60px">
+    <div class="card"><span class="mono mu">01</span> <b style="font-size:26px">Que padrão seu modelo aprendeu?</b></div>
+    <div class="card"><span class="mono mu">02</span> <b style="font-size:26px">Onde errou, e por quê?</b></div>
+    <div class="card"><span class="mono mu">03</span> <b style="font-size:26px">O que isso tem em comum com os LLMs?</b></div></div>
+  <div class="f mu" data-f="8" style="margin-top:34px;font-size:21px"><b class="cy">Para continuar:</b> documentação do scikit-learn · Kaggle Learn · curso de NLP da Hugging Face · os notebooks do curso</div>
+</section>
+<svg width="0" height="0" style="position:absolute"><defs>
+  <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#8A94B8"/></marker>
+  <marker id="arc" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#22D3EE"/></marker>
+  <marker id="arw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#EAF0FF"/></marker>
+  <marker id="ara" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#F59E0B"/></marker>
+  <marker id="arv" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#8B5CF6"/></marker>
+  <clipPath id="clipFit"><rect x="70" y="20" width="730" height="470"/></clipPath>
+</defs></svg>
+</div>
+
+<div id="bar"><i></i></div>
+<div id="notes"></div>
+<div id="help">← → navegar · M mapa · N notas · F tela cheia</div>
+<div id="nav"><a id="bHome" href="index.html" aria-label="Início">⌂</a><button id="bPrev" aria-label="Anterior">←</button><button id="bMap">Mapa</button><button id="bNotes">Notas</button><button id="bFull">Tela cheia</button><button id="bNext" aria-label="Próximo">→</button></div>
+<script>window.DECK={day:2}</script>
+<script src="assets/deck.js"></script>
+</body>
+</html>
