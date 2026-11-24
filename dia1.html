@@ -8,6 +8,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/deck.css">
+<script>window.MathJax={loader:{load:['[tex]/color']},tex:{packages:{'[+]':['color']},macros:{cy:['{\\color[RGB]{34,211,238}{#1}}',1],am:['{\\color[RGB]{245,158,11}{#1}}',1],vi:['{\\color[RGB]{139,92,246}{#1}}',1],rd:['{\\color[RGB]{248,113,113}{#1}}',1],gr:['{\\color[RGB]{52,211,153}{#1}}',1]}},svg:{fontCache:'none'},options:{menuOptions:{settings:{assistiveMml:false}}},startup:{typeset:false,pageReady:()=>MathJax.startup.defaultPageReady().then(()=>{document.head.appendChild(MathJax.svgStylesheet());dispatchEvent(new Event('mathjax-ready'))})}};</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg.js"></script>
+<style>mjx-container[jax="SVG"]{direction:ltr}mjx-container svg{overflow:visible}</style>
 </head>
 <body>
 <div id="stage">
@@ -79,7 +82,7 @@
     <g class="f" data-f="1"><ellipse cx="430" cy="350" rx="420" ry="270" fill="#5A6488" fill-opacity=".1" stroke="#5A6488" stroke-width="2"/><text x="430" y="118" text-anchor="middle" font-size="24" font-weight="700" fill="#8A94B8">Inteligência Artificial</text></g>
     <g class="f" data-f="2"><ellipse cx="430" cy="400" rx="330" ry="215" fill="#22D3EE" fill-opacity=".1" stroke="#22D3EE" stroke-width="2"/><text x="430" y="225" text-anchor="middle" font-size="24" font-weight="700" fill="#22D3EE">Machine Learning</text></g>
     <g class="f" data-f="3"><ellipse cx="430" cy="450" rx="235" ry="160" fill="#8B5CF6" fill-opacity=".15" stroke="#8B5CF6" stroke-width="2"/><text x="430" y="330" text-anchor="middle" font-size="24" font-weight="700" fill="#8B5CF6">Deep Learning</text></g>
-    <g class="f" data-f="4"><ellipse cx="430" cy="505" rx="140" ry="98" fill="#F472B6" fill-opacity=".28" stroke="#F472B6" stroke-width="2.5"/><text x="430" y="505" text-anchor="middle" font-size="36" font-weight="700">LLMs</text><text x="430" y="540" text-anchor="middle" font-size="16" fill="#8A94B8" font-family="JetBrains Mono">texto → próximo token</text></g>
+    <g class="f" data-f="4"><ellipse cx="430" cy="505" rx="140" ry="98" fill="#F472B6" fill-opacity=".28" stroke="#F472B6" stroke-width="2.5"/><text x="430" y="505" text-anchor="middle" font-size="36" font-weight="700">LLMs</text><text x="430" y="540" text-anchor="middle" font-size="16" fill="#8A94B8" font-family="JetBrains Mono,monospace">texto → próximo token</text></g>
   </svg>
   <div class="f col" data-f="5" style="position:absolute;right:96px;top:250px;width:520px;gap:14px">
     <div class="lbl am">IA generativa ≠ LLM</div>
@@ -154,7 +157,7 @@
     </div>
   </div>
   <style>#tbl th{font-size:19px;padding:12px 8px;border-radius:12px;background:var(--p1);transition:background .4s,color .4s}#tbl th small{font-weight:400;color:var(--mu);font-size:15px}
-  #tbl td{text-align:center;padding:14px 0;border-bottom:1px solid var(--ln);font-family:"JetBrains Mono"}#tbl tr.new td{font-weight:700}
+  #tbl td{text-align:center;padding:14px 0;border-bottom:1px solid var(--ln);font-family:"JetBrains Mono",monospace}#tbl tr.new td{font-weight:700}
   #tbl.c0 th[data-c="0"]{background:#22D3EE33;color:var(--cy)}#tbl.c1 th[data-c="1"]{background:#F59E0B33;color:var(--am)}</style>
 </section>
 
@@ -192,7 +195,7 @@
 <section class="s" data-b="2" data-id="scale" data-notes="ESCALA (5 min). Quem é mais parecido com “você” (25 anos, R$ 3.000)? A tem 62 anos e ganha R$ 3.200; B tem 27 anos e ganha R$ 4.500. Sem padronizar, a distância é dominada pela renda (milhares de reais contra dezenas de anos) e A parece mais próxima — absurdo. Clique em Padronizar: z = (x − média) / desvio coloca as features na mesma escala e B passa a ser a mais próxima. Afeta KNN, K-Means, redes neurais e regularização; árvores não ligam para escala. A média e o desvio vêm do treino.">
   <h2>Quem é mais parecido com você?</h2>
   <div class="row" style="gap:44px">
-    <div class="col" style="width:560px;gap:16px"><div id="scPeople" class="col" style="gap:12px"></div><div class="row" style="gap:16px;align-items:center;margin-top:6px"><button class="b" id="scBtn">Padronizar</button><span class="formula" style="font-size:24px;padding:12px 18px">z = (x − μ) / σ</span></div></div>
+    <div class="col" style="width:560px;gap:16px"><div id="scPeople" class="col" style="gap:12px"></div><div class="row" style="gap:16px;align-items:center;margin-top:6px"><button class="b" id="scBtn">Padronizar</button><span class="formula" style="font-size:24px;padding:12px 18px" data-tex="z = \frac{x-\mu}{\sigma}">z = (x − μ) / σ</span></div></div>
     <div class="card" style="flex:1"><div class="lbl mu" style="font-size:14px">Distância até você · contribuição de cada feature</div><svg id="scSvg" viewBox="0 0 760 360" style="width:100%;height:360px;margin-top:10px"></svg><div id="scVerdict" class="big" style="font-size:32px;margin-top:6px"></div></div>
   </div>
   <div class="note" style="margin-top:22px">Árvores não ligam para escala · KNN, K-Means, redes neurais e regularização ligam</div>
@@ -254,7 +257,7 @@
   <h2>A primeira previsão pode ser uma reta</h2>
   <div class="row" style="gap:50px">
     <div class="col" style="width:560px;gap:24px">
-      <div class="mono big" style="font-size:88px"><span class="am">ŷ</span> = <span class="cy">w</span>·x + <span class="vi">b</span></div>
+      <div class="mono big" style="font-size:80px" data-tex="\am{\hat{y}} = \cy{w}\,x + \vi{b}"><span class="am">ŷ</span> = <span class="cy">w</span>·x + <span class="vi">b</span></div>
       <div class="card col" style="gap:14px">
         <label class="ctl"><span class="mono cy" style="width:60px;font-weight:700">w</span><input id="lw" type="range" min="0" max="10" step="0.5" value="5"><span class="mono" id="lwv">5</span><span class="mu">inclinação</span></label>
         <label class="ctl"><span class="mono vi" style="width:60px;font-weight:700">b</span><input id="lb" type="range" min="0" max="60" step="1" value="20"><span class="mono" id="lbv">20</span><span class="mu">intercepto</span></label>
@@ -273,7 +276,7 @@
   <div class="row" style="gap:44px">
     <svg id="resPlot" viewBox="0 0 820 560" style="width:820px;height:560px"></svg>
     <div class="col" style="flex:1;gap:22px">
-      <div class="formula f" data-f="2" style="font-size:30px">MSE = <span class="mu">1/n</span> Σ <span class="am">(y − ŷ)²</span></div>
+      <div class="formula f" data-f="2" style="font-size:28px" data-tex="\mathrm{MSE} = \frac{1}{n}\sum_{i=1}^{n}\am{\left(y_i-\hat{y}_i\right)^2}">MSE = <span class="mu">1/n</span> Σ <span class="am">(y − ŷ)²</span></div>
       <div class="card"><div class="lbl mu" style="font-size:14px">Erro quadrático médio agora</div><div class="big am" id="mseV" style="font-size:84px;margin-top:8px">0</div></div>
       <div class="card col" style="gap:12px">
         <label class="ctl"><span class="mono cy" style="width:40px;font-weight:700">w</span><input id="rw" type="range" min="0" max="1.6" step="0.02" value="0.4"><span class="mono" id="rwv"></span></label>
@@ -291,7 +294,7 @@
   <div class="row" style="gap:44px">
     <svg id="gdPlot" viewBox="0 0 860 560" style="width:860px;height:560px"></svg>
     <div class="col" style="flex:1;gap:20px">
-      <div class="formula" style="font-size:31px">w ← w − <span class="am">α</span> · <span class="cy">∂L/∂w</span></div>
+      <div class="formula" style="font-size:31px" data-tex="w \leftarrow w - \am{\alpha}\,\cy{\frac{\partial L}{\partial w}}">w ← w − <span class="am">α</span> · <span class="cy">∂L/∂w</span></div>
       <div class="card col" style="gap:14px"><div class="lbl mu" style="font-size:14px">Taxa de aprendizado α</div>
         <div class="row" id="gdA" style="gap:10px;flex-wrap:wrap"><button class="b" data-a="0.05">0,05</button><button class="b on" data-a="0.3">0,3</button><button class="b" data-a="0.9">0,9</button><button class="b" data-a="1.05">1,05</button></div>
         <div class="row" style="gap:10px"><button class="b" id="gdGo">▶ Descer</button><button class="b" id="gdRst">Reiniciar</button></div></div>
@@ -306,7 +309,7 @@
   <h2>Mais de uma feature, um peso para cada</h2>
   <div class="row" style="gap:50px">
     <div class="col" style="width:600px;gap:22px">
-      <div class="mono big" style="font-size:33px;white-space:nowrap"><span class="am">ŷ</span> = <span class="cy">0,6</span>·horas <span class="rd">− 0,35</span>·faltas + <span class="vi">4,0</span></div>
+      <div class="mono big" style="font-size:31px;white-space:nowrap" data-tex="\am{\hat{y}} = \cy{0{,}6}\cdot\text{horas}\;\rd{-\,0{,}35}\cdot\text{faltas} + \vi{4{,}0}"><span class="am">ŷ</span> = <span class="cy">0,6</span>·horas <span class="rd">− 0,35</span>·faltas + <span class="vi">4,0</span></div>
       <div class="card col" style="gap:14px">
         <label class="ctl"><span style="width:90px;font-weight:700" class="cy">horas</span><input id="mrH" type="range" min="0" max="10" step="0.5" value="6"><span class="mono" id="mrHv"></span></label>
         <label class="ctl"><span style="width:90px;font-weight:700" class="rd">faltas</span><input id="mrF" type="range" min="0" max="10" step="1" value="3"><span class="mono" id="mrFv"></span></label>
@@ -324,7 +327,7 @@
   <div class="row" style="gap:40px">
     <svg id="regPlot" viewBox="0 0 820 560" style="width:820px;height:560px"></svg>
     <div class="col" style="flex:1;gap:18px">
-      <div class="formula" style="font-size:26px">Perda = MSE + <span class="am">λ</span>·Σw²</div>
+      <div class="formula" style="font-size:26px" data-tex="\text{Perda} = \mathrm{MSE} + \am{\lambda}\sum_{j} w_j^2">Perda = MSE + <span class="am">λ</span>·Σw²</div>
       <div class="card"><div class="lbl mu" style="font-size:14px">Força da regularização λ</div><div class="row" style="align-items:center;gap:16px;margin-top:10px"><input id="regL" type="range" min="-7" max="2" step="0.1" value="-7" style="width:280px"><span class="mono big am" id="regLv" style="font-size:30px"></span></div><div class="row mono" style="gap:26px;margin-top:14px;font-size:19px"><span>treino <b id="regTr"></b></span><span class="am">validação <b id="regVa"></b></span></div><div id="regTag" class="big" style="font-size:32px;margin-top:12px"></div></div>
       <div class="card"><div class="lbl mu" style="font-size:14px">Tamanho dos coeficientes |w|</div><svg id="regCoef" viewBox="0 0 520 150" style="width:100%;height:150px;margin-top:8px"></svg></div>
     </div>
@@ -335,13 +338,13 @@
 <section class="s" data-b="3" data-notes="SLIDE 12 (3 min). MAE: erro absoluto médio, na unidade original. MSE: penaliza mais os desvios grandes (unidade ao quadrado). R²: compara com prever sempre a média; 1 é perfeito, 0 é igual à média, pode ser negativo fora do treino. Nunca interprete uma métrica sozinha.">
   <h2>Um modelo erra. Quanto, e em qual unidade?</h2>
   <div class="grid3">
-    <div class="card f" data-f="1" style="min-height:470px"><div class="big cy" style="font-size:78px">MAE</div><div class="mono" style="font-size:24px;margin:18px 0 26px">1/n Σ |y − ŷ|</div>
+    <div class="card f" data-f="1" style="min-height:470px"><div class="big cy" style="font-size:78px">MAE</div><div class="mono" style="font-size:30px;margin:14px 0 22px" data-tex="\frac{1}{n}\sum_{i=1}^{n}\left|y_i-\hat{y}_i\right|">1/n Σ |y − ŷ|</div>
       <div style="display:flex;align-items:flex-end;gap:16px;height:110px"><i style="width:44px;height:36%;background:var(--cy)"></i><i style="width:44px;height:80%;background:var(--cy)"></i><i style="width:44px;height:27%;background:var(--cy)"></i><i style="width:44px;height:62%;background:var(--cy)"></i></div>
       <h3 style="font-size:27px;margin-top:26px">Erro médio na unidade original</h3><div class="mu" style="font-style:italic">“erra 0,6 ponto, em média”</div></div>
-    <div class="card f" data-f="2" style="min-height:470px"><div class="big am" style="font-size:78px">MSE</div><div class="mono" style="font-size:24px;margin:18px 0 26px">1/n Σ (y − ŷ)²</div>
+    <div class="card f" data-f="2" style="min-height:470px"><div class="big am" style="font-size:78px">MSE</div><div class="mono" style="font-size:30px;margin:14px 0 22px" data-tex="\frac{1}{n}\sum_{i=1}^{n}\left(y_i-\hat{y}_i\right)^2">1/n Σ (y − ŷ)²</div>
       <div style="display:flex;align-items:flex-end;gap:16px;height:110px"><i style="width:44px;height:13%;background:var(--am)"></i><i style="width:44px;height:64%;background:var(--am)"></i><i style="width:44px;height:7%;background:var(--am)"></i><i style="width:44px;height:38%;background:var(--am)"></i></div>
       <h3 style="font-size:27px;margin-top:26px">Penaliza erros grandes</h3><div class="mu" style="font-style:italic">unidade ao quadrado</div></div>
-    <div class="card f" data-f="3" style="min-height:470px"><div class="big vi" style="font-size:78px">R²</div><div class="mono" style="font-size:24px;margin:18px 0 26px">1 − SS<sub>res</sub> / SS<sub>tot</sub></div>
+    <div class="card f" data-f="3" style="min-height:470px"><div class="big vi" style="font-size:78px">R²</div><div class="mono" style="font-size:30px;margin:14px 0 22px" data-tex="1-\frac{\sum_i (y_i-\hat{y}_i)^2}{\sum_i (y_i-\bar{y})^2}">1 − SS<sub>res</sub> / SS<sub>tot</sub></div>
       <div style="height:110px;display:flex;flex-direction:column;justify-content:center"><div style="height:26px;border-radius:13px;background:var(--ln)"><div style="width:82%;height:100%;border-radius:13px;background:var(--vi)"></div></div><div class="mono mu" style="display:flex;justify-content:space-between;font-size:16px;margin-top:8px"><span>0</span><span>0,82</span><span>1</span></div></div>
       <h3 style="font-size:27px;margin-top:26px">Comparado a prever a média</h3><div class="mu" style="font-style:italic">pode ser negativo fora do treino</div></div>
   </div>
@@ -378,8 +381,8 @@
     <svg id="distSvg" viewBox="0 0 760 560" style="width:760px;height:560px;cursor:crosshair"></svg>
     <div class="col" style="flex:1;gap:18px">
       <div class="row" id="distM" style="gap:10px"><button class="b on" data-m="e">Euclidiana</button><button class="b" data-m="m">Manhattan</button></div>
-      <div class="card"><div class="lbl cy" style="font-size:14px">Euclidiana</div><div class="mono" style="font-size:22px;margin-top:6px">√(Δx² + Δy²) = <b class="cy" id="dE"></b></div></div>
-      <div class="card"><div class="lbl am" style="font-size:14px">Manhattan</div><div class="mono" style="font-size:22px;margin-top:6px">|Δx| + |Δy| = <b class="am" id="dM"></b></div></div>
+      <div class="card"><div class="lbl cy" style="font-size:14px">Euclidiana</div><div class="mono" style="font-size:24px;margin-top:6px;display:flex;align-items:center;gap:10px"><span data-tex="\sqrt{\Delta x^2+\Delta y^2} =">√(Δx² + Δy²) =</span> <b class="cy" id="dE"></b></div></div>
+      <div class="card"><div class="lbl am" style="font-size:14px">Manhattan</div><div class="mono" style="font-size:24px;margin-top:6px;display:flex;align-items:center;gap:10px"><span data-tex="|\Delta x| + |\Delta y| =">|Δx| + |Δy| =</span> <b class="am" id="dM"></b></div></div>
       <div class="card"><div class="lbl vi" style="font-size:14px">Cosseno · dia 2</div><div class="mu" style="font-size:19px;margin-top:6px">compara a direção dos vetores: usado em textos e embeddings</div></div>
       <div class="mono" id="dCnt" style="font-size:21px"></div>
       <div class="note">Clique para mover B · região = até 3 unidades de A</div>
@@ -420,7 +423,7 @@
       <div class="card"><b class="rd" style="font-size:24px">Recall</b><div class="mu" style="font-size:18px">dos ✓ reais, quantos achei?</div><div class="mono" style="font-size:20px;margin-top:6px">0/5 = 0%</div></div>
       <div class="card"><b class="vi" style="font-size:24px">F1</b><div class="mu" style="font-size:18px">equilíbrio entre os dois</div><div class="mono" style="font-size:20px;margin-top:6px">média harmônica</div></div></div>
   </div>
-  <style>.cell{height:190px;border-radius:16px;background:var(--p2);display:flex;flex-direction:column;justify-content:center}.cell b{font:700 64px "Space Grotesk"}.cell small{font:16px "JetBrains Mono";color:var(--tx)}</style>
+  <style>.cell{height:190px;border-radius:16px;background:var(--p2);display:flex;flex-direction:column;justify-content:center}.cell b{font:700 64px "Space Grotesk",Inter,sans-serif}.cell small{font:16px "JetBrains Mono",monospace;color:var(--tx)}</style>
 </section>
 
 <!-- THR -->

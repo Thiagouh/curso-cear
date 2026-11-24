@@ -12,6 +12,12 @@ function rng(seed){return()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(see
 function gauss(r){let u=0,v=0;while(!u)u=r();while(!v)v=r();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)}
 function mapper(x,y,w,h,x0,x1,y0,y1){return{X:v=>x+(v-x0)/(x1-x0)*w,Y:v=>y+h-(v-y0)/(y1-y0)*h,ix:px=>x0+(px-x)/w*(x1-x0),iy:py=>y0+(y+h-py)/h*(y1-y0)}}
 function axes(m,x,y,w,h,xl,yl){return `<path d="M${x} ${y} V${y+h} H${x+w}" fill="none" stroke="${COL.dim}" stroke-width="2"/>`+(xl?`<text x="${x+w}" y="${y+h+32}" text-anchor="end" font-size="18" fill="${COL.mu}">${xl}</text>`:'')+(yl?`<text x="${x}" y="${y-12}" font-size="18" fill="${COL.mu}">${yl}</text>`:'')}
+
+/* ---------- fórmulas em LaTeX (MathJax SVG; sem MathJax, fica o texto original) ---------- */
+const tn=v=>String(v).replace(/,/g,'{,}').replace(/\./g,'{.}');
+const hasTex=()=>!!(window.MathJax&&MathJax.tex2svg);
+function TX(tex,fallback){if(!hasTex())return fallback;try{return MathJax.tex2svg('\\displaystyle '+tex,{display:false}).outerHTML}catch(e){return fallback}}
+function texAll(){if(!hasTex())return;$$('[data-tex]').forEach(el=>{if(el.dataset.done)return;try{el.replaceChildren(MathJax.tex2svg('\\displaystyle '+el.dataset.tex,{display:false}));el.dataset.done=1}catch(e){}})}
 const stage=$('#stage'),slides=$$('.s');
 const FX={};let FITD=null;
 
@@ -33,7 +39,7 @@ function ill(b){const c=COL[BLK[b][2]];let h='';
   A.forEach(([x,y])=>h+=`<circle cx="${x}" cy="${y}" r="11" fill="${COL.cy}"/>`);B.forEach(([x,y])=>h+=`<path d="M${x} ${y-13}L${x+13} ${y+9}L${x-13} ${y+9}Z" fill="${COL.am}"/>`);h+=`<text x="200" y="135" text-anchor="middle" font-size="44" fill="${c}">★</text>`}
  else if(b===5){const r=rng(2),C=[[100,80],[300,70],[205,180]],CC=[COL.cy,COL.am,c];C.forEach(([cx,cy],j)=>{for(let i=0;i<11;i++)h+=`<circle cx="${cx+gauss(r)*26}" cy="${cy+gauss(r)*22}" r="7" fill="${CC[j]}" opacity=".85"/>`;h+=`<g transform="translate(${cx},${cy})"><circle r="17" fill="${COL.bg}" stroke="${CC[j]}" stroke-width="4"/><path d="M-9 0H9M0 -9V9" stroke="${CC[j]}" stroke-width="4"/></g>`})}
  else if(b===6){const S=15,ox=95,oy=15;h+=`<rect x="${ox-2}" y="${oy-2}" width="${14*S+3}" height="${14*S+3}" rx="4" fill="${COL.ln}"/>`;PAT7.forEach((row,r)=>[...row].forEach((ch,k)=>{const v={' ':0,'.':.45,'#':1}[ch];h+=`<rect x="${ox+k*S}" y="${oy+r*S}" width="${S-1}" height="${S-1}" fill="${v?c:COL.p1}" fill-opacity="${v?v:1}"/>`}));h+=`<rect x="${ox-6}" y="${oy+5*S}" width="${14*S+11}" height="${3*S}" fill="none" stroke="${COL.tx}" stroke-width="2.5" stroke-dasharray="7 5"/>`}
- else if(b===7){const T=['O','céu','hoje','está','azul'];let x=26;const cx=[];T.forEach(t=>{const w=30+t.length*16;cx.push(x+w/2);h+=`<rect x="${x}" y="160" width="${w}" height="46" rx="23" fill="${c}" fill-opacity="${t==='azul'?.6:.18}" stroke="${c}" stroke-width="2.5"/><text x="${x+w/2}" y="190" text-anchor="middle" font-family="JetBrains Mono" font-weight="700" font-size="20">${t}</text>`;x+=w+10});
+ else if(b===7){const T=['O','céu','hoje','está','azul'];let x=26;const cx=[];T.forEach(t=>{const w=30+t.length*16;cx.push(x+w/2);h+=`<rect x="${x}" y="160" width="${w}" height="46" rx="23" fill="${c}" fill-opacity="${t==='azul'?.6:.18}" stroke="${c}" stroke-width="2.5"/><text x="${x+w/2}" y="190" text-anchor="middle" font-family="JetBrains Mono,monospace" font-weight="700" font-size="20">${t}</text>`;x+=w+10});
   [0,1,2,3].forEach(i=>{const x1=cx[4],x2=cx[i],hh=30+Math.abs(x1-x2)*.45;h+=`<path d="M${x1} 156 C${x1} ${156-hh} ${x2} ${156-hh} ${x2} 156" fill="none" stroke="${c}" stroke-width="${[1.5,6,2,3][i]}" opacity="${[.4,1,.5,.7][i]}"/>`})}
  else if(b===8){[100,72,44,16].forEach((r,i)=>h+=`<circle cx="200" cy="124" r="${r}" fill="${i%2?COL.bg:c}" fill-opacity="${i%2?1:.25+i*.2}" stroke="${c}" stroke-width="3"/>`);h+=`<path d="M340 30 L214 114" stroke="${COL.tx}" stroke-width="5"/><path d="M340 30 l-4 22 M340 30 l-22 4" stroke="${COL.tx}" stroke-width="5"/><circle cx="210" cy="117" r="7" fill="${COL.tx}"/>`}
  return h}
@@ -89,9 +95,9 @@ $('#bNext').onclick=next;$('#bPrev').onclick=prev;$('#bNotes').onclick=()=>$('#n
 /* ---------- overview map ---------- */
 const ov=document.createElement('div');ov.id='ov';document.body.append(ov);
 const titleOf=s=>s.classList.contains('sec')?'Capa do módulo':s.dataset.lab?(s.dataset.lab.split('|')[0]==='04'?'Desafio: ':'Lab: ')+s.dataset.lab.split('|')[1]:s.dataset.pause?(s.dataset.label||'Pausa'):(($('h2',s)||$('h1',s)||{}).textContent||'').replace(/\s+/g,' ').trim();
-function buildOv(){let h=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px"><b style="font:700 28px 'Space Grotesk'">Mapa da aula</b><span style="color:#8A94B8">clique para ir · M ou Esc fecha</span></div><div class="g">`;
+function buildOv(){let h=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px"><b style="font:700 28px 'Space Grotesk',Inter,sans-serif">Mapa da aula</b><span style="color:#8A94B8">clique para ir · M ou Esc fecha</span></div><div class="g">`;
   for(let b=1;b<=8;b++){if(!(b in modMin))continue;const B=BLK[b],c=COL[B[2]];h+=`<div><h4 style="color:${c}">${B[0]} · ${B[3]} <span style="color:#5A6488">~${b===1?(modMin[0]||0)+modMin[1]:modMin[b]} min</span></h4>`;
-    slides.forEach((s,i)=>{const sb=+s.dataset.b;if(sb!==b&&!(b===1&&sb===0))return;h+=`<button data-i="${i}" class="${i===cur?'cur':''}" style="--c:${c}"><span style="color:#5A6488;font-family:'JetBrains Mono'">${String(i+1).padStart(2,'0')}</span><span>${titleOf(s)}</span></button>`});h+='</div>'}
+    slides.forEach((s,i)=>{const sb=+s.dataset.b;if(sb!==b&&!(b===1&&sb===0))return;h+=`<button data-i="${i}" class="${i===cur?'cur':''}" style="--c:${c}"><span style="color:#5A6488;font-family:'JetBrains Mono',monospace">${String(i+1).padStart(2,'0')}</span><span>${titleOf(s)}</span></button>`});h+='</div>'}
   ov.innerHTML=h+'</div>';$$('button',ov).forEach(x=>x.onclick=()=>{go(+x.dataset.i);ov.classList.remove('on')})}
 function toggleOv(){if(!ov.classList.contains('on'))buildOv();ov.classList.toggle('on')}
 $('#bMap').onclick=toggleOv;
@@ -106,7 +112,7 @@ if($('#cover')){const pts=[[60,560],[110,500],[160,530],[210,440],[250,470],[300
  for(let i=0;i<2;i++)for(const a of L[i][1])for(const b of L[i+1][1])h+=`<line x1="${L[i][0]}" y1="${a}" x2="${L[i+1][0]}" y2="${b}" stroke="${COL.vi}" stroke-width="1.2" opacity=".55"/>`;
  h+=`<line x1="380" y1="360" x2="440" y2="${300}" stroke="${COL.cy}" stroke-width="3"/>`;
  L.forEach(([x,ys],i)=>ys.forEach((y,k)=>h+=`<circle cx="${x}" cy="${y}" r="14" fill="${COL.bg}" stroke="${COL.vi}" stroke-width="3" style="animation:pulse 2.2s ${(i*0.4+k*0.15)}s infinite"/>`));
- ['tok','en','s'].forEach((t,i)=>h+=`<rect x="${420+i*86}" y="620" width="76" height="40" rx="20" fill="${COL.vi}" fill-opacity=".2" stroke="${COL.vi}" stroke-width="2"/><text x="${458+i*86}" y="647" text-anchor="middle" font-family="JetBrains Mono" font-size="18" font-weight="700" fill="${COL.vi}">${t}</text>`);
+ ['tok','en','s'].forEach((t,i)=>h+=`<rect x="${420+i*86}" y="620" width="76" height="40" rx="20" fill="${COL.vi}" fill-opacity=".2" stroke="${COL.vi}" stroke-width="2"/><text x="${458+i*86}" y="647" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="18" font-weight="700" fill="${COL.vi}">${t}</text>`);
  $('#cover').innerHTML=h}
 
 /* ---------- cover module list ---------- */
@@ -122,7 +128,7 @@ if($('#agSvg')){const seq=[];slides.forEach((s,i)=>{if(s.classList.contains('sec
   const B=BLK[x.b],c=COL[B[2]],cx=k*W+W/2,sec=slides[x.i],items=sec.dataset.items.split(';');k++;
   h+=`<g class="st" data-go="${x.i}"><rect x="${cx-W/2+8}" y="0" width="${W-16}" height="600" rx="20" fill="transparent"/>
    <svg x="${cx-70}" y="0" width="140" height="84" viewBox="0 0 400 240">${ill(x.b)}</svg>
-   <circle class="o" cx="${cx}" cy="150" r="34" fill="${COL.bg}" stroke="${c}" stroke-width="5"/><text x="${cx}" y="160" text-anchor="middle" font-family="JetBrains Mono" font-weight="700" font-size="25" fill="${c}">${B[0]}</text>
+   <circle class="o" cx="${cx}" cy="150" r="34" fill="${COL.bg}" stroke="${c}" stroke-width="5"/><text x="${cx}" y="160" text-anchor="middle" font-family="JetBrains Mono,monospace" font-weight="700" font-size="25" fill="${c}">${B[0]}</text>
    <foreignObject x="${cx-W/2+14}" y="198" width="${W-28}" height="400"><div xmlns="http://www.w3.org/1999/xhtml" style="text-align:center;font-family:Inter,sans-serif;color:#EAF0FF">
     <div style="font:700 23px/1.15 'Space Grotesk',Inter,sans-serif;min-height:54px">${B[3]}</div>
     <div style="font:16px 'JetBrains Mono',monospace;color:#8A94B8;margin:6px 0 14px">~${modMin[x.b]} min</div>
@@ -138,7 +144,7 @@ if($('#dsGrid')){const D=[['Regressão','am','Pontos sintéticos','x → y com r
 FX.tblx={step:k=>{$('#tbl').classList.toggle('c0',k>=1);$('#tbl').classList.toggle('c1',k>=2)}};
 
 /* ---------- 07 leakage rows ---------- */
-if($('#wrongRow')){const row=(steps,col)=>steps.map((t,i)=>{const x=34+i*345;return `<rect x="${x}" y="90" width="300" height="90" rx="14" fill="${COL.p2}"/><text x="${x+150}" y="143" text-anchor="middle" font-size="22" ${/\(/.test(t)?'font-family="JetBrains Mono"':''}>${t}</text>`+(i<3?`<path d="M${x+305} 135 H${x+338}" stroke="${COL.mu}" stroke-width="3" marker-end="url(#ar)"/>`:'')}).join('');
+if($('#wrongRow')){const row=(steps,col)=>steps.map((t,i)=>{const x=34+i*345;return `<rect x="${x}" y="90" width="300" height="90" rx="14" fill="${COL.p2}"/><text x="${x+150}" y="143" text-anchor="middle" font-size="22" ${/\(/.test(t)?'font-family="JetBrains Mono,monospace"':''}>${t}</text>`+(i<3?`<path d="M${x+305} 135 H${x+338}" stroke="${COL.mu}" stroke-width="3" marker-end="url(#ar)"/>`:'')}).join('');
  $('#wrongRow').innerHTML=row(['scaler.fit(X)','dividir treino/teste','treinar','avaliar']);
  $('#rightRow').innerHTML=row(['dividir treino/teste','scaler.fit(X_treino)','transform(treino, teste)','treinar e avaliar'])}
 
@@ -173,13 +179,13 @@ if($('#wrongRow')){const row=(steps,col)=>steps.map((t,i)=>{const x=34+i*345;ret
 {const m=mapper(70,20,690,470,0,10,0,120);
  function draw(){const w=+$('#lw').value,b=+$('#lb').value,x=+$('#lx').value,y=w*x+b;
   $('#lwv').textContent=w;$('#lbv').textContent=b;$('#lxv').textContent=x;
-  $('#lcalc').innerHTML=`ŷ = <span class="cy">${w}</span>·${x} + <span class="vi">${b}</span> = <span class="am">${fmt(y,y%1?1:0)}</span>`;
-  let h=axes(m,70,20,690,470,'x','ŷ');for(let v=0;v<=120;v+=20)h+=`<text x="58" y="${m.Y(v)+6}" text-anchor="end" font-size="15" fill="${COL.dim}">${v}</text>`;
+  $('#lcalc').innerHTML=TX(`\\am{\\hat{y}} = \\cy{${tn(w)}}\\cdot ${x} + \\vi{${b}} = \\am{${tn(fmt(y,y%1?1:0))}}`,`ŷ = <span class="cy">${w}</span>·${x} + <span class="vi">${b}</span> = <span class="am">${fmt(y,y%1?1:0)}</span>`);
+  let h=axes(m,70,20,690,470,'','ŷ')+`<text x="780" y="496" font-size="18" fill="${COL.mu}">x</text>`;for(let v=0;v<=120;v+=20)h+=`<text x="58" y="${m.Y(v)+6}" text-anchor="end" font-size="15" fill="${COL.dim}">${v}</text>`;
   for(let v=0;v<=10;v+=2)h+=`<text x="${m.X(v)}" y="514" text-anchor="middle" font-size="15" fill="${COL.dim}">${v}</text>`;
   const ye=Math.min(120,w*10+b),xe=ye<w*10+b?(120-b)/w:10;
   h+=`<line x1="${m.X(0)}" y1="${m.Y(b)}" x2="${m.X(xe)}" y2="${m.Y(ye)}" stroke="${COL.cy}" stroke-width="5"/>`;
-  if(y<=120){h+=`<line x1="${m.X(x)}" y1="${m.Y(0)}" x2="${m.X(x)}" y2="${m.Y(y)}" stroke="${COL.am}" stroke-dasharray="7 6" stroke-width="2"/><line x1="${m.X(0)}" y1="${m.Y(y)}" x2="${m.X(x)}" y2="${m.Y(y)}" stroke="${COL.am}" stroke-dasharray="7 6" stroke-width="2"/><circle cx="${m.X(x)}" cy="${m.Y(y)}" r="12" fill="${COL.am}"/><text x="${m.X(x)+18}" y="${m.Y(y)+30}" font-family="JetBrains Mono" font-weight="700" font-size="20" fill="${COL.am}">(${x}, ${fmt(y,y%1?1:0)})</text>`}
-  h+=`<circle cx="${m.X(0)}" cy="${m.Y(b)}" r="10" fill="${COL.vi}"/><text x="${m.X(0)+16}" y="${m.Y(b)-12}" font-family="JetBrains Mono" font-size="18" fill="${COL.vi}">b = ${b}</text>`;
+  if(y<=120){h+=`<line x1="${m.X(x)}" y1="${m.Y(0)}" x2="${m.X(x)}" y2="${m.Y(y)}" stroke="${COL.am}" stroke-dasharray="7 6" stroke-width="2"/><line x1="${m.X(0)}" y1="${m.Y(y)}" x2="${m.X(x)}" y2="${m.Y(y)}" stroke="${COL.am}" stroke-dasharray="7 6" stroke-width="2"/><circle cx="${m.X(x)}" cy="${m.Y(y)}" r="12" fill="${COL.am}"/><text x="${m.X(x)+18}" y="${m.Y(y)+30}" font-family="JetBrains Mono,monospace" font-weight="700" font-size="20" fill="${COL.am}">(${x}, ${fmt(y,y%1?1:0)})</text>`}
+  h+=`<circle cx="${m.X(0)}" cy="${m.Y(b)}" r="10" fill="${COL.vi}"/><text x="${m.X(0)+18}" y="${m.Y(b)+30}" font-family="JetBrains Mono,monospace" font-size="18" fill="${COL.vi}">b = ${b}</text>`;
   $('#linePlot').innerHTML=h}
  FX.line={init(){['#lw','#lb','#lx'].forEach(q=>$(q).oninput=draw);draw()}}}
 
@@ -241,10 +247,10 @@ if($('#wrongRow')){const row=(steps,col)=>steps.map((t,i)=>{const x=34+i*345;ret
  function draw(k){let h='';if(k>=1)h+=`<rect x="${m.X(.5)}" y="20" width="${m.X(2.45)-m.X(.5)}" height="470" fill="${COL.pk}" opacity=".1"/><line x1="${m.X(2.45)}" y1="20" x2="${m.X(2.45)}" y2="490" stroke="${COL.cy}" stroke-width="3" stroke-dasharray="9 6"/>`;
   if(k>=2)h+=`<rect x="${m.X(2.45)}" y="${m.Y(1.75)}" width="${m.X(7.5)-m.X(2.45)}" height="${m.Y(0)-m.Y(1.75)}" fill="${COL.gr}" opacity=".1"/><rect x="${m.X(2.45)}" y="20" width="${m.X(7.5)-m.X(2.45)}" height="${m.Y(1.75)-20}" fill="${COL.vi}" opacity=".12"/><line x1="${m.X(2.45)}" y1="${m.Y(1.75)}" x2="${m.X(7.5)}" y2="${m.Y(1.75)}" stroke="${COL.cy}" stroke-width="3" stroke-dasharray="9 6"/>`;
   h+=axes(m,70,20,600,470,'comprimento da pétala (cm)','largura (cm)');D.forEach(d=>h+=`<circle cx="${m.X(d[0])}" cy="${m.Y(d[1])}" r="7" fill="${CC[d[2]]}" opacity=".9"/>`);$('#treePlot').innerHTML=h;
-  const node=(x,y,w,t,S,col,leaf)=>{const c=cnt(S);return `<rect x="${x}" y="${y}" width="${w}" height="92" rx="14" fill="${leaf?col+'33':COL.p2}" stroke="${col}" stroke-width="2.5"/><text x="${x+w/2}" y="${y+36}" text-anchor="middle" font-size="21" font-weight="700" ${leaf?'':'font-family="JetBrains Mono"'}>${t}</text><text x="${x+w/2}" y="${y+70}" text-anchor="middle" font-size="16" font-family="JetBrains Mono" fill="${COL.mu}">[${c.join(', ')}] gini ${fmt(gini(S))}</text>`};
+  const node=(x,y,w,t,S,col,leaf)=>{const c=cnt(S);return `<rect x="${x}" y="${y}" width="${w}" height="92" rx="14" fill="${leaf?col+'33':COL.p2}" stroke="${col}" stroke-width="2.5"/><text x="${x+w/2}" y="${y+36}" text-anchor="middle" font-size="21" font-weight="700" ${leaf?'':'font-family="JetBrains Mono,monospace"'}>${t}</text><text x="${x+w/2}" y="${y+70}" text-anchor="middle" font-size="16" font-family="JetBrains Mono,monospace" fill="${COL.mu}">[${c.join(', ')}] gini ${fmt(gini(S))}</text>`};
   let t=node(150,10,380,k>=1?'pétala comp. < 2,45?':'todas as flores',A,COL.cy,0);
-  if(k>=1)t+=`<path d="M260 102 L120 220 M420 102 L470 220" stroke="${COL.mu}" stroke-width="2.5"/><text x="160" y="160" font-size="17" fill="${COL.mu}">sim</text><text x="460" y="160" font-size="17" fill="${COL.mu}">não</text>`+node(0,220,250,'Setosa',Lft,COL.pk,1)+node(300,220,370,k>=2?'pétala larg. < 1,75?':'resto',Rgt,COL.cy,0);
-  if(k>=2)t+=`<path d="M420 312 L300 430 M560 312 L560 430" stroke="${COL.mu}" stroke-width="2.5"/><text x="320" y="370" font-size="17" fill="${COL.mu}">sim</text><text x="572" y="370" font-size="17" fill="${COL.mu}">não</text>`+node(170,430,250,'Versicolor',RL,COL.gr,1)+node(450,430,220,'Virginica',RR,COL.vi,1);
+  if(k>=1)t+=`<path d="M260 102 L120 220 M420 102 L470 220" stroke="${COL.mu}" stroke-width="2.5"/><text x="138" y="160" font-size="17" fill="${COL.mu}">sim</text><text x="460" y="160" font-size="17" fill="${COL.mu}">não</text>`+node(0,220,250,'Setosa',Lft,COL.pk,1)+node(300,220,370,k>=2?'pétala larg. < 1,75?':'resto',Rgt,COL.cy,0);
+  if(k>=2)t+=`<path d="M420 312 L300 430 M560 312 L560 430" stroke="${COL.mu}" stroke-width="2.5"/><text x="300" y="370" font-size="17" fill="${COL.mu}">sim</text><text x="572" y="370" font-size="17" fill="${COL.mu}">não</text>`+node(170,430,250,'Versicolor',RL,COL.gr,1)+node(450,430,220,'Virginica',RR,COL.vi,1);
   if(k>=3)t+=`<text x="0" y="560" font-size="19" fill="${COL.rd}" font-weight="700">Profunda demais? Decora o treino → overfitting</text>`;
   $('#treeDiag').innerHTML=t}
  (slides.find(s=>s.dataset.id==='tree')||document.createElement('i')).insertAdjacentHTML('beforeend','<i class="f" data-f="3"></i>');
@@ -294,7 +300,7 @@ function silhouette(P,A,k){let s=0;P.forEach((p,i)=>{const dist=j=>{const g=P.fi
   h+=`<path d="${p}" fill="none" stroke="${COL.gr}" stroke-width="4"/>`;for(let k=1;k<=8;k++)h+=`<circle cx="${m.X(k)}" cy="${m.Y(inr[k])}" r="${k===3?13:7}" fill="${k===3?COL.am:COL.gr}"/><text x="${m.X(k)}" y="386" text-anchor="middle" font-size="17" fill="${COL.mu}">${k}</text>`;
   h+=`<text x="${m.X(3)+20}" y="${m.Y(inr[3])-20}" font-size="20" font-weight="700" fill="${COL.am}">cotovelo?</text>`;$('#elbowSvg').innerHTML=h;
   const mm=mapper(70,20,520,330,1.5,8.5,0,Math.max(...sil.filter(x=>x!==undefined))*1.15);let g=axes(mm,70,20,520,330,'K','silhouette');
-  for(let k=2;k<=8;k++){const x=mm.X(k)-24,y=mm.Y(sil[k]);g+=`<rect x="${x}" y="${y}" width="48" height="${350-y}" rx="6" fill="${k===bestS?COL.am:COL.cy}" opacity="${k===bestS?1:.6}"/><text x="${x+24}" y="${y-10}" text-anchor="middle" font-size="16" font-family="JetBrains Mono" fill="${COL.mu}">${fmt(sil[k])}</text><text x="${x+24}" y="386" text-anchor="middle" font-size="17" fill="${COL.mu}">${k}</text>`}
+  for(let k=2;k<=8;k++){const x=mm.X(k)-24,y=mm.Y(sil[k]);g+=`<rect x="${x}" y="${y}" width="48" height="${350-y}" rx="6" fill="${k===bestS?COL.am:COL.cy}" opacity="${k===bestS?1:.6}"/><text x="${x+24}" y="${y-10}" text-anchor="middle" font-size="16" font-family="JetBrains Mono,monospace" fill="${COL.mu}">${fmt(sil[k])}</text><text x="${x+24}" y="386" text-anchor="middle" font-size="17" fill="${COL.mu}">${k}</text>`}
   $('#silSvg').innerHTML=g}}}
 
 /* ---------- 23 neuron & activations ---------- */
@@ -330,11 +336,10 @@ if($('#ntBars')){const o=[['azul',.41],['nublado',.27],['limpo',.14],['escuro',.
  const preset={7:[.03,.55,.02,.08,.02,.18,.04,.08]};
  const weights=i=>{if(preset[i])return preset[i];const s=[];for(let j=0;j<=i;j++)s.push(Math.cos(i*1.7+j*2.3)*1.6+(j===i?1.2:0));const mx=Math.max(...s),e=s.map(v=>Math.exp(v-mx)),z=e.reduce((a,b)=>a+b,0);return e.map(v=>v/z)};
  function draw(){const ws=W.map(w=>34+w.length*15),gap=14,tot=ws.reduce((a,b)=>a+b,0)+gap*(W.length-1);let x=(1408-tot)/2;const cx=[];ws.forEach(w=>{cx.push(x+w/2);x+=w+gap});
-  const by=300,wt=weights(sel);let h='';
-  wt.forEach((v,j)=>{if(j===sel)return;const x1=cx[sel],x2=cx[j],hh=40+Math.abs(x1-x2)*.32;h+=`<path d="M${x1} ${by-6} C${x1} ${by-hh*1.3} ${x2} ${by-hh*1.3} ${x2} ${by-8}" fill="none" stroke="${COL.vi}" stroke-width="${1+v*16}" opacity="${.35+v*.65}" marker-end="url(#arv)"/>`;
-   h+=`<text x="${x2}" y="${by-14-(v>.3?0:0)}" text-anchor="middle" font-size="15" font-family="JetBrains Mono" fill="${COL.mu}" dy="-6">${fmt(v)}</text>`});
-  W.forEach((w,i)=>{const fut=i>sel,me=i===sel;h+=`<g class="tk" data-i="${i}" style="cursor:pointer"><rect x="${cx[i]-ws[i]/2}" y="${by}" width="${ws[i]}" height="58" rx="12" fill="${me?COL.vi:COL.p2}" opacity="${fut?.35:1}"/><text x="${cx[i]}" y="${by+38}" text-anchor="middle" font-size="24" font-weight="${me?700:500}" fill="${fut?COL.dim:COL.tx}">${w}</text></g>`});
-  h+=`<text x="${cx[Math.min(W.length-1,sel+1)]-ws[Math.min(W.length-1,sel+1)]/2}" y="${by+92}" font-size="17" font-style="italic" fill="${COL.dim}">${sel<W.length-1?'tokens futuros: bloqueados pela máscara causal':''}</text>`;
+  const by=272,wt=weights(sel);let h=`<defs><marker id="arvF" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="18" markerHeight="18" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="${COL.vi}"/></marker></defs>`;
+  wt.forEach((v,j)=>{if(j===sel)return;const x1=cx[sel],x2=cx[j],hh=40+Math.abs(x1-x2)*.32;h+=`<path d="M${x1} ${by-6} C${x1} ${by-hh*1.3} ${x2} ${by-hh*1.3} ${x2} ${by-8}" fill="none" stroke="${COL.vi}" stroke-width="${1+v*16}" opacity="${.35+v*.65}" marker-end="url(#arvF)"/>`});
+  W.forEach((w,i)=>{const fut=i>sel,me=i===sel;h+=`<g class="tk" data-i="${i}" style="cursor:pointer"><rect x="${cx[i]-ws[i]/2}" y="${by}" width="${ws[i]}" height="72" rx="12" fill="${me?COL.vi:COL.p2}" opacity="${fut?.35:1}"/><text x="${cx[i]}" y="${by+32}" text-anchor="middle" font-size="24" font-weight="${me?700:500}" fill="${fut?COL.dim:COL.tx}">${w}</text>${i<sel?`<text x="${cx[i]}" y="${by+58}" text-anchor="middle" font-size="15" font-family="JetBrains Mono,monospace" font-weight="700" fill="${COL.vi}">${fmt(wt[i])}</text>`:i===sel?`<text x="${cx[i]}" y="${by+58}" text-anchor="middle" font-size="15" font-family="JetBrains Mono,monospace" fill="${COL.tx}" opacity=".8">${fmt(wt[i])}</text>`:''}</g>`});
+  h+=`<text x="${cx[Math.min(W.length-1,sel+1)]-ws[Math.min(W.length-1,sel+1)]/2}" y="${by+100}" font-size="17" font-style="italic" fill="${COL.dim}">${sel<W.length-1?'tokens futuros: bloqueados pela máscara causal':''}</text>`;
   $('#attSvg').innerHTML=h;$$('#attSvg .tk').forEach(g=>g.onclick=()=>{sel=+g.dataset.i;draw()})}
  let mk='';for(let r=0;r<6;r++)for(let c=0;c<6;c++)mk+=`<rect x="${c*28}" y="${r*28}" width="24" height="24" rx="4" fill="${c<=r?COL.vi:COL.ln}" opacity="${c<=r?.85:1}"/>`;if($('#maskSvg'))$('#maskSvg').innerHTML=mk;
  FX.att={init(){draw()}}}
@@ -362,12 +367,12 @@ if($('#ntBars')){const o=[['azul',.41],['nublado',.27],['limpo',.14],['escuro',.
 
 /* ---------- 32 chain ---------- */
 if($('#chain')){const ch=[['dados',COL.cy],['previsão',COL.cy],['erro',COL.am],['ajuste',COL.vi],['avaliação',COL.gr],['generalização',COL.gr]];
- $('#chain').innerHTML=ch.map(([t,c],i)=>`<div class="f" data-f="${i+1}" style="display:flex;align-items:center"><div style="text-align:center;width:180px"><div style="width:96px;height:96px;margin:0 auto 14px;border-radius:50%;border:4px solid ${c};background:${c}33;display:grid;place-items:center;font:700 34px 'JetBrains Mono';color:${c}">${i+1}</div><b style="font-size:24px">${t}</b></div>${i<5?`<svg width="50" height="20" style="margin-top:-40px"><path d="M0 10H40" stroke="${COL.mu}" stroke-width="3" marker-end="url(#ar)"/></svg>`:''}</div>`).join('')}
+ $('#chain').innerHTML=ch.map(([t,c],i)=>`<div class="f" data-f="${i+1}" style="display:flex;align-items:center"><div style="text-align:center;width:180px"><div style="width:96px;height:96px;margin:0 auto 14px;border-radius:50%;border:4px solid ${c};background:${c}33;display:grid;place-items:center;font:700 34px 'JetBrains Mono',monospace;color:${c}">${i+1}</div><b style="font-size:24px">${t}</b></div>${i<5?`<svg width="50" height="20" style="margin-top:-40px"><path d="M0 10H40" stroke="${COL.mu}" stroke-width="3" marker-end="url(#ar)"/></svg>`:''}</div>`).join('')}
 
 /* ---------- VC: pixels ---------- */
 {const N=14,S=36;let showN=1,drawing=0,erase=0;
  function draw(){let h=`<rect x="-1" y="-1" width="${N*S+1}" height="${N*S+1}" fill="${COL.ln}"/>`;
-  for(let r=0;r<N;r++)for(let c=0;c<N;c++){const v=IMG[r*N+c],g=Math.round(v*255);h+=`<rect x="${c*S}" y="${r*S}" width="${S-1}" height="${S-1}" fill="rgb(${g},${g},${g})"/>`;if(showN)h+=`<text x="${c*S+S/2-.5}" y="${r*S+S/2+4}" text-anchor="middle" font-size="11" font-family="JetBrains Mono" fill="${v>.5?COL.bg:COL.dim}">${g}</text>`}
+  for(let r=0;r<N;r++)for(let c=0;c<N;c++){const v=IMG[r*N+c],g=Math.round(v*255);h+=`<rect x="${c*S}" y="${r*S}" width="${S-1}" height="${S-1}" fill="rgb(${g},${g},${g})"/>`;if(showN)h+=`<text x="${c*S+S/2-.5}" y="${r*S+S/2+4}" text-anchor="middle" font-size="11" font-family="JetBrains Mono,monospace" fill="${v>.5?COL.bg:COL.dim}">${g}</text>`}
   $('#pxGrid').innerHTML=h;
   let vh='';const cw=760/98;for(let i=0;i<196;i++){const g=Math.round(IMG[i]*255);vh+=`<rect x="${(i%98)*cw}" y="${Math.floor(i/98)*31}" width="${cw-1}" height="29" fill="rgb(${g},${g},${g})" stroke="${COL.ln}" stroke-width=".5"/>`}$('#pxVec').innerHTML=vh}
  function paint(e){const svg=$('#pxGrid'),pt=svg.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;const p=pt.matrixTransform(svg.getScreenCTM().inverse());const c=Math.floor(p.x/S),r=Math.floor(p.y/S);if(c<0||r<0||c>=N||r>=N)return;
@@ -386,7 +391,7 @@ if($('#chain')){const ch=[['dados',COL.cy],['previsão',COL.cy],['erro',COL.am],
   for(let i=0;i<144;i++){const x=OX+(i%12)*S,y=OY+Math.floor(i/12)*S;if(a>=0&&i>a){h+=`<rect x="${x}" y="${y}" width="${S-1}" height="${S-1}" fill="${COL.p1}"/>`;continue}
    const v=out[i];h+=`<rect x="${x}" y="${y}" width="${S-1}" height="${S-1}" fill="${COL.bg}"/>`;if(Math.abs(v)>1e-3)h+=`<rect x="${x}" y="${y}" width="${S-1}" height="${S-1}" fill="${v>0?COL.cy:COL.am}" opacity="${(Math.abs(v)/mx).toFixed(2)}"/>`}
   let mk=0;k.forEach(r=>r.forEach(v=>mk=Math.max(mk,Math.abs(v))));
-  k.forEach((row,i)=>row.forEach((v,j)=>{const x=KX+j*KS,y=KY+i*KS;h+=`<rect x="${x}" y="${y}" width="${KS-4}" height="${KS-4}" rx="10" fill="${v>0?COL.cy:v<0?COL.am:COL.p2}" fill-opacity="${v?(.25+.55*Math.abs(v)/mk).toFixed(2):1}"/><text x="${x+KS/2-2}" y="${y+KS/2+6}" text-anchor="middle" font-family="JetBrains Mono" font-weight="700" font-size="21">${kk==='blur'?'1/9':v}</text>`}));
+  k.forEach((row,i)=>row.forEach((v,j)=>{const x=KX+j*KS,y=KY+i*KS;h+=`<rect x="${x}" y="${y}" width="${KS-4}" height="${KS-4}" rx="10" fill="${v>0?COL.cy:v<0?COL.am:COL.p2}" fill-opacity="${v?(.25+.55*Math.abs(v)/mk).toFixed(2):1}"/><text x="${x+KS/2-2}" y="${y+KS/2+6}" text-anchor="middle" font-family="JetBrains Mono,monospace" font-weight="700" font-size="21">${kk==='blur'?'1/9':v}</text>`}));
   h+=`<text x="436" y="224" text-anchor="middle" font-size="54" fill="${COL.mu}">∗</text><text x="765" y="220" text-anchor="middle" font-size="54" fill="${COL.mu}">=</text>`;
   if(a>=0){const r=Math.floor(a/12),c=a%12;h+=`<line x1="${c*S+1.5*S}" y1="${r*S+1.5*S}" x2="${OX+c*S+S/2}" y2="${OY+r*S+S/2}" stroke="${COL.or}" stroke-width="2" stroke-dasharray="6 6" opacity=".55"/><rect x="${c*S-2}" y="${r*S-2}" width="${3*S+3}" height="${3*S+3}" fill="${COL.or}" fill-opacity=".2" stroke="${COL.or}" stroke-width="4"/><rect x="${OX+c*S-2}" y="${OY+r*S-2}" width="${S+3}" height="${S+3}" fill="none" stroke="${COL.or}" stroke-width="4"/>`}
   const lab=(x,y,t)=>`<text x="${x}" y="${y}" text-anchor="middle" font-size="18" fill="${COL.mu}">${t}</text>`;
@@ -416,10 +421,10 @@ if($('#chain')){const ch=[['dados',COL.cy],['previsão',COL.cy],['erro',COL.am],
   let g2='';L2.forEach((a,i)=>g2+=fmap(a,4,712+i*14,170+i*14,14,COL.pk));
   const all=[].concat(...L2.map(a=>[...a]));let fm=1e-6;all.forEach(v=>fm=Math.max(fm,v));
   let g3='';for(let i=0;i<14;i++){const v=all[(i*7)%all.length]/fm;g3+=`<rect x="900" y="${152+i*14}" width="12" height="12" fill="${COL.pk}" opacity="${(.15+.85*v).toFixed(2)}"/>`}
-  h+=`<g class="f" data-f="2">${arrow(652,700)}${g2}${lab(790,'Conv + ReLU','6 filtros')}${arrow(850,890)}${g3}${lab(906,'Achatar','vira vetor')}<text x="830" y="470" text-anchor="middle" font-size="22" font-weight="700" fill="${COL.pk}">curvas e formas</text></g>`;
+  h+=`<g class="f" data-f="2">${arrow(652,700)}${g2}${lab(772,'Conv + ReLU','6 filtros')}${arrow(850,890)}${g3}${lab(906,'Achatar','vira vetor')}<text x="830" y="470" text-anchor="middle" font-size="22" font-weight="700" fill="${COL.pk}">curvas e formas</text></g>`;
   let g4='';for(let i=0;i<14;i++)for(let j=0;j<8;j++)g4+=`<line x1="912" y1="${158+i*14}" x2="1008" y2="${152+j*28}" stroke="${COL.vi}" stroke-width=".7" opacity=".35"/>`;for(let j=0;j<8;j++)g4+=`<circle cx="1018" cy="${152+j*28}" r="10" fill="${COL.bg}" stroke="${COL.vi}" stroke-width="2.5"/>`;
   h+=`<g class="f" data-f="3">${g4}${lab(1018,'Densa','combina tudo')}</g>`;
-  let g5='';PR.forEach((p,d)=>{const y=100+d*27,top=d===7,w=Math.max(3,p*230);g5+=`<line x1="1028" y1="${152+(d%8)*28}" x2="1088" y2="${y+11}" stroke="${COL.vi}" stroke-width=".7" opacity=".3"/><text x="1104" y="${y+17}" text-anchor="middle" font-family="JetBrains Mono" font-size="18" font-weight="${top?700:400}" fill="${top?COL.gr:COL.mu}">${d}</text><rect x="1120" y="${y+3}" width="${w}" height="17" rx="5" fill="${top?COL.gr:COL.dim}"/><text x="${1128+w}" y="${y+17}" font-family="JetBrains Mono" font-size="15" fill="${top?COL.gr:COL.dim}">${Math.round(p*100)}%</text>`});
+  let g5='';PR.forEach((p,d)=>{const y=100+d*27,top=d===7,w=Math.max(3,p*230);g5+=`<line x1="1028" y1="${152+(d%8)*28}" x2="1088" y2="${y+11}" stroke="${COL.vi}" stroke-width=".7" opacity=".3"/><text x="1104" y="${y+17}" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="18" font-weight="${top?700:400}" fill="${top?COL.gr:COL.mu}">${d}</text><rect x="1120" y="${y+3}" width="${w}" height="17" rx="5" fill="${top?COL.gr:COL.dim}"/><text x="${1128+w}" y="${y+17}" font-family="JetBrains Mono,monospace" font-size="15" fill="${top?COL.gr:COL.dim}">${Math.round(p*100)}%</text>`});
   h+=`<g class="f" data-f="4">${g5}${lab(1200,'Saída','probabilidade por classe')}<text x="1200" y="470" text-anchor="middle" font-size="22" font-weight="700" fill="${COL.gr}">“é um 7”</text></g>`;
   $('#cnnSvg').innerHTML=h}
  FX.cnn={enter(){draw()}}}
@@ -431,7 +436,7 @@ if($('#vcTasks')){const car=(f,s)=>`<path d="M54 110 L72 82 H118 L136 110" fill=
  const T=[['Classificação','o que tem na imagem?',gnd+car(N,S)+`<rect x="176" y="22" width="114" height="40" rx="20" fill="${COL.or}"/><text x="233" y="49" text-anchor="middle" font-size="19" font-weight="700" fill="${COL.bg}">carro 94%</text>`],
   ['Detecção','onde está cada objeto?',gnd+car(N,S)+per(N,S)+`<rect x="18" y="72" width="150" height="94" fill="none" stroke="${COL.or}" stroke-width="3" stroke-dasharray="8 5"/><rect x="18" y="48" width="70" height="24" fill="${COL.or}"/><text x="53" y="66" text-anchor="middle" font-size="15" font-weight="700" fill="${COL.bg}">carro</text><rect x="196" y="46" width="52" height="120" fill="none" stroke="${COL.cy}" stroke-width="3" stroke-dasharray="8 5"/><rect x="196" y="22" width="76" height="24" fill="${COL.cy}"/><text x="234" y="40" text-anchor="middle" font-size="15" font-weight="700" fill="${COL.bg}">pessoa</text>`],
   ['Segmentação','a que objeto pertence cada pixel?',`<rect x="0" y="166" width="300" height="34" fill="${COL.gr}" opacity=".35"/>`+gnd+car(COL.or+'cc',COL.or)+per(COL.cy+'cc',COL.cy)],
-  ['Leitura de texto (OCR)','transformar pixels em letras',`<rect x="40" y="50" width="220" height="74" rx="10" fill="#EAF0FF"/><rect x="48" y="58" width="204" height="58" rx="6" fill="none" stroke="#0B1020" stroke-width="2"/><text x="150" y="101" text-anchor="middle" font-family="JetBrains Mono" font-weight="700" font-size="34" fill="#0B1020">BRA2E19</text><rect x="34" y="44" width="232" height="86" rx="12" fill="none" stroke="${COL.or}" stroke-width="3" stroke-dasharray="8 5"/><text x="150" y="176" text-anchor="middle" font-family="JetBrains Mono" font-weight="700" font-size="24" fill="${COL.or}">→ "BRA2E19"</text>`]];
+  ['Leitura de texto (OCR)','transformar pixels em letras',`<rect x="40" y="50" width="220" height="74" rx="10" fill="#EAF0FF"/><rect x="48" y="58" width="204" height="58" rx="6" fill="none" stroke="#0B1020" stroke-width="2"/><text x="150" y="101" text-anchor="middle" font-family="JetBrains Mono,monospace" font-weight="700" font-size="34" fill="#0B1020">BRA2E19</text><rect x="34" y="44" width="232" height="86" rx="12" fill="none" stroke="${COL.or}" stroke-width="3" stroke-dasharray="8 5"/><text x="150" y="176" text-anchor="middle" font-family="JetBrains Mono,monospace" font-weight="700" font-size="24" fill="${COL.or}">→ "BRA2E19"</text>`]];
  $('#vcTasks').innerHTML=T.map(([t,d,s])=>`<div class="card"><div class="lbl or" style="font-size:15px">${t}</div><svg viewBox="0 0 300 200" style="width:100%;height:200px;margin:16px 0 12px">${s}</svg><div class="mu" style="font-size:19px">${d}</div></div>`).join('')}
 
 /* ---------- LLM: embeddings ---------- */
@@ -453,11 +458,11 @@ if($('#multiSvg')){let h=`<defs><linearGradient id="skyG" x1="0" y1="0" x2="0" y
  let g='';for(let i=1;i<4;i++)g+=`<line x1="${i*60}" y1="140" x2="${i*60}" y2="380" stroke="#fff" stroke-width="2" opacity=".75"/><line x1="0" y1="${140+i*60}" x2="240" y2="${140+i*60}" stroke="#fff" stroke-width="2" opacity=".75"/>`;
  let p='';for(let k=0;k<16;k++){const x=320+k*52,pr=Math.floor(k/4),pc=k%4;p+=`<svg x="${x}" y="150" width="44" height="44" viewBox="${pc*60} ${pr*60} 60 60"><use href="#scene"/></svg><rect x="${x}" y="150" width="44" height="44" rx="4" fill="none" stroke="${COL.or}" stroke-width="1.5"/>`;for(let j=0;j<4;j++)p+=`<rect x="${x+2+j*10.5}" y="204" width="8" height="22" rx="2" fill="${COL.vi}" opacity="${(.25+((k*5+j*3)%7)/9).toFixed(2)}"/>`}
  h+=`<g class="f" data-f="1">${g}<path d="M250 230 C292 230 288 172 312 172" fill="none" stroke="${COL.or}" stroke-width="3" marker-end="url(#ar)"/>${p}<text x="320" y="132" font-size="19" font-weight="700" fill="${COL.or}">16 pedaços (patches) → 16 vetores, como tokens</text></g>`;
- let x=320,t='';['Descreva','esta','imagem'].forEach(w=>{const wd=30+w.length*13;t+=`<rect x="${x}" y="266" width="${wd}" height="44" rx="22" fill="${COL.vi}" fill-opacity=".2" stroke="${COL.vi}" stroke-width="2"/><text x="${x+wd/2}" y="295" text-anchor="middle" font-family="JetBrains Mono" font-size="19" font-weight="700">${w}</text>`;x+=wd+10});
+ let x=320,t='';['Descreva','esta','imagem'].forEach(w=>{const wd=30+w.length*13;t+=`<rect x="${x}" y="266" width="${wd}" height="44" rx="22" fill="${COL.vi}" fill-opacity=".2" stroke="${COL.vi}" stroke-width="2"/><text x="${x+wd/2}" y="295" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="19" font-weight="700">${w}</text>`;x+=wd+10});
  h+=`<g class="f" data-f="2"><text x="320" y="254" font-size="19" font-weight="700" fill="${COL.vi}">+ tokens de texto</text>${t}</g>`;
  let ar='';[360,520,680,840,1000,1120].forEach(v=>ar+=`<path d="M${v} 314 V336" stroke="${COL.mu}" stroke-width="2.5" marker-end="url(#ar)"/>`);
  h+=`<g class="f" data-f="3">${ar}<rect x="320" y="342" width="826" height="78" rx="18" fill="${COL.vi}" fill-opacity=".18" stroke="${COL.vi}" stroke-width="2.5"/><text x="733" y="390" text-anchor="middle" font-size="24" font-weight="700">Transformer · atenção sobre imagem e texto juntos</text></g>`;
- x=320;let o='';['Montanhas','com','o','sol','se','pondo'].forEach(w=>{const wd=28+w.length*13;o+=`<rect x="${x}" y="468" width="${wd}" height="44" rx="22" fill="${COL.gr}" fill-opacity=".2" stroke="${COL.gr}" stroke-width="2"/><text x="${x+wd/2}" y="497" text-anchor="middle" font-family="JetBrains Mono" font-size="19" font-weight="700" fill="${COL.gr}">${w}</text>`;x+=wd+10});
+ x=320;let o='';['Montanhas','com','o','sol','se','pondo'].forEach(w=>{const wd=28+w.length*13;o+=`<rect x="${x}" y="468" width="${wd}" height="44" rx="22" fill="${COL.gr}" fill-opacity=".2" stroke="${COL.gr}" stroke-width="2"/><text x="${x+wd/2}" y="497" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="19" font-weight="700" fill="${COL.gr}">${w}</text>`;x+=wd+10});
  h+=`<g class="f" data-f="4"><path d="M733 424 V460" stroke="${COL.gr}" stroke-width="3" marker-end="url(#arc)"/>${o}<text x="${x+10}" y="497" font-size="18" font-style="italic" fill="${COL.mu}">gerada token a token</text></g>`;
  const cap=(y,f,c,a,b)=>`<g class="f" data-f="${f}"><foreignObject x="1186" y="${y}" width="222" height="90"><div xmlns="http://www.w3.org/1999/xhtml" style="font:700 19px/1.25 Inter,sans-serif;color:${c}">${a}<div style="font-weight:400;color:#8A94B8;font-size:16px;margin-top:4px">${b}</div></div></foreignObject></g>`;
  h+=cap(146,1,COL.or,'Vision Transformer','cada pedaço vira um vetor')+cap(262,2,COL.vi,'Texto','tokens, como antes')+cap(346,3,COL.vi,'Uma só sequência','a atenção mistura tudo')+cap(464,4,COL.gr,'Saída','o mesmo laço autorregressivo');
@@ -527,7 +532,7 @@ if($('#scSvg')){const PP=[['Você',25,3000,'tx'],['A',62,3200,'am'],['B',27,4500
  function draw(){const z=p=>std?[(p[1]-MU[0])/SD[0],(p[2]-MU[1])/SD[1]]:[p[1],p[2]],me=z(PP[0]);
   $('#scPeople').innerHTML=PP.map(p=>{const v=z(p);return `<div class="card row" style="justify-content:space-between;align-items:center;padding:18px 24px;border-left:5px solid ${COL[p[3]]}"><b style="font-size:28px;color:${COL[p[3]]}">${p[0]}</b><span class="mono" style="font-size:22px">${std?`z = ${fmt(v[0])}`:p[1]+' anos'}</span><span class="mono" style="font-size:22px">${std?`z = ${fmt(v[1])}`:brl(p[2])}</span></div>`}).join('');
   const D=PP.slice(1).map(p=>{const v=z(p),a=(v[0]-me[0])**2,b=(v[1]-me[1])**2;return{p,a,b,d:Math.sqrt(a+b)}}),mx=Math.max(...D.map(x=>x.a+x.b));let h='';
-  D.forEach((x,i)=>{const y=40+i*150,wa=x.a/mx*560,wb=x.b/mx*560;h+=`<text x="0" y="${y+42}" font-size="30" font-weight="700" fill="${COL[x.p[3]]}">${x.p[0]}</text><rect x="60" y="${y}" width="${Math.max(2,wa)}" height="64" rx="6" fill="${COL.cy}"/><rect x="${60+wa}" y="${y}" width="${Math.max(2,wb)}" height="64" rx="6" fill="${COL.am}"/><text x="${70+wa+wb}" y="${y+42}" font-family="JetBrains Mono" font-size="22" font-weight="700">d = ${fmt(x.d,std?2:0)}</text>`});
+  D.forEach((x,i)=>{const y=40+i*150,wa=x.a/mx*560,wb=x.b/mx*560;h+=`<text x="0" y="${y+42}" font-size="30" font-weight="700" fill="${COL[x.p[3]]}">${x.p[0]}</text><rect x="60" y="${y}" width="${Math.max(2,wa)}" height="64" rx="6" fill="${COL.cy}"/><rect x="${60+wa}" y="${y}" width="${Math.max(2,wb)}" height="64" rx="6" fill="${COL.am}"/><text x="${70+wa+wb}" y="${y+42}" font-family="JetBrains Mono,monospace" font-size="22" font-weight="700">d = ${fmt(x.d,std?2:0)}</text>`});
   h+=`<rect x="60" y="330" width="22" height="22" rx="5" fill="${COL.cy}"/><text x="92" y="348" font-size="18">idade²</text><rect x="200" y="330" width="22" height="22" rx="5" fill="${COL.am}"/><text x="232" y="348" font-size="18">renda²</text>`;
   $('#scSvg').innerHTML=h;const w=D[0].d<D[1].d?D[0]:D[1];
   $('#scVerdict').innerHTML=std?`<span class="gr">Mais parecido: B</span> <span class="mu" style="font-size:22px">idade e renda pesam igual</span>`:`<span class="rd">Mais parecido: ${w.p[0]}, de 62 anos?!</span> <span class="mu" style="font-size:22px">a renda domina</span>`}
@@ -539,17 +544,17 @@ if($('#cvSvg')){const S=[.82,.79,.85,.80,.83],m=S.reduce((a,b)=>a+b)/5,sd=Math.s
  h+=`<text x="150" y="18" font-size="16" fill="${COL.mu}">dados de treino divididos em 5 partes (folds)</text>`;
  S.forEach((s,k)=>{const y=34+k*72;let g=`<text x="0" y="${y+38}" font-size="20" font-weight="700">Rodada ${k+1}</text>`;
   for(let f=0;f<5;f++){const x=150+f*182,v=f===k;g+=`<rect x="${x}" y="${y}" width="176" height="56" rx="8" fill="${v?COL.am:COL.cy}" fill-opacity="${v?.85:.28}"/><text x="${x+88}" y="${y+35}" text-anchor="middle" font-size="16" font-weight="700" fill="${v?COL.bg:COL.tx}">${v?'validação':'treino'}</text>`}
-  g+=`<text x="1080" y="${y+38}" font-family="JetBrains Mono" font-size="24" font-weight="700" fill="${COL.am}">${fmt(s)}</text>`;h+=`<g class="f" data-f="${k+1}">${g}</g>`});
- h+=`<g class="f" data-f="6"><text x="150" y="440" font-size="30" font-weight="700">Resultado: <tspan fill="${COL.am}" font-family="JetBrains Mono">${fmt(m)} ± ${fmt(sd)}</tspan></text><text x="640" y="440" font-size="20" fill="${COL.mu}">média e desvio das 5 rodadas · notas ilustrativas</text></g>`;
+  g+=`<text x="1080" y="${y+38}" font-family="JetBrains Mono,monospace" font-size="24" font-weight="700" fill="${COL.am}">${fmt(s)}</text>`;h+=`<g class="f" data-f="${k+1}">${g}</g>`});
+ h+=`<g class="f" data-f="6"><text x="150" y="440" font-size="30" font-weight="700">Resultado: <tspan fill="${COL.am}" font-family="JetBrains Mono,monospace">${fmt(m)} ± ${fmt(sd)}</tspan></text><text x="640" y="440" font-size="20" fill="${COL.mu}">média e desvio das 5 rodadas · notas ilustrativas</text></g>`;
  $('#cvSvg').innerHTML=h}
 
 /* ---------- regressão múltipla ---------- */
 if($('#mrSvg')){const W1=.6,W2=-.35,B0=4;
  function draw(){const hs=+$('#mrH').value,fa=+$('#mrF').value,a=W1*hs,b=W2*fa,y=B0+a+b;$('#mrHv').textContent=hs;$('#mrFv').textContent=fa;
-  $('#mrCalc').innerHTML=`ŷ = <span class="cy">0,6·${fmt(hs,1)}</span> <span class="rd">− 0,35·${fa}</span> + <span class="vi">4,0</span> = <span class="am">${fmt(y)}</span>`;
+  $('#mrCalc').innerHTML=TX(`\\am{\\hat{y}} = \\cy{0{,}6\\cdot ${tn(fmt(hs,1))}}\\;\\rd{-\\,0{,}35\\cdot ${fa}} + \\vi{4{,}0} = \\am{${tn(fmt(y))}}`,`ŷ = <span class="cy">0,6·${fmt(hs,1)}</span> <span class="rd">− 0,35·${fa}</span> + <span class="vi">4,0</span> = <span class="am">${fmt(y)}</span>`);
   const m=mapper(80,20,640,440,0,4,0,12);let h=axes(m,80,20,640,440);for(let v=0;v<=12;v+=2)h+=`<text x="68" y="${m.Y(v)+5}" text-anchor="end" font-size="15" fill="${COL.dim}">${v}</text><line x1="80" y1="${m.Y(v)}" x2="720" y2="${m.Y(v)}" stroke="${COL.ln}" stroke-width="1" opacity=".5"/>`;
   const bars=[['b',0,B0,COL.vi,'4,0'],['horas',B0,B0+a,COL.cy,'+'+fmt(a)],['faltas',B0+a,y,COL.rd,fmt(b)],['ŷ',0,y,COL.am,fmt(y)]];
-  bars.forEach(([t,y0,y1,c,l],i)=>{const x=m.X(i+.18),w=m.X(.64)-m.X(0),top=m.Y(Math.max(y0,y1));h+=`<rect x="${x}" y="${top}" width="${w}" height="${Math.max(2,Math.abs(m.Y(y0)-m.Y(y1)))}" rx="8" fill="${c}" fill-opacity="${i===3?.9:.75}"/><text x="${x+w/2}" y="${top-12}" text-anchor="middle" font-family="JetBrains Mono" font-size="21" font-weight="700" fill="${c}">${l}</text><text x="${x+w/2}" y="492" text-anchor="middle" font-size="19" font-weight="700">${t}</text>`;
+  bars.forEach(([t,y0,y1,c,l],i)=>{const x=m.X(i+.18),w=m.X(.64)-m.X(0),top=m.Y(Math.max(y0,y1));h+=`<rect x="${x}" y="${top}" width="${w}" height="${Math.max(2,Math.abs(m.Y(y0)-m.Y(y1)))}" rx="8" fill="${c}" fill-opacity="${i===3?.9:.75}"/><text x="${x+w/2}" y="${top-12}" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="21" font-weight="700" fill="${c}">${l}</text><text x="${x+w/2}" y="492" text-anchor="middle" font-size="19" font-weight="700">${t}</text>`;
    if(i<2)h+=`<line x1="${x+w}" y1="${m.Y(y1)}" x2="${m.X(i+1.18)}" y2="${m.Y(y1)}" stroke="${COL.mu}" stroke-dasharray="5 5" stroke-width="2"/>`});
   $('#mrSvg').innerHTML=h}
  FX.mreg={init(){$('#mrH').oninput=draw;$('#mrF').oninput=draw;draw()}}}
@@ -672,6 +677,8 @@ if($('#ragSvg')){const r=rng(8),Q=[500,240],Pts=[[Q[0]-70,Q[1]-38],[Q[0]+62,Q[1]
  $('#ragSvg').innerHTML=h}
 
 window.deck={go,next,prev};
+const texGo=()=>{texAll();['#lw','#mrH'].forEach(q=>{const e=$(q);if(e)e.dispatchEvent(new Event('input'))})};
+if(hasTex())texGo();else addEventListener('mathjax-ready',texGo,{once:true});
 /* ---------- start ---------- */
 const h0=parseInt((location.hash||'').replace('#s',''),10);go(h0>0&&h0<=slides.length?h0-1:0);
 addEventListener('hashchange',()=>{const h=parseInt(location.hash.replace('#s',''),10);if(h>0&&h<=slides.length&&h-1!==cur)go(h-1)});

@@ -8,6 +8,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/deck.css">
+<script>window.MathJax={loader:{load:['[tex]/color']},tex:{packages:{'[+]':['color']},macros:{cy:['{\\color[RGB]{34,211,238}{#1}}',1],am:['{\\color[RGB]{245,158,11}{#1}}',1],vi:['{\\color[RGB]{139,92,246}{#1}}',1],rd:['{\\color[RGB]{248,113,113}{#1}}',1],gr:['{\\color[RGB]{52,211,153}{#1}}',1]}},svg:{fontCache:'none'},options:{menuOptions:{settings:{assistiveMml:false}}},startup:{typeset:false,pageReady:()=>MathJax.startup.defaultPageReady().then(()=>{document.head.appendChild(MathJax.svgStylesheet());dispatchEvent(new Event('mathjax-ready'))})}};</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg.js"></script>
+<style>mjx-container[jax="SVG"]{direction:ltr}mjx-container svg{overflow:visible}</style>
 </head>
 <body>
 <div id="stage">
@@ -116,10 +119,10 @@
   <h2>Da primeira reta a uma rede inteira</h2>
   <div class="row" style="gap:30px">
     <svg viewBox="0 0 860 600" style="width:860px;height:600px">
-      <g class="f" data-f="0" style="opacity:1;transform:none"><rect x="0" y="40" width="240" height="220" rx="18" fill="#141B33"/><line x1="30" y1="210" x2="210" y2="80" stroke="#22D3EE" stroke-width="5"/><text x="120" y="245" text-anchor="middle" font-family="JetBrains Mono" font-weight="700" font-size="22" fill="#22D3EE">w·x + b</text></g>
+      <g class="f" data-f="0" style="opacity:1;transform:none"><rect x="0" y="40" width="240" height="220" rx="18" fill="#141B33"/><line x1="30" y1="210" x2="210" y2="80" stroke="#22D3EE" stroke-width="5"/><text x="120" y="245" text-anchor="middle" font-family="JetBrains Mono,monospace" font-weight="700" font-size="22" fill="#22D3EE">w·x + b</text></g>
       <g class="f" data-f="1">
         <path d="M255 150 H300" stroke="#8A94B8" stroke-width="3" marker-end="url(#arw)"/>
-        <g font-family="JetBrains Mono" font-size="20">
+        <g font-family="JetBrains Mono,monospace" font-size="20">
         <circle cx="350" cy="60" r="30" fill="#1B2442" stroke="#22D3EE" stroke-width="2.5"/><text x="350" y="67" text-anchor="middle">x₁</text>
         <circle cx="350" cy="150" r="30" fill="#1B2442" stroke="#22D3EE" stroke-width="2.5"/><text x="350" y="157" text-anchor="middle">x₂</text>
         <circle cx="350" cy="240" r="30" fill="#1B2442" stroke="#22D3EE" stroke-width="2.5"/><text x="350" y="247" text-anchor="middle">x₃</text>
@@ -127,7 +130,7 @@
         <text x="430" y="85" fill="#22D3EE" font-size="17">w₁</text><text x="430" y="142" fill="#22D3EE" font-size="17">w₂</text><text x="430" y="222" fill="#22D3EE" font-size="17">w₃</text>
         <circle cx="565" cy="150" r="55" fill="#8B5CF6" fill-opacity=".25" stroke="#8B5CF6" stroke-width="3"/><text x="565" y="158" text-anchor="middle" font-weight="700" font-size="24">Σ | σ</text>
         <path d="M620 150 H690" stroke="#8B5CF6" stroke-width="3" marker-end="url(#arv)"/><text x="705" y="160" font-size="30" font-weight="700" fill="#8B5CF6">a</text></g>
-        <rect x="270" y="320" width="520" height="70" rx="14" fill="#141B33"/><text x="530" y="364" text-anchor="middle" font-family="JetBrains Mono" font-weight="700" font-size="22">a = <tspan fill="#8B5CF6">σ</tspan>(w₁x₁ + w₂x₂ + w₃x₃ + b)</text></g>
+        <rect x="270" y="320" width="520" height="70" rx="14" fill="#141B33"/><foreignObject x="270" y="320" width="520" height="70"><div xmlns="http://www.w3.org/1999/xhtml" style="height:70px;display:grid;place-items:center;font:700 22px 'JetBrains Mono',monospace;color:#EAF0FF"><span data-tex="a = \vi{\sigma}\left(w_1x_1 + w_2x_2 + w_3x_3 + b\right)">a = <span style="color:#8B5CF6">σ</span>(w₁x₁ + w₂x₂ + w₃x₃ + b)</span></div></foreignObject></g>
       <g class="f" data-f="2"><g id="netSmall" transform="translate(0,430)"></g></g>
     </svg>
     <div class="card f" data-f="3" style="flex:1"><div class="lbl vi">Mesma rede, outra ativação</div>
@@ -149,12 +152,12 @@
         <rect x="500" y="248" width="250" height="84" rx="16" fill="#141B33" stroke="#F59E0B" stroke-width="2.5"/><text x="625" y="286" fill="#F59E0B">Perda</text><text x="625" y="314" font-size="17" font-weight="400" fill="#8A94B8">mede o erro</text>
         <rect x="230" y="456" width="300" height="84" rx="16" fill="#141B33" stroke="#8B5CF6" stroke-width="2.5"/><text x="380" y="494" fill="#8B5CF6">Retropropagação</text><text x="380" y="522" font-size="17" font-weight="400" fill="#8A94B8">calcula os gradientes</text>
         <rect x="10" y="248" width="250" height="84" rx="16" fill="#141B33" stroke="#34D399" stroke-width="2.5"/><text x="135" y="286" fill="#34D399">Otimizador</text><text x="135" y="314" font-size="17" font-weight="400" fill="#8A94B8">atualiza os pesos</text>
-        <text x="380" y="298" font-size="22" font-family="JetBrains Mono" font-weight="400" fill="#5A6488">1 passo</text></g>
+        <text x="380" y="298" font-size="22" font-family="JetBrains Mono,monospace" font-weight="400" fill="#5A6488">1 passo</text></g>
     </svg>
     <div class="card" style="flex:1"><div class="lbl am">Lembra do módulo 02?</div>
       <svg viewBox="0 0 520 260" style="width:100%;height:260px;margin:18px 0"><path d="M20 20 Q260 460 500 20" fill="none" stroke="#22D3EE" stroke-width="4"/>
         <g fill="#F59E0B"><circle cx="60" cy="72" r="9"/><circle cx="140" cy="150" r="9"/><circle cx="200" cy="190" r="9"/><circle cx="240" cy="205" r="9"/></g></svg>
-      <div class="mono" style="font-size:30px;font-weight:700;text-align:center">w ← w − α · ∂L/∂w</div>
+      <div class="mono" style="font-size:30px;font-weight:700;display:flex;justify-content:center" data-tex="w \leftarrow w - \am{\alpha}\,\cy{\frac{\partial L}{\partial w}}">w ← w − α · ∂L/∂w</div>
       <div class="mu" style="text-align:center;margin-top:12px">mesma regra, aplicada a todos os pesos da rede</div></div>
   </div>
 </section>
@@ -240,9 +243,9 @@
 </section>
 
 <!-- 26 -->
-<section class="s" data-b="7" data-id="tok"data-notes="SLIDE 26 (4 min). Digite qualquer frase no campo. Texto vira tokens, cada token vira um ID, cada ID é mapeado para um vetor (embedding), e a posição também entra. O “tokenizador” aqui é ilustrativo (corta palavras longas em pedaços); modelos reais usam BPE ou similares e cada um tokeniza de um jeito.">
+<section class="s" data-b="7" data-id="tok" data-notes="SLIDE 26 (4 min). Digite qualquer frase no campo. Texto vira tokens, cada token vira um ID, cada ID é mapeado para um vetor (embedding), e a posição também entra. O “tokenizador” aqui é ilustrativo (corta palavras longas em pedaços); modelos reais usam BPE ou similares e cada um tokeniza de um jeito.">
   <h2>Texto não entra como texto</h2>
-  <input id="tokIn" value="O céu hoje está" aria-label="Frase" style="font:700 34px 'JetBrains Mono';width:100%;background:var(--p1);color:var(--tx);border:2px solid var(--ln);border-radius:14px;padding:16px 22px">
+  <input id="tokIn" value="O céu hoje está" aria-label="Frase" style="font:700 34px 'JetBrains Mono',monospace;width:100%;background:var(--p1);color:var(--tx);border:2px solid var(--ln);border-radius:14px;padding:16px 22px">
   <div id="tokOut" style="margin-top:36px"></div>
   <div class="note" style="position:absolute;bottom:40px">Tokens, IDs e vetores ilustrativos: cada modelo tokeniza diferente</div>
 </section>
@@ -266,7 +269,7 @@
   <h2>A palavra “ele” aponta para quem?</h2>
   <svg id="attSvg" viewBox="0 0 1408 380" style="width:1408px;height:380px"></svg>
   <div class="row" style="gap:30px;margin-top:20px">
-    <div class="formula" style="font-size:28px;flex:1">Attention(Q,K,V) = softmax( QKᵀ / √d<sub>k</sub> ) V
+    <div class="formula" style="font-size:28px;flex:1"><div data-tex="\mathrm{Attention}(\cy{Q},\am{K},\gr{V}) = \mathrm{softmax}\!\left(\frac{\cy{Q}\,\am{K}^{\top}}{\sqrt{d_k}}\right)\gr{V}">Attention(Q,K,V) = softmax( QKᵀ / √d<sub>k</sub> ) V</div>
       <div style="font:500 19px Inter;margin-top:12px" class="mu"><b class="cy">Q</b> consultas &nbsp; <b class="am">K</b> chaves &nbsp; <b class="gr">V</b> valores</div></div>
     <div class="card row" style="gap:24px;align-items:center"><svg id="maskSvg" viewBox="0 0 170 170" style="width:170px;height:170px"></svg><div style="width:220px"><div class="lbl vi" style="font-size:14px">Máscara causal</div><div class="mu" style="font-size:19px;margin-top:6px">cada token só vê o passado</div></div></div>
   </div>
@@ -292,7 +295,7 @@
     <div class="col" style="width:520px;gap:18px">
       <div class="card"><div class="lbl mu" style="font-size:14px">Temperatura</div><div class="row" style="align-items:center;gap:16px;margin-top:8px"><input id="tT" type="range" min="0.1" max="2.5" step="0.05" value="1" style="width:300px"><span class="big mono am" id="tTv" style="font-size:48px">1,00</span></div></div>
       <div class="card"><div class="row" style="gap:10px"><button class="b" id="tS">Amostrar ×10</button><button class="b" id="tR">Limpar</button></div><div id="tOut" class="mono" style="font-size:20px;margin-top:14px;min-height:120px;line-height:1.6"></div></div>
-      <div class="mono" style="font-size:22px;font-weight:700">softmax(logits / T)</div>
+      <div class="mono" style="font-size:26px;font-weight:700" data-tex="p_i = \frac{e^{\,z_i/\am{T}}}{\sum_j e^{\,z_j/\am{T}}}">softmax(logits / T)</div>
       <div class="am" style="font-size:22px;font-weight:700">Mais variedade ≠ mais verdade</div></div>
   </div>
 </section>
@@ -348,7 +351,7 @@
 </section>
 
 <!-- 30 LAB05 -->
-<section class="s lab" data-b="7"data-lab="05|Brinque com o próximo token|05_llms.ipynb|10|vi" data-steps="passo 1|Logits → softmax → probabilidades;passo 2|Mudar a temperatura e comparar as distribuições;passo 3|Amostrar tokens com semente fixa;extra|DistilGPT2 real: opcional, não depende do download" data-q="Por que a mesma pergunta pode gerar respostas diferentes?" data-notes="SLIDE 30 — LAB 05 (10 min). Abra 05_llms.ipynb. Logits, softmax e temperatura funcionam localmente. O DistilGPT2 é opcional e não deve comprometer a aula se o download falhar."></section>
+<section class="s lab" data-b="7" data-lab="05|Brinque com o próximo token|05_llms.ipynb|10|vi" data-steps="passo 1|Logits → softmax → probabilidades;passo 2|Mudar a temperatura e comparar as distribuições;passo 3|Amostrar tokens com semente fixa;extra|DistilGPT2 real: opcional, não depende do download" data-q="Por que a mesma pergunta pode gerar respostas diferentes?" data-notes="SLIDE 30 — LAB 05 (10 min). Abra 05_llms.ipynb. Logits, softmax e temperatura funcionam localmente. O DistilGPT2 é opcional e não deve comprometer a aula se o download falhar."></section>
 
 <!-- M07 -->
 <section class="s sec" data-b="8" data-q="Agora é com vocês." data-items="Explorar o Wine Dataset;Pipelines sem vazamento;Comparar com validação cruzada;Avaliar no teste e justificar;Apresentar para a turma;lab:Desafio 04 · 40 min" data-notes="CAPA DO DESAFIO (1 min). Hora de juntar tudo dos dois dias: dados, pipeline, comparação de modelos, avaliação honesta no teste — e explicar a escolha para a turma."></section>
