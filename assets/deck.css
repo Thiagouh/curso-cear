@@ -172,3 +172,19 @@ input[type=range]{accent-color:var(--cy);width:260px;height:32px}
 #gdcA button.b{min-height:36px;padding:5px 12px;font:700 15px "JetBrains Mono",monospace}
 /* código sem ligaduras: o aluno precisa ver >= e não ≥ */
 .nbcell pre,.cchip code,.otxt,.pdf,.vec,.libc code,.api code,.strip,.colv{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+/* lista compacta + cartão "o que o comando faz" */
+.cmdList{gap:6px}
+.cchip{padding:6px 12px;gap:8px;grid-template-columns:26px minmax(0,1fr)}
+.cchip code{font-size:16px}.cchip small{font-size:13px;margin-top:0}
+.cdoc{flex:1;min-height:0;overflow:auto;background:var(--p1);border:1px solid var(--ln);border-top:3px solid var(--acc);border-radius:12px;padding:12px 16px;font-size:15.5px;line-height:1.45}
+.cdoc .lbl{font-size:12px;color:var(--acc);margin-bottom:6px}
+.cdoc p{margin:0 0 8px}
+.cdoc code{font:600 14px "JetBrains Mono",monospace;color:#cfe3ff;background:#ffffff0d;border-radius:4px;padding:0 4px;font-variant-ligatures:none;white-space:nowrap}
+.cdoc dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 10px;margin:0 0 8px}
+.cdoc dt{white-space:nowrap}.cdoc dd{margin:0;color:var(--mu)}
+.cdoc .ret{color:var(--mu)}.cdoc .ret b{color:var(--tx)}
+.cdoc{font-size:14.5px;line-height:1.42}.cdoc code{font-size:13px}
+.cchip{padding:5px 12px}
+.chain{display:flex;flex-direction:column;gap:6px;margin-top:14px}
+.chain div{display:flex;gap:14px;align-items:baseline;background:var(--p2);border-radius:8px;padding:6px 12px;width:max-content}
+.chain code{font:700 16px "JetBrains Mono",monospace;color:var(--acc)}.chain span{font-size:15px;color:var(--mu)}
