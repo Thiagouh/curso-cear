@@ -476,8 +476,8 @@ const tbl=(head,rows)=>`<table class="dt"><tr>${head.map(h=>`<th>${h}</th>`).joi
 
 /* ---------- dados bagunçados ---------- */
 if($('#messyTbl')){
- const R=[[2,6,'noite','4,1'],[5,2,'manhã','7,3'],[8,null,'Manhã','8,9'],[3,4,'tarde','5,2'],[5,2,'manhã','7,3'],[80,1,'MANHÃ ','9,1'],[null,3,'noite','6,0'],[6,0,'tarde',null]];
- const C=[[2,6,'noite','4,1'],[5,2,'manhã','7,3'],[8,'~2,5','~manhã','8,9'],[3,4,'tarde','5,2'],['~8,0',1,'~manhã','9,1'],['~5,0',3,'noite','6,0']];
+ const R=[[2,6,'noite','4,1'],[5,2,'manhã','7,3'],[8,null,'Manhã','8,9'],[3,4,'tarde','5,2'],[5,2,'manhã','7,3'],[80,1,'MANHÃ ','9,1'],[null,3,'manha','6,0'],[6,0,'tarde',null]];
+ const C=[[2,6,'noite','4,1'],[5,2,'manhã','7,3'],[8,'~2,5','~manhã','8,9'],[3,4,'tarde','5,2'],['~8,0',1,'~manhã','9,1'],['~5,0',3,'~manhã','6,0']];
  const P=[['Valores faltantes','am','imputar (ex.: mediana) ou remover · sem o alvo, a linha sai do treino'],['Duplicados','rd','remover: a mesma linha conta duas vezes'],['Outliers','pk','investigar: 80 h por semana? provável erro de digitação (8,0)'],['Categorias inconsistentes','vi','padronizar: minúsculas, sem acento solto nem espaços'],['Tabela limpa','gr','8 linhas → 6 · cada decisão registrada no notebook']];
  const H=['#','Horas','Faltas','Turno','Nota'];
  function draw(k){const td=(v,st)=>`<td style="${st||''}">${v===null?'NaN':v}</td>`;let rows;
@@ -674,6 +674,9 @@ if($('#ragSvg')){const r=rng(8),Q=[500,240],Pts=[[Q[0]-70,Q[1]-38],[Q[0]+62,Q[1]
  h+=`<g class="f" data-f="3">${nn.map(i=>`<line x1="${Q[0]}" y1="${Q[1]}" x2="${Pts[i][0]}" y2="${Pts[i][1]}" stroke="${COL.am}" stroke-width="3"/><circle cx="${Pts[i][0]}" cy="${Pts[i][1]}" r="11" fill="${COL.am}"/>`).join('')}<text x="736" y="196" text-anchor="middle" font-size="18" font-weight="700" fill="${COL.am}">3 · KNN</text><text x="736" y="218" text-anchor="middle" font-size="15" fill="${COL.mu}">3 mais</text><text x="736" y="262" text-anchor="middle" font-size="15" fill="${COL.mu}">próximos</text><path d="M694 230 H776" stroke="${COL.am}" stroke-width="3" marker-end="url(#ara)"/></g>`;
  h+=`<g class="f" data-f="4"><rect x="782" y="40" width="400" height="250" rx="16" fill="${COL.p2}" stroke="${COL.dim}" stroke-width="2"/><foreignObject x="800" y="54" width="366" height="230"><div xmlns="http://www.w3.org/1999/xhtml" style="font:16px/1.45 'JetBrains Mono',monospace;color:#c9d1ee"><b style="color:#EAF0FF">Contexto:</b><div style="color:${COL.am}">[Regulamento, art. 12] O trancamento pode ser pedido até a 4ª semana…</div><div style="color:${COL.am}">[FAQ] O pedido é feito pelo portal…</div><div style="color:${COL.am}">[Manual] Prazos do calendário…</div><b style="color:#EAF0FF">Pergunta:</b> Qual o prazo para trancar?</div></foreignObject><path d="M982 292 V326" stroke="${COL.mu}" stroke-width="3" marker-end="url(#ar)"/><rect x="782" y="332" width="400" height="66" rx="14" fill="${COL.vi}" fill-opacity=".25" stroke="${COL.vi}" stroke-width="2.5"/><text x="982" y="373" text-anchor="middle" font-size="22" font-weight="700">LLM</text><path d="M982 400 V434" stroke="${COL.gr}" stroke-width="3" marker-end="url(#arc)"/><rect x="782" y="440" width="626" height="84" rx="14" fill="${COL.gr}" fill-opacity=".15" stroke="${COL.gr}" stroke-width="2.5"/><foreignObject x="800" y="452" width="596" height="66"><div xmlns="http://www.w3.org/1999/xhtml" style="font:700 19px/1.35 Inter,sans-serif;color:${COL.gr}">Até a 4ª semana de aula, pelo portal. <span style="font-weight:400;color:#8A94B8">Fonte: Regulamento, art. 12</span></div></foreignObject>${cap(1206,60,200,COL.gr,'4 ·','o LLM responde com base nos trechos e cita a fonte')}</g>`;
  $('#ragSvg').innerHTML=h}
+
+/* ---------- extensões (ex.: assets/comandos.js), carregadas antes deste arquivo ---------- */
+(window.DECK_EXT||[]).forEach(f=>{try{f({FX,COL,BLK,slides,go,$,$$,rng,gauss,mapper,axes,fmt,TX,tn})}catch(e){console.error(e)}});
 
 window.deck={go,next,prev};
 const texGo=()=>{texAll();['#lw','#mrH'].forEach(q=>{const e=$(q);if(e)e.dispatchEvent(new Event('input'))})};
