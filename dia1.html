@@ -126,11 +126,6 @@
 <!-- M01 -->
 <section class="s sec" data-b="2" data-q="O que um modelo realmente recebe para aprender?" data-items="Features e target;Dados bagunçados;EDA: olhar antes de modelar;Encoding e escala;Vazamento e overfitting;Validação cruzada;lab:Lab 00" data-notes="CAPA DO MÓDULO 01 (1 min). Agora começamos a falar de dados. Todo modelo, da regressão ao LLM, depende de como os dados são coletados, limpos, transformados, divididos e avaliados. É o módulo mais longo do dia — e o mais importante na prática."></section>
 
-<!-- CMD LIB00 -->
-<section class="s" data-b="2" data-cmd="lib00" data-notes="FERRAMENTAS DO LAB 00 (3 min). Esta é a primeira célula do notebook, linha por linha. numpy, pandas e matplotlib com seus apelidos de sempre; do scikit-learn, importamos só as peças. Reforce: no Colab tudo já vem instalado. Use → para passar de comando em comando (ou clique na lista); os controles mudam o parâmetro destacado no código.">
-  <h2>As ferramentas do Lab 00</h2>
-</section>
-
 <!-- DATASETS -->
 <section class="s" data-b="2" data-notes="DATASETS (4 min). Apresente os conjuntos de dados que aparecem ao longo do curso. Cada linha é um exemplo; cada coluna, uma feature. Destaque que imagens e textos também viram tabelas de números (módulos 05 e 06). Iris e Wine são datasets clássicos do Scikit-learn; os sintéticos foram gerados para a aula; MNIST aparece como exemplo nos slides de visão.">
   <h2>Os datasets que vamos usar hoje</h2>
@@ -174,6 +169,11 @@
     <div id="messyCards" class="col" style="flex:1;gap:12px"></div>
   </div>
   <i class="f" data-f="5"></i>
+</section>
+
+<!-- CMD LIB00 -->
+<section class="s" data-b="2" data-cmd="lib00" data-notes="FERRAMENTAS DO LAB 00 (3 min). Os problemas já foram mostrados; agora, com que ferramentas vamos resolvê-los. Esta é a primeira célula do notebook, linha por linha. numpy, pandas e matplotlib com seus apelidos de sempre; do scikit-learn, importamos só as peças. Reforce: no Colab tudo já vem instalado. Use → para passar de comando em comando (ou clique na lista); os controles mudam o parâmetro destacado no código.">
+  <h2>As ferramentas do Lab 00</h2>
 </section>
 
 <!-- CMD INSP -->
@@ -251,6 +251,11 @@
   <h2>Separar, preparar e encadear</h2>
 </section>
 
+<!-- CMD CONF -->
+<section class="s" data-b="2" data-cmd="conf" data-notes="NO NOTEBOOK · CONFERIR E SALVAR (4 min). Etapas 4.4 a 5.1 do Lab 00. Fatiamento de array e mean(axis=0) para conferir a padronização (o teste fica perto de 0, não exato); named_transformers_ para ler o μ aprendido; fillna + scaler no dataset inteiro para mostrar o jeito errado; to_csv; e o desafio da distância com iloc, np.sqrt e idxmin — alterne sem/com padronização. Use → para passar de comando em comando (ou clique na lista); os controles mudam o parâmetro destacado no código. O cartão à esquerda descreve o comando por escrito.">
+  <h2>Conferir o que o fit aprendeu e salvar</h2>
+</section>
+
 <!-- 08 -->
 <section class="s" data-b="2" data-id="fit" data-notes="SLIDE 08 (8 min). Arraste a complexidade (grau do polinômio). Pontos brancos = treino; anéis âmbar = validação. Com grau alto, o erro de treino vai a quase zero e o de validação explode. “Qual curva vocês escolheriam?” A decisão precisa de dados de validação, não do olho.">
   <h2>Acertar tudo no treino é sempre bom sinal?</h2>
@@ -281,11 +286,6 @@
 
 <!-- M02 -->
 <section class="s sec" data-b="3" data-q="Como uma reta aprende com os próprios erros?" data-items="ŷ = w·x + b;Resíduos e MSE;Descida do gradiente;Regressão múltipla;Regularização;MAE, MSE e R²;lab:Lab 01" data-notes="CAPA DO MÓDULO 02 (1 min). Primeiro modelo do curso: a regressão linear. A ideia de perda + descida do gradiente vai reaparecer nas redes neurais e nos LLMs amanhã."></section>
-
-<!-- CMD LIB01 -->
-<section class="s" data-b="3" data-cmd="lib01" data-notes="FERRAMENTAS DO LAB 01 (2 min). Mostre só o que é novo em relação ao Lab 00: cross_val_score, PolynomialFeatures, LinearRegression/Ridge e as métricas. Use → para passar de comando em comando (ou clique na lista); os controles mudam o parâmetro destacado no código.">
-  <h2>As ferramentas do Lab 01</h2>
-</section>
 
 <!-- 09 -->
 <section class="s" data-b="3" data-id="line" data-notes="SLIDE 09 (4 min). ŷ = wx + b. w = inclinação, b = intercepto, x = entrada. Mova os controles. Exemplo: x = 6, w = 5, b = 20 → ŷ = 50 (exemplo matemático, não uma escala real de nota). O modelo precisa descobrir w e b a partir dos dados.">
@@ -321,6 +321,11 @@
       <div class="f" data-f="1" style="font-size:22px">Um erro <b class="am">2×</b> maior pesa <b class="am">4×</b></div>
     </div>
   </div>
+</section>
+
+<!-- CMD LIB01 -->
+<section class="s" data-b="3" data-cmd="lib01" data-notes="FERRAMENTAS DO LAB 01 (2 min). Depois da reta e do erro, as ferramentas para calculá-los. Mostre só o que é novo em relação ao Lab 00: cross_val_score, PolynomialFeatures, LinearRegression/Ridge e as métricas. Use → para passar de comando em comando (ou clique na lista); os controles mudam o parâmetro destacado no código.">
+  <h2>As ferramentas do Lab 01</h2>
 </section>
 
 <!-- CMD NP -->
@@ -428,16 +433,6 @@
 <!-- M03 -->
 <section class="s sec" data-b="4" data-q="Como decidir a classe de algo que nunca vimos?" data-items="KNN e distâncias;Árvore de decisão e Gini;Random Forest;Matriz de confusão;Precision × recall e limiar;lab:Lab 02" data-notes="CAPA DO MÓDULO 03 (1 min). Classificação: o KNN decide pela vizinhança; as árvores fazem perguntas; a Random Forest junta várias árvores. Depois, como medir se a classificação está boa de verdade — e como escolher o limiar."></section>
 
-<!-- CMD LIB02 -->
-<section class="s" data-b="4" data-cmd="lib02" data-notes="FERRAMENTAS DO LAB 02 (2 min). datasets (Iris e câncer de mama), os três classificadores (neighbors, tree, ensemble) e as métricas de classificação. Use → para passar de comando em comando (ou clique na lista); os controles mudam o parâmetro destacado no código.">
-  <h2>As ferramentas do Lab 02</h2>
-</section>
-
-<!-- CMD IRIS -->
-<section class="s" data-b="4" data-cmd="iris" data-notes="NO NOTEBOOK · IRIS (4 min). as_frame=True × arrays; as 4 medidas; classes 0/1/2 e target_names; o scatter das pétalas (dados reais); stratify=y × None com as contagens reais do split. Use → para passar de comando em comando (ou clique na lista); os controles mudam o parâmetro destacado no código.">
-  <h2>Carregar e separar o Iris</h2>
-</section>
-
 <!-- 14 -->
 <section class="s" data-b="4" data-id="knn" data-notes="SLIDE 14 (4 min). Clique no gráfico para mover o ponto novo; troque K. As cores de fundo mostram como cada região seria classificada. K pequeno é sensível a ruído (fronteira recortada); K grande suaviza. Normalizar muda as distâncias. O KNN não ajusta pesos: ele guarda os exemplos e compara.">
   <h2>Seus vizinhos podem decidir quem você é</h2>
@@ -484,9 +479,24 @@
   <div class="row" style="justify-content:space-between;font-size:23px;margin-top:20px"><div><b class="cy">1 árvore</b> <span class="mu">fácil de ler, alta variância</span></div><div><b class="gr">Floresta</b> <span class="mu">menor variância, menos interpretável</span></div></div>
 </section>
 
+<!-- CMD LIB02 -->
+<section class="s" data-b="4" data-cmd="lib02" data-notes="FERRAMENTAS DO LAB 02 (2 min). Depois de KNN, árvore e floresta, as peças que os implementam: datasets (Iris e câncer de mama), os três classificadores (neighbors, tree, ensemble) e as métricas de classificação. Use → para passar de comando em comando (ou clique na lista); os controles mudam o parâmetro destacado no código.">
+  <h2>As ferramentas do Lab 02</h2>
+</section>
+
+<!-- CMD IRIS -->
+<section class="s" data-b="4" data-cmd="iris" data-notes="NO NOTEBOOK · IRIS (4 min). as_frame=True × arrays; as 4 medidas; classes 0/1/2 e target_names; o scatter das pétalas (dados reais); stratify=y × None com as contagens reais do split. Use → para passar de comando em comando (ou clique na lista); os controles mudam o parâmetro destacado no código.">
+  <h2>Carregar e separar o Iris</h2>
+</section>
+
 <!-- CMD CLF -->
 <section class="s" data-b="4" data-cmd="clf" data-notes="NO NOTEBOOK · CLASSIFICADORES (6 min). Todas as acurácias são reais do Lab 02. KNN: K = 1 dá 100% no treino, mas a validação não melhora; K = 61 despenca. Árvore: max_depth=None decora. Floresta: mais árvores, menor desvio. plot_tree real com profundidade 2. predict × predict_proba nas 5 primeiras flores do teste. Use → para passar de comando em comando (ou clique na lista); os controles mudam o parâmetro destacado no código.">
   <h2>Três classificadores, a mesma interface</h2>
+</section>
+
+<!-- CMD CMP -->
+<section class="s" data-b="4" data-cmd="cmp" data-notes="NO NOTEBOOK · COMPARAR E INSPECIONAR (4 min). Etapas 3 e 4 do Lab 02. score no treino × validação cruzada (valores reais); plt.subplots com ax[0]/ax[1] — alterne set_xscale log/linear; plot_tree real; predict × predict_proba nas 5 primeiras flores. Use → para passar de comando em comando (ou clique na lista); os controles mudam o parâmetro destacado no código. O cartão à esquerda descreve o comando por escrito.">
+  <h2>Comparar, desenhar e prever</h2>
 </section>
 
 <!-- 17 -->
