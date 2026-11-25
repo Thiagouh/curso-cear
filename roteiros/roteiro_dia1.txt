@@ -164,15 +164,7 @@ MÓDULO 01 · DADOS & DATASETS
      é real (fundamental < médio < superior), o encoding ordinal faz sentido. Cuidado com
      categorias muito numerosas (ex.: CEP): one-hot gera colunas demais.
 
-[18] Quem é mais parecido com você?
-     Fala: Quem é mais parecido com “você” (25 anos, R$ 3.000)? A tem 62 anos e ganha R$
-     3.200; B tem 27 anos e ganha R$ 4.500. Sem padronizar, a distância é dominada pela
-     renda (milhares de reais contra dezenas de anos) e A parece mais próxima — absurdo.
-     Clique em Padronizar: z = (x − média) / desvio coloca as features na mesma escala e B
-     passa a ser a mais próxima. Afeta KNN, K-Means, redes neurais e regularização; árvores
-     não ligam para escala. A média e o desvio vêm do treino.
-
-[19] Encoding, faltantes e escala no código  [no notebook]
+[18] Encoding, faltantes e escala no código  [no notebook]
      Comandos:
        1. pd.get_dummies() — one-hot no pandas
        2. OneHotEncoder(handle_unknown=…) — one-hot no scikit-learn
@@ -181,17 +173,17 @@ MÓDULO 01 · DADOS & DATASETS
        5. pd.concat([…], axis=1) — juntar colunas lado a lado
      Fala: get_dummies × map (a ordem falsa do slide de encoding); OneHotEncoder com
      handle_unknown: troque para error e mostre o erro com a categoria nova; SimpleImputer
-     com as três estratégias; StandardScaler nas 3 pessoas do slide anterior, com mean_ e
-     scale_. Use → para passar de comando em comando (ou clique na lista); os controles
-     mudam o parâmetro destacado no código.
+     com as três estratégias; StandardScaler mostrando mean_ e scale_ (escala: renda em
+     milhares × idade em dezenas). Use → para passar de comando em comando (ou clique na
+     lista); os controles mudam o parâmetro destacado no código.
 
-[20] O teste não pode contar o futuro
+[19] O teste não pode contar o futuro
      Fala: Padronizar o dataset inteiro antes de separar vaza média e desvio do teste para o
      treino. Certo: separar; ajustar (fit) o scaler só no treino; transformar treino e teste
      com ele. O Pipeline do Scikit-learn garante essa ordem, inclusive na validação cruzada.
      “O teste é uma prova inédita, não uma cola para o estudo.”
 
-[21] Separar, preparar e encadear  [no notebook]
+[20] Separar, preparar e encadear  [no notebook]
      Comandos:
        1. df.drop(columns=[…]) — separar features e alvo
        2. train_test_split() — separar treino e teste
@@ -205,7 +197,7 @@ MÓDULO 01 · DADOS & DATASETS
      comando em comando (ou clique na lista); os controles mudam o parâmetro destacado no
      código.
 
-[22] Conferir o que o fit aprendeu e salvar  [no notebook]
+[21] Conferir o que o fit aprendeu e salvar  [no notebook]
      Comandos:
        1. Z_tr[:, :4].mean(axis=0) — conferir a padronização
        2. named_transformers_[…].mean_ — ler o que o fit aprendeu
@@ -219,19 +211,19 @@ MÓDULO 01 · DADOS & DATASETS
      para passar de comando em comando (ou clique na lista); os controles mudam o parâmetro
      destacado no código. O cartão à esquerda descreve o comando por escrito.
 
-[23] Acertar tudo no treino é sempre bom sinal?
+[22] Acertar tudo no treino é sempre bom sinal?
      Fala: Arraste a complexidade (grau do polinômio). Pontos brancos = treino; anéis âmbar
      = validação. Com grau alto, o erro de treino vai a quase zero e o de validação explode.
      “Qual curva vocês escolheriam?” A decisão precisa de dados de validação, não do olho.
 
-[24] Uma divisão pode dar sorte. Cinco, nem tanto
+[23] Uma divisão pode dar sorte. Cinco, nem tanto
      Fala: Um único corte de validação pode dar sorte ou azar. Na validação cruzada k-fold
      (aqui k = 5), o treino é dividido em 5 partes e cada parte vira validação uma vez.
      Avance para ver as 5 rodadas. O resultado é a média e o desvio das 5 notas — mais
      confiável para comparar modelos e escolher hiperparâmetros. O teste continua guardado
      até o fim. Notas ilustrativas.
 
-[25] Lab 00 · Arrume a casa antes de modelar
+[24] Lab 00 · Arrume a casa antes de modelar
      Notebook: 00_dados_e_datasets.ipynb
      Passos:
        1. Carregar e inspecionar: formato, tipos, describe() e faltantes
@@ -243,7 +235,7 @@ MÓDULO 01 · DADOS & DATASETS
      dentro do notebook (não depende de download) e reproduz os problemas do slide “dados
      bagunçados”. O gabarito está em 00_dados_e_datasets_gabarito.ipynb — não mostre antes.
 
-[26] Pausa
+[25] Pausa
      Na tela: Deixe o Notebook 01 aberto
      Fala: Clique em Iniciar.
 
@@ -251,7 +243,7 @@ MÓDULO 01 · DADOS & DATASETS
 MÓDULO 02 · REGRESSÃO LINEAR
 --------------------------------------------------------------------------------------------
 
-[27] Capa do módulo 02 · Regressão Linear
+[26] Capa do módulo 02 · Regressão Linear
      Tópicos:
        1. ŷ = w·x + b
        2. Resíduos e MSE
@@ -264,18 +256,18 @@ MÓDULO 02 · REGRESSÃO LINEAR
      Fala: Primeiro modelo do curso: a regressão linear. A ideia de perda + descida do
      gradiente vai reaparecer nas redes neurais e nos LLMs amanhã.
 
-[28] A primeira previsão pode ser uma reta
+[27] A primeira previsão pode ser uma reta
      Fala: ŷ = wx + b. w = inclinação, b = intercepto, x = entrada. Mova os controles.
      Exemplo: x = 6, w = 5, b = 20 → ŷ = 50 (exemplo matemático, não uma escala real de
      nota). O modelo precisa descobrir w e b a partir dos dados.
 
-[29] Como uma reta sabe que está errada?
+[28] Como uma reta sabe que está errada?
      Fala: A distância vertical entre ponto real e previsão é o resíduo. MSE = média dos
      quadrados: os quadrados no gráfico são literalmente cada erro ao quadrado. Pergunte:
      “Se eu deslocar a reta, o erro melhora ou piora?” — e mova os controles. Depois clique
      em “Ajuste ótimo” (mínimos quadrados).
 
-[30] As ferramentas do Lab 01  [no notebook]
+[29] As ferramentas do Lab 01  [no notebook]
      Comandos:
        1. numpy · pandas · plt — as mesmas do Lab 00
        2. model_selection — + cross_val_score
@@ -288,7 +280,7 @@ MÓDULO 02 · REGRESSÃO LINEAR
      métricas. Use → para passar de comando em comando (ou clique na lista); os controles
      mudam o parâmetro destacado no código.
 
-[31] NumPy: a reta e o erro em uma linha  [no notebook]
+[30] NumPy: a reta e o erro em uma linha  [no notebook]
      Comandos:
        1. os.path.exists() · to_numpy() — carregar e separar
        2. x_tr[:10] — um array
@@ -303,27 +295,27 @@ MÓDULO 02 · REGRESSÃO LINEAR
      de comando em comando (ou clique na lista); os controles mudam o parâmetro destacado no
      código.
 
-[32] Aprender é caminhar ladeira abaixo
+[31] Aprender é caminhar ladeira abaixo
      Fala: Gradiente = direção de maior crescimento do erro; a descida vai no sentido
      contrário: w ← w − α·∂L/∂w. Rode com α pequeno (lento), bom (converge), grande (oscila)
      e grande demais (diverge). Cada passo aqui é uma atualização; uma época é uma passada
      por todos os dados de treino.
 
-[33] A descida do gradiente, linha por linha  [no notebook]
+[32] A descida do gradiente, linha por linha  [no notebook]
      Fala: É a função do Lab 01, executada como o Python faz. Clique “Próxima linha” algumas
      vezes na primeira época: w e b começam em 0, y_hat e erro viram arrays, dw e db são os
      gradientes, e w e b dão um passo contra eles. Depois use “Próxima época” e “100
      épocas”. Troque alpha: 0,001 lento; 0,02 desce bem; 0,023 oscila; 0,03 diverge — os
      mesmos valores do item 4 do notebook.
 
-[34] Mais de uma feature, um peso para cada
+[33] Mais de uma feature, um peso para cada
      Fala: Com várias features, cada uma ganha seu peso: ŷ = w₁·horas + w₂·faltas + b. Mova
      os controles: as barras mostram quanto cada termo soma ou subtrai da previsão. Avance:
      um coeficiente é o efeito de uma feature mantendo as outras fixas; com 2 features o
      modelo é um plano, com 100 um hiperplano. Coeficientes ilustrativos — e coeficiente não
      prova causa.
 
-[35] Regularização: freando um modelo complexo
+[34] Regularização: freando um modelo complexo
      Fala: Mesmos dados do slide de overfitting, agora com um polinômio de grau 11 fixo. A
      regularização L2 (Ridge) soma à perda uma penalidade λ·Σw²: pesos grandes custam caro.
      Arraste λ: perto de zero a curva decora o treino; com λ moderado ela suaviza e o erro
@@ -331,12 +323,12 @@ MÓDULO 02 · REGRESSÃO LINEAR
      coeficientes encolhendo. Lasso (L1) pode zerar coeficientes e serve também para
      selecionar features.
 
-[36] Um modelo erra. Quanto, e em qual unidade?
+[35] Um modelo erra. Quanto, e em qual unidade?
      Fala: MAE: erro absoluto médio, na unidade original. MSE: penaliza mais os desvios
      grandes (unidade ao quadrado). R²: compara com prever sempre a média; 1 é perfeito, 0 é
      igual à média, pode ser negativo fora do treino. Nunca interprete uma métrica sozinha.
 
-[37] Scikit-learn: criar, treinar, prever, medir  [no notebook]
+[36] Scikit-learn: criar, treinar, prever, medir  [no notebook]
      Comandos:
        1. LinearRegression() — criar o modelo
        2. reg.fit(X, y) — treinar
@@ -350,7 +342,7 @@ MÓDULO 02 · REGRESSÃO LINEAR
      Use → para passar de comando em comando (ou clique na lista); os controles mudam o
      parâmetro destacado no código.
 
-[38] Validação cruzada, polinômios e Ridge  [no notebook]
+[37] Validação cruzada, polinômios e Ridge  [no notebook]
      Comandos:
        1. cross_val_score(…, cv=5) — validação cruzada
        2. PolynomialFeatures(degree=…) — potências de x
@@ -362,7 +354,7 @@ MÓDULO 02 · REGRESSÃO LINEAR
      regressão múltipla via named_steps. Use → para passar de comando em comando (ou clique
      na lista); os controles mudam o parâmetro destacado no código.
 
-[39] Lab 01 · Faça a reta aprender
+[38] Lab 01 · Faça a reta aprender
      Notebook: 01_regressao_linear.ipynb
      Passos:
        1. Carregar os dados limpos do Lab 00 e visualizar horas × nota
@@ -374,7 +366,7 @@ MÓDULO 02 · REGRESSÃO LINEAR
      Fala: Abra 01_regressao_linear.ipynb (versão do aluno). Não mostre o gabarito antes da
      atividade.
 
-[40] Pausa
+[39] Pausa
      Na tela: Deixe o Notebook 02 aberto
      Fala: Clique em Iniciar.
 
@@ -382,7 +374,7 @@ MÓDULO 02 · REGRESSÃO LINEAR
 MÓDULO 03 · KNN, ÁRVORES & RANDOM FOREST
 --------------------------------------------------------------------------------------------
 
-[41] Capa do módulo 03 · KNN, Árvores & Random Forest
+[40] Capa do módulo 03 · KNN, Árvores & Random Forest
      Tópicos:
        1. KNN e distâncias
        2. Árvore de decisão e Gini
@@ -395,30 +387,30 @@ MÓDULO 03 · KNN, ÁRVORES & RANDOM FOREST
      Forest junta várias árvores. Depois, como medir se a classificação está boa de verdade
      — e como escolher o limiar.
 
-[42] Seus vizinhos podem decidir quem você é
+[41] Seus vizinhos podem decidir quem você é
      Fala: Clique no gráfico para mover o ponto novo; troque K. As cores de fundo mostram
      como cada região seria classificada. K pequeno é sensível a ruído (fronteira
      recortada); K grande suaviza. Normalizar muda as distâncias. O KNN não ajusta pesos:
      ele guarda os exemplos e compara.
 
-[43] “Perto” depende de como você mede
+[42] “Perto” depende de como você mede
      Fala: O KNN depende de como medimos “perto”. Clique no gráfico para mover o ponto B.
      Euclidiana = linha reta (Pitágoras); Manhattan = soma dos deslocamentos em cada eixo,
      como andar por quarteirões. Troque a métrica e veja a região de raio 3 ao redor de A:
      na Manhattan ela vira um losango — e os pontos considerados vizinhos mudam. Para textos
      e embeddings usamos muito a similaridade do cosseno, que compara direções (dia 2).
 
-[44] Que pergunta separa melhor estas flores?
+[43] Que pergunta separa melhor estas flores?
      Fala: Avance: cada divisão procura grupos mais homogêneos; o Gini (calculado ao vivo
      nos pontos do gráfico) cai a cada pergunta. 0 = nó puro. Árvore profunda demais decora
      o treino (overfitting). Dados sintéticos no estilo Iris; regras didáticas.
 
-[45] E se várias árvores votassem juntas?
+[44] E se várias árvores votassem juntas?
      Fala: Random Forest: muitas árvores, cada uma treinada com amostras e features
      sorteadas. Avance para ver a votação. A combinação tende a reduzir a variância em
      relação a uma árvore só, mas não garante acerto. Troca: perde-se interpretabilidade.
 
-[46] As ferramentas do Lab 02  [no notebook]
+[45] As ferramentas do Lab 02  [no notebook]
      Comandos:
        1. datasets — dados prontos
        2. model_selection · pipeline — separar, validar, encadear
@@ -431,7 +423,7 @@ MÓDULO 03 · KNN, ÁRVORES & RANDOM FOREST
      classificação. Use → para passar de comando em comando (ou clique na lista); os
      controles mudam o parâmetro destacado no código.
 
-[47] Carregar e separar o Iris  [no notebook]
+[46] Carregar e separar o Iris  [no notebook]
      Comandos:
        1. load_iris(as_frame=True) — carregar o dataset
        2. X.head() — as 4 medidas
@@ -443,7 +435,7 @@ MÓDULO 03 · KNN, ÁRVORES & RANDOM FOREST
      passar de comando em comando (ou clique na lista); os controles mudam o parâmetro
      destacado no código.
 
-[48] Três classificadores, a mesma interface  [no notebook]
+[47] Três classificadores, a mesma interface  [no notebook]
      Comandos:
        1. modelos = {…} · .items() — avaliar os três de uma vez
        2. KNeighborsClassifier(n_neighbors=…) — KNN
@@ -455,7 +447,7 @@ MÓDULO 03 · KNN, ÁRVORES & RANDOM FOREST
      primeiras flores do teste. Use → para passar de comando em comando (ou clique na
      lista); os controles mudam o parâmetro destacado no código.
 
-[49] Comparar, desenhar e prever  [no notebook]
+[48] Comparar, desenhar e prever  [no notebook]
      Comandos:
        1. .fit(…).score(…) — treino × validação
        2. plt.subplots(1, 2) — dois gráficos lado a lado
@@ -467,14 +459,14 @@ MÓDULO 03 · KNN, ÁRVORES & RANDOM FOREST
      clique na lista); os controles mudam o parâmetro destacado no código. O cartão à
      esquerda descreve o comando por escrito.
 
-[50] 95% de acurácia pode ser péssimo
+[49] 95% de acurácia pode ser péssimo
      Fala: Matriz ilustrativa: 95 negativos corretos, 5 positivos perdidos, nenhum positivo
      previsto. Acurácia 95%, mas recall positivo = 0. Precisão positiva é indefinida (0/0).
      A classe minoritária pode importar mais que o percentual total. Precision: dos que
      previ positivos, quantos eram? Recall: dos positivos reais, quantos achei? F1: média
      harmônica.
 
-[51] Precision × recall: quem escolhe é o limiar
+[50] Precision × recall: quem escolhe é o limiar
      Fala: Um classificador costuma devolver uma probabilidade; nós escolhemos o limiar a
      partir do qual dizemos “positivo”. Cada ponto é um paciente (ilustrativo): na linha de
      cima, os realmente positivos; embaixo, os negativos; a posição horizontal é o score do
@@ -482,7 +474,7 @@ MÓDULO 03 · KNN, ÁRVORES & RANDOM FOREST
      precision cai (mais alarmes falsos); subindo, o contrário. Não existe limiar certo:
      depende do custo de cada erro (triagem de câncer × filtro de spam).
 
-[52] Avaliar a classificação no código  [no notebook]
+[51] Avaliar a classificação no código  [no notebook]
      Comandos:
        1. ConfusionMatrixDisplay — matriz de confusão
        2. classification_report() — métricas por classe
@@ -494,7 +486,7 @@ MÓDULO 03 · KNN, ÁRVORES & RANDOM FOREST
      números reais do desafio 5.1 (câncer de mama). Use → para passar de comando em comando
      (ou clique na lista); os controles mudam o parâmetro destacado no código.
 
-[53] Lab 02 · Mesmos dados. Três algoritmos
+[52] Lab 02 · Mesmos dados. Três algoritmos
      Notebook: 02_classificacao.ipynb
      Passos:
        1. Explorar o Iris e separar treino/teste com estratificação
@@ -505,7 +497,7 @@ MÓDULO 03 · KNN, ÁRVORES & RANDOM FOREST
      Para discutir: O modelo que foi melhor no treino deve necessariamente ser o escolhido?
      Fala: Abra 02_classificacao.ipynb. Não mostre o gabarito antes.
 
-[54] Hoje a máquina aprendeu com respostas. Amanhã, sem elas.
+[53] Hoje a máquina aprendeu com respostas. Amanhã, sem elas.
      Fala: Recapitule em uma frase cada módulo e pergunte o que ficou mais claro e o que
      ficou confuso. Amanhã: aprender sem rótulos, visão computacional e LLMs. Peça que
      salvem os notebooks no Drive.

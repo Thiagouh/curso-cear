@@ -540,7 +540,7 @@ skl:{
 cv:{
  'cross_val_score(…, cv=5)':{f:"«cross_val_score()» divide os dados em «cv» partes, treina em cv − 1 delas e avalia na que sobrou, repetindo até cada parte ser validação uma vez. Com um Pipeline, o preparo é refeito em cada rodada, só com a parte de treino.",p:[["cv","número de folds (partes)"],["scoring","a métrica: «'accuracy'», «'neg_mean_absolute_error'»…; erros vêm negativos porque o scikit-learn sempre maximiza o score"]],r:"um array com uma nota por fold; «.mean()» e «.std()» resumem."},
  'PolynomialFeatures(degree=…)':{f:"«PolynomialFeatures» cria colunas novas com as potências de cada feature (x, x², x³… até o grau pedido), mais uma coluna de 1s.",p:[["degree","o maior expoente"]],r:"um array 2D; para uma feature, com degree + 1 colunas."},
- 'Ridge(alpha=…)':{f:"«Ridge» é a regressão linear com a penalidade λ·Σw² somada à perda. A função «poli(lam)» monta um Pipeline: polinômio de grau 10 → padronizar → modelo. «passos.append(…)» acrescenta a última etapa à lista, e «A if condição else B» escolhe «LinearRegression()» quando λ = 0 e «Ridge» nos outros casos.",p:[["alpha","a força da penalidade, o λ do slide. Não é a taxa de aprendizado!"]]},
+ 'Ridge(alpha=…)':{f:"«Ridge» é a regressão linear com a penalidade λ·Σw² somada à perda. A função «poli(lam)» monta um Pipeline: polinômio de grau 10 → padronizar → modelo. «passos.append(…)» acrescenta a última etapa à lista, e «A if condição else B» escolhe «LinearRegression()» quando λ = 0 e «Ridge» nos outros casos.",p:[["alpha","a força da penalidade, o λ do slide."]]},
  "named_steps['regressao'].coef_":{f:"«named_steps['regressao']» acessa a etapa do modelo dentro do Pipeline e «.coef_» lê os pesos. «get_feature_names_out()» dá os nomes das colunas depois do preparo. «pd.Series(valores, index=nomes)» junta os dois numa coluna rotulada; «.round(2)» arredonda e «.sort_values()» ordena do menor para o maior.",r:"uma Series: um peso por feature."}},
 lib02:{
  'datasets':{f:"«load_iris» e «load_breast_cancer» carregam datasets que já vêm com o scikit-learn, sem download."},
@@ -576,26 +576,28 @@ aval:{
 
 /* ---------------- motor dos slides de comando ---------------- */
 const md=t=>esc(t).replace(/«([^»]*)»/g,'<code>$1</code>');
-const docHTML=d=>`<div class="lbl">O que o comando faz</div><p>${md(d.f)}</p>${d.p?`<dl>${d.p.map(([n,t])=>`<dt><code>${esc(n)}</code></dt><dd>${md(t)}</dd>`).join('')}</dl>`:''}${d.r?`<p class="ret"><b>Devolve:</b> ${md(d.r)}</p>`:''}`;
+const docHTML=(d,tip)=>`<div class="lbl">O que o comando faz</div><p>${md(d.f)}</p>${d.p?`<dl>${d.p.map(([n,t])=>`<dt><code>${esc(n)}</code></dt><dd>${md(t)}</dd>`).join('')}</dl>`:''}${d.r?`<p class="ret"><b>Devolve:</b> ${md(d.r)}</p>`:''}${tip?`<p class="dtip"><b>Dica:</b> ${tip}</p>`:''}`;
 function build(sec){const key=sec.dataset.cmd,C=CMD[key];if(!C){console.warn('comando sem conteúdo:',key);return}
  const id='cmd_'+key,S=Object.assign({},C.state||{}),idx=slides.indexOf(sec);sec.dataset.id=id;sec.classList.add('cmds');
- sec.insertAdjacentHTML('beforeend',`<div class="nbk">▸ ${C.lab}</div><div class="cmdw"><div class="cmdL"><div class="cmdLib">${C.libs.map(n=>`<span class="pill" style="color:var(--${LIBC[n]})">${n}</span>`).join('')}</div><div class="cmdList">${C.items.map((it,k)=>`<button class="cchip" data-k="${k}"><span class="k">${String(k+1).padStart(2,'0')}</span><span><code>${esc(it.chip)}</code><small>${it.lbl}</small></span></button>`).join('')}</div><div class="cdoc"></div></div>
-  <div class="cmdR"><div class="nbcell${C.cell?' libcell':''}"><div class="in">[ ]:</div><pre class="code"></pre></div><div class="ctls"></div><div class="cout"><span class="ol">${C.outLbl||'SAÍDA'}</span><div class="ob"></div></div><div class="csay"></div></div></div>`);
+ sec.insertAdjacentHTML('beforeend',`<div class="nbk">▸ ${C.lab}</div><div class="cmdw"><div class="cmdL"><div class="cmdLib">${C.libs.map(n=>`<span class="pill" style="color:var(--${LIBC[n]})">${n}</span>`).join('')}</div><div class="cmdList">${C.items.map((it,k)=>`<button class="cchip" data-k="${k}"><span class="k">${String(k+1).padStart(2,'0')}</span><span><code>${esc(it.chip)}</code><small>${it.lbl}</small></span></button>`).join('')}</div><button class="b cdbtn" title="tecla D">Ver descrição completa <kbd>D</kbd></button></div>
+  <div class="cmdR"><div class="nbcell${C.cell?' libcell':''}"><div class="in">[ ]:</div><pre class="code"></pre></div><div class="ctls"></div><div class="cout"><span class="ol">${C.outLbl||'SAÍDA'}</span><div class="ob"></div></div><div class="cdoc" hidden></div><div class="csay"></div></div></div>`);
  for(let k=1;k<C.items.length;k++)sec.insertAdjacentHTML('beforeend',`<i class="f" data-f="${k}"></i>`);
  let sel=-1;const v=(x,s)=>typeof x==='function'?x(s):x;
  const render=()=>{const it=C.items[sel];
   $('.code',sec).innerHTML=C.cell?C.cell.split('\n').map((ln,i)=>`<span class="ln${it.lines.includes(i)?' on':''}">${hlPy(ln)||' '}</span>`).join(''):hlPy(v(it.code,S));
   $('.ob',sec).innerHTML=it.out(S);
-  const tip=v(it.tip,S);$('.csay',sec).innerHTML=`<div>${v(it.say,S)}${tip?`<div class="tip">${tip}</div>`:''}</div>`;
-  const d=(DOC[key]||{})[it.chip],cd=$('.cdoc',sec);cd.hidden=!d;cd.innerHTML=d?docHTML(d):'';cd.scrollTop=0};
+  $('.csay',sec).innerHTML=`<div>${v(it.say,S)}</div>`;
+  const d=(DOC[key]||{})[it.chip],cd=$('.cdoc',sec);cd.innerHTML=d?docHTML(d,v(it.tip,S)):'';cd.scrollTop=0};
  C.items.forEach(it=>{if(!(DOC[key]||{})[it.chip])console.warn('comando sem descrição:',key,it.chip)});
  const ctls=()=>{const it=C.items[sel],L=it.ctl||[],bx=$('.ctls',sec);bx.style.display=L.length?'':'none';
   bx.innerHTML=L.map(c=>c.t==='range'?`<label class="ctl"><span class="mu mono">${c.l}</span><input type="range" data-c="${c.k}" min="${c.min}" max="${c.max}" step="${c.step}" value="${S[c.k]}"></label>`:`<div class="seg">${c.l?`<span class="mu mono">${c.l}</span>`:''}${c.o.map(([val,t])=>`<button class="b${String(S[c.k])===String(val)?' on':''}" data-c="${c.k}" data-v="${val}">${esc(t)}</button>`).join('')}</div>`).join('');
   $$('input',bx).forEach(inp=>inp.oninput=()=>{S[inp.dataset.c]=+inp.value;render()});
   $$('button',bx).forEach(b=>b.onclick=()=>{const c=L.find(x=>x.k===b.dataset.c);S[c.k]=c.num?+b.dataset.v:b.dataset.v;$$(`button[data-c="${c.k}"]`,bx).forEach(x=>x.classList.toggle('on',x===b));render()})};
- FX[id]={init(){$$('.cchip',sec).forEach(b=>b.onclick=()=>go(idx,+b.dataset.k))},
+ const togDoc=o=>{const R=$('.cmdR',sec),on=o??!R.classList.contains('doc');R.classList.toggle('doc',on);$('.cdoc',sec).hidden=!on;$('.cdbtn',sec).classList.toggle('on',on)};sec.togDoc=togDoc;
+ FX[id]={init(){$$('.cchip',sec).forEach(b=>b.onclick=()=>go(idx,+b.dataset.k));$('.cdbtn',sec).onclick=()=>togDoc()},
   step(k){if(k!==sel){sel=k;$$('.cchip',sec).forEach((b,j)=>{b.classList.toggle('on',j===k);b.classList.toggle('seen',j<k)});ctls();render()}}}}
 $$('section[data-cmd]').forEach(build);
+addEventListener('keydown',e=>{if((e.key==='d'||e.key==='D')&&!e.ctrlKey&&!e.metaKey&&e.target.tagName!=='INPUT'){const c=$('section.cmds.cur');if(c)c.togDoc()}});
 
 /* ---------------- descida do gradiente, linha por linha ---------------- */
 if($('#gdcCode')){const SRC=['def descida_gradiente(x, y, alpha=⟨A⟩, epocas=3000):','    w, b = 0.0, 0.0','    historico = []','    for _ in range(epocas):','        y_hat = w * x + b','        erro = y - y_hat','        historico.append((erro ** 2).mean())','        dw = -2 * (x * erro).mean()','        db = -2 * erro.mean()','        w = w - alpha * dw','        b = b - alpha * db','    return w, b, historico'];
