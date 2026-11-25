@@ -66,6 +66,19 @@ LIMPAR = r'''def limpar(df):
     df.loc[df['horas_estudo'] > 24, 'horas_estudo'] = np.nan
     return df.dropna(subset=['nota_final']).reset_index(drop=True)'''
 
+
+INSTALAR = md('''
+### Bibliotecas
+No **Google Colab** tudo já vem instalado: esta célula só confere. Em outro ambiente (Jupyter no seu PC), ela instala o que faltar.
+'''), code('''
+import importlib.util, subprocess, sys
+pacotes = {'numpy': 'numpy', 'pandas': 'pandas', 'matplotlib': 'matplotlib', 'sklearn': 'scikit-learn'}
+faltando = [pip for modulo, pip in pacotes.items() if importlib.util.find_spec(modulo) is None]
+if faltando:
+    subprocess.check_call([sys.executable, '-m', 'pip', 'install', '-q', *faltando])
+print('Bibliotecas prontas!' if not faltando else f'Instalado agora: {", ".join(faltando)}')
+''')
+
 # ================================================================== LAB 00
 lab00 = [
 md('''
@@ -101,6 +114,7 @@ md('''
 | correlação | `df.corr(numeric_only=True)` |
 | média de um grupo | `df.groupby('col')['outra'].mean()` |
 '''),
+*INSTALAR,
 md('## 0 · Preparação'),
 code('''
 import numpy as np
@@ -372,6 +386,7 @@ Os dados de alunos já chegam **limpos**, do jeito que você deixou no Lab 00. A
 
 Procure as células marcadas com **`# TODO`** e substitua os `___`.
 '''),
+*INSTALAR,
 md('## 0 · Preparação (célula pronta)'),
 code('''
 import numpy as np
@@ -579,6 +594,7 @@ O foco é comparar classificadores com honestidade.
 
 Procure as células marcadas com **`# TODO`** e substitua os `___`.
 '''),
+*INSTALAR,
 md('## 0 · Preparação (célula pronta)'),
 code('''
 import numpy as np
