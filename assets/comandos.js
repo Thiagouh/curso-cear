@@ -583,7 +583,10 @@ $$('section[data-cmd]').forEach(build);
 if($('#gdcCode')){const SRC=['def descida_gradiente(x, y, alpha=⟨A⟩, epocas=3000):','    w, b = 0.0, 0.0','    historico = []','    for _ in range(epocas):','        y_hat = w * x + b','        erro = y - y_hat','        historico.append((erro ** 2).mean())','        dw = -2 * (x * erro).mean()','        db = -2 * erro.mean()','        w = w - alpha * dw','        b = b - alpha * db','    return w, b, historico'];
  const AL=[0.001,0.01,0.023,0.03];let a=0.01,pc,w,b,yh,er,dw,db,hist,ep,chg,timer=null,last;
  const V3=a=>a?`[${a.slice(0,4).map(v=>v.toFixed(2)).join(', ')}, …]`:'—',N=v=>v===null||v===undefined?'—':Math.abs(v)>1e5?v.toExponential(2):v.toFixed(4);
- function reset(){stop();pc=1;w=b=yh=er=dw=db=hist=null;ep=0;chg=[];last=-1;$('#gdcMsg').innerHTML='<span class="mu">Clique em “Próxima linha” para executar a função como o Python faz.</span>';draw()}
+ let snaps=[];
+ const snap=()=>{snaps.push({pc,w,b,yh,er,dw,db,hist:hist&&[...hist],ep,chg,last,msg:$('#gdcMsg').innerHTML});if(snaps.length>500)snaps.shift()};
+ function back(){stop();const o=snaps.pop();if(!o)return;({pc,w,b,yh,er,dw,db,hist,ep,chg,last}=o);$('#gdcMsg').innerHTML=o.msg;draw()}
+ function reset(){stop();snaps=[];pc=1;w=b=yh=er=dw=db=hist=null;ep=0;chg=[];last=-1;$('#gdcMsg').innerHTML='<span class="mu">Clique em “Próxima linha” para executar a função como o Python faz.</span>';draw()}
  function exec1(){last=pc;switch(pc){case 1:w=0;b=0;chg=['w','b'];pc=2;break;case 2:hist=[];chg=['historico'];pc=3;break;case 3:ep++;chg=['época'];pc=4;break;
   case 4:yh=X10.map(x=>w*x+b);chg=['y_hat'];pc=5;break;case 5:er=Y10.map((y,i)=>y-yh[i]);chg=['erro'];pc=6;break;case 6:hist.push(mean(er.map(e=>e*e)));chg=['historico'];pc=7;break;
   case 7:dw=-2*mean(X10.map((x,i)=>x*er[i]));chg=['dw'];pc=8;break;case 8:db=-2*mean(er);chg=['db'];pc=9;break;case 9:w=w-a*dw;chg=['w'];pc=10;break;case 10:b=b-a*db;chg=['b'];pc=3;break}}
@@ -602,6 +605,6 @@ if($('#gdcCode')){const SRC=['def descida_gradiente(x, y, alpha=⟨A⟩, epocas=
  function stop(){clearInterval(timer);timer=null;$('#gdcRun').textContent='▶ 100 épocas'}
  $('#gdcA').innerHTML=AL.map(v=>`<button class="b${v===a?' on':''}" data-a="${v}">${v}</button>`).join('');
  FX.gdc={init(){$$('#gdcA button').forEach(x=>x.onclick=()=>{$$('#gdcA button').forEach(y=>y.classList.toggle('on',y===x));a=+x.dataset.a;reset()});
-  $('#gdcLine').onclick=()=>{stop();exec1();draw();check()};$('#gdcEp').onclick=()=>{stop();epoch();draw();check()};$('#gdcRst').onclick=reset;
-  $('#gdcRun').onclick=()=>{if(timer){stop();return}$('#gdcRun').textContent='❚❚ Pausar';let n=0;timer=setInterval(()=>{epoch();n++;draw();if(check()||n>=100)stop()},40)};reset()},leave:stop}}
+  $('#gdcLine').onclick=()=>{stop();snap();exec1();draw();check()};$('#gdcEp').onclick=()=>{stop();snap();epoch();draw();check()};$('#gdcBack').onclick=back;$('#gdcRst').onclick=reset;
+  $('#gdcRun').onclick=()=>{if(timer){stop();return}snap();$('#gdcRun').textContent='❚❚ Pausar';let n=0;timer=setInterval(()=>{epoch();n++;draw();if(check()||n>=100)stop()},40)};reset()},leave:stop}}
 });
