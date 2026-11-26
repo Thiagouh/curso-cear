@@ -229,16 +229,17 @@ if($('#wrongRow')){const row=(steps,col)=>steps.map((t,i)=>{const x=34+i*345;ret
    anim.push(setTimeout(()=>put(ds[i],r[1],1),t));t+=D;anim.push(setTimeout(()=>put(ds[i],r[2],1),t));t+=D});
   anim.push(setTimeout(()=>{anim=null;done()},t))}
  function cancelAnim(){if(anim){anim.forEach(clearTimeout);anim=null}}
- function draw(){let h=axes(m,70,20,760,470,'parâmetro w','perda L(w)');let p='';for(let i=0;i<=200;i++){const x=W0+(W1-W0)*i/200;p+=(i?'L':'M')+m.X(x)+' '+m.Y(Math.min(62,L(x)))}
+ function draw(){let h=axes(m,70,20,760,470,'peso w','perda L(w)');let p='';for(let i=0;i<=200;i++){const x=W0+(W1-W0)*i/200;p+=(i?'L':'M')+m.X(x)+' '+m.Y(Math.min(62,L(x)))}
   h+=`<path d="${p}" fill="none" stroke="${COL.cy}" stroke-width="4"/>`;h+=`<circle cx="${m.X(WS)}" cy="${m.Y(0)}" r="9" fill="${COL.gr}"/><text x="${m.X(WS)}" y="${m.Y(0)+34}" text-anchor="middle" font-size="18" fill="${COL.gr}">mínimo (w ≈ 0,77)</text>`;
   const inR=v=>v>=W0&&v<=W1&&L(v)<=62,vis=trail.filter(inR);for(let i=1;i<vis.length;i++)h+=`<line x1="${m.X(vis[i-1])}" y1="${m.Y(L(vis[i-1]))-14}" x2="${m.X(vis[i])}" y2="${m.Y(L(vis[i]))-14}" stroke="${COL.am}" stroke-width="2.5" marker-end="url(#ara)" opacity=".8"/>`;
   vis.forEach((v,i)=>h+=`<circle cx="${m.X(v)}" cy="${m.Y(L(v))-14}" r="${i===vis.length-1?14:6}" fill="${COL.am}" opacity="${i===vis.length-1?1:.5}"/>`);
   if(inR(w)){const g=G(w),d=0.2;h+=`<line x1="${m.X(w-d)}" y1="${m.Y(L(w)-g*d)}" x2="${m.X(w+d)}" y2="${m.Y(L(w)+g*d)}" stroke="${COL.tx}" stroke-width="2" stroke-dasharray="6 5"/>`}
   $('#gdPlot').innerHTML=h;$('#gdK').textContent=k;$('#gdW').textContent=Math.abs(w)>50?'∞':nf(w);$('#gdL').textContent=Math.abs(w)>50?'∞':fmt(L(w));calc()}
- function reset(){cancelAnim();clearInterval(timer);timer=null;w=0;k=0;last=null;trail=[w];$('#gdMsg').textContent='';$('#gdGo').textContent='▶ Descer';draw()}
+ function reset(){cancelAnim();clearInterval(timer);timer=null;w=0;k=0;last=null;trail=[w];hist=[];$('#gdMsg').textContent='';$('#gdGo').textContent='▶ Descer';draw()}
  const next=()=>{const g=G(w);return{w,e:Y-w*X,g,w1:w-a*g,a}};let pend=null;
  function stepOnce(){apply(next())}
- function apply(c){last=c;w=c.w1;k++;trail.push(w);draw();
+ let hist=[];
+ function apply(c){hist.push({w,k,last,trail:[...trail],msg:$('#gdMsg').innerHTML});last=c;w=c.w1;k++;trail.push(w);draw();
   const msg=$('#gdMsg');if(w<W0||w>W1){msg.innerHTML='<span class="rd">Divergiu: cada passo piora o erro</span>';stop()}
   else if(Math.abs(w-WS)<0.004){msg.innerHTML='<span class="gr">Convergiu para o mínimo</span>';stop()}
   else if(k>=40){msg.innerHTML=a*X*X>0.5?'<span class="am">Oscila e demora a assentar</span>':'<span class="mu">Ainda descendo… α pequeno é lento</span>';stop()}
@@ -246,7 +247,7 @@ if($('#wrongRow')){const row=(steps,col)=>steps.map((t,i)=>{const x=34+i*345;ret
  function stop(){clearInterval(timer);timer=null;$('#gdGo').textContent='▶ Descer'}
  FX.gd={init(){$$('#gdA button').forEach(b=>b.onclick=()=>{$$('#gdA button').forEach(x=>x.classList.toggle('on',x===b));a=+b.dataset.a;reset()});
   $('#gdStep').onclick=()=>{if(anim){cancelAnim();apply(pend);return}stop();if(w<W0||w>W1||Math.abs(w-WS)<0.004)reset();pend=next();animStep(pend,()=>apply(pend))};
-  $('#gdGo').onclick=()=>{if(anim){cancelAnim();apply(pend)}if(timer){stop();return}if(w<W0||w>W1||Math.abs(w-WS)<0.004||k>=40)reset();$('#gdGo').textContent='❚❚ Pausar';timer=setInterval(stepOnce,a<0.005?160:600)};$('#gdRst').onclick=reset;reset();addEventListener('mathjax-ready',()=>{if(!anim)draw()},{once:true})},leave(){stop();if(anim){cancelAnim();apply(pend)}}}}
+  $('#gdGo').onclick=()=>{if(anim){cancelAnim();apply(pend)}if(timer){stop();return}if(w<W0||w>W1||Math.abs(w-WS)<0.004||k>=40)reset();$('#gdGo').textContent='❚❚ Pausar';timer=setInterval(stepOnce,a<0.005?160:600)};$('#gdRst').onclick=reset;$('#gdBack').onclick=()=>{if(anim){cancelAnim();calc();return}stop();const h=hist.pop();if(!h)return;w=h.w;k=h.k;last=h.last;trail=h.trail;$('#gdMsg').innerHTML=h.msg;draw()};reset();addEventListener('mathjax-ready',()=>{if(!anim)draw()},{once:true})},leave(){stop();if(anim){cancelAnim();apply(pend)}}}}
 
 /* ---------- 14 KNN ---------- */
 {const r=rng(3),P=[];for(let i=0;i<26;i++)P.push([2.8+gauss(r)*1.3,2.8+gauss(r)*1.1,0].map((v,j)=>j<2?Math.max(.3,Math.min(j?6.7:9.7,v)):v));for(let i=0;i<26;i++)P.push([6.6+gauss(r)*1.3,4.2+gauss(r)*1.1,1].map((v,j)=>j<2?Math.max(.3,Math.min(j?6.7:9.7,v)):v));
