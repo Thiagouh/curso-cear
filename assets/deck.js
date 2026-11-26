@@ -209,16 +209,23 @@ if($('#wrongRow')){const row=(steps,col)=>steps.map((t,i)=>{const x=34+i*345;ret
  let a=0.01,w=0,k=0,trail=[],timer=null,last=null;
  const br=v=>String(v).replace('.',',');
  const nf=(v,d=2)=>br((Math.abs(v)<5e-4?0:v).toFixed(d)),ps=(v,d=2)=>v<0?`(${nf(v,d)})`:nf(v,d);
- function calc(){const el=$('#gdCalc');if(!el)return;const c=last||{w,e:Y-w*X,g:G(w),w1:null};
-  el.innerHTML=`<div>erro = 4,6 − ${ps(c.w)}·6 = <b>${nf(c.e)}</b></div><div><span class="cy">∂L/∂w</span> = −2·6·${ps(c.e)} = <b class="cy">${nf(c.g,1)}</b></div>`+
-   (c.w1===null?`<div class="mu">w novo = ${nf(c.w)} − <span class="am">α</span>·${ps(c.g,1)} = ?</div>`:`<div>w novo = ${nf(c.w)} − <span class="am">${br(String(a))}</span>·${ps(c.g,1)} = <b class="am">${nf(c.w1)}</b></div>`)}
+ let anim=1;
+ function calc(){const el=$('#gdCalc');if(!el)return;const c=last||{w,e:Y-w*X,g:G(w),w1:null},t=v=>tn(v),
+   A=`\\am{${t(br(String(a)))}}`,pt=(v,d)=>v<0?`(${t(nf(v,d))})`:t(nf(v,d)),
+   rows=[[`\\text{erro} = 4{,}6 - ${pt(c.w,2)}\\cdot 6 = \\mathbf{${t(nf(c.e))}}`,`erro = 4,6 − ${ps(c.w)}·6 = <b>${nf(c.e)}</b>`],
+    [`\\cy{\\dfrac{\\partial L}{\\partial w}} = -2\\cdot 6\\cdot ${pt(c.e,2)} = \\cy{\\mathbf{${t(nf(c.g,1))}}}`,`<span class="cy">∂L/∂w</span> = −2·6·${ps(c.e)} = <b class="cy">${nf(c.g,1)}</b>`],
+    c.w1===null?[`w_{\\text{novo}} = ${t(nf(c.w))} - \\am{\\alpha}\\cdot ${pt(c.g,1)} = \\; ?`,`w novo = ${nf(c.w)} − <span class="am">α</span>·${ps(c.g,1)} = ?`]
+     :[`w_{\\text{novo}} = ${t(nf(c.w))} - ${A}\\cdot ${pt(c.g,1)} = \\am{\\mathbf{${t(nf(c.w1))}}}`,`w novo = ${nf(c.w)} − <span class="am">${br(String(a))}</span>·${ps(c.g,1)} = <b class="am">${nf(c.w1)}</b>`]];
+  const dl=anim?(timer?110:420):0;
+  el.innerHTML=rows.map(([tx,fb],i)=>`<div class="gdl" style="opacity:${dl?0:1};transform:translateX(${dl?-14:0}px);transition:opacity .3s,transform .3s">${TX(tx,fb)}</div>`).join('');
+  if(dl)[...el.children].forEach((d,i)=>setTimeout(()=>{d.style.opacity=1;d.style.transform='none'},40+i*dl))}
  function draw(){let h=axes(m,70,20,760,470,'parâmetro w','perda L(w)');let p='';for(let i=0;i<=200;i++){const x=W0+(W1-W0)*i/200;p+=(i?'L':'M')+m.X(x)+' '+m.Y(Math.min(62,L(x)))}
   h+=`<path d="${p}" fill="none" stroke="${COL.cy}" stroke-width="4"/>`;h+=`<circle cx="${m.X(WS)}" cy="${m.Y(0)}" r="9" fill="${COL.gr}"/><text x="${m.X(WS)}" y="${m.Y(0)+34}" text-anchor="middle" font-size="18" fill="${COL.gr}">mínimo (w ≈ 0,77)</text>`;
   const inR=v=>v>=W0&&v<=W1&&L(v)<=62,vis=trail.filter(inR);for(let i=1;i<vis.length;i++)h+=`<line x1="${m.X(vis[i-1])}" y1="${m.Y(L(vis[i-1]))-14}" x2="${m.X(vis[i])}" y2="${m.Y(L(vis[i]))-14}" stroke="${COL.am}" stroke-width="2.5" marker-end="url(#ara)" opacity=".8"/>`;
   vis.forEach((v,i)=>h+=`<circle cx="${m.X(v)}" cy="${m.Y(L(v))-14}" r="${i===vis.length-1?14:6}" fill="${COL.am}" opacity="${i===vis.length-1?1:.5}"/>`);
   if(inR(w)){const g=G(w),d=0.2;h+=`<line x1="${m.X(w-d)}" y1="${m.Y(L(w)-g*d)}" x2="${m.X(w+d)}" y2="${m.Y(L(w)+g*d)}" stroke="${COL.tx}" stroke-width="2" stroke-dasharray="6 5"/>`}
   $('#gdPlot').innerHTML=h;$('#gdK').textContent=k;$('#gdW').textContent=Math.abs(w)>50?'∞':nf(w);$('#gdL').textContent=Math.abs(w)>50?'∞':fmt(L(w));calc()}
- function reset(){clearInterval(timer);timer=null;w=0;k=0;last=null;trail=[w];$('#gdMsg').textContent='';$('#gdGo').textContent='▶ Descer';draw()}
+ function reset(){clearInterval(timer);timer=null;w=0;k=0;last=null;trail=[w];$('#gdMsg').textContent='';$('#gdGo').textContent='▶ Descer';anim=0;draw();anim=1}
  function stepOnce(){const g=G(w),w1=w-a*g;last={w,e:Y-w*X,g,w1};w=w1;k++;trail.push(w);draw();
   const msg=$('#gdMsg');if(w<W0||w>W1){msg.innerHTML='<span class="rd">Divergiu: cada passo piora o erro</span>';stop()}
   else if(Math.abs(w-WS)<0.004){msg.innerHTML='<span class="gr">Convergiu para o mínimo</span>';stop()}
@@ -227,7 +234,7 @@ if($('#wrongRow')){const row=(steps,col)=>steps.map((t,i)=>{const x=34+i*345;ret
  function stop(){clearInterval(timer);timer=null;$('#gdGo').textContent='▶ Descer'}
  FX.gd={init(){$$('#gdA button').forEach(b=>b.onclick=()=>{$$('#gdA button').forEach(x=>x.classList.toggle('on',x===b));a=+b.dataset.a;reset()});
   $('#gdStep').onclick=()=>{stop();if(w<W0||w>W1||Math.abs(w-WS)<0.004)reset();stepOnce()};
-  $('#gdGo').onclick=()=>{if(timer){stop();return}if(w<W0||w>W1||Math.abs(w-WS)<0.004||k>=40)reset();$('#gdGo').textContent='❚❚ Pausar';timer=setInterval(stepOnce,a<0.005?160:600)};$('#gdRst').onclick=reset;reset()},leave:stop}}
+  $('#gdGo').onclick=()=>{if(timer){stop();return}if(w<W0||w>W1||Math.abs(w-WS)<0.004||k>=40)reset();$('#gdGo').textContent='❚❚ Pausar';timer=setInterval(stepOnce,a<0.005?160:600)};$('#gdRst').onclick=reset;reset();addEventListener('mathjax-ready',()=>{anim=0;draw();anim=1},{once:true})},leave:stop}}
 
 /* ---------- 14 KNN ---------- */
 {const r=rng(3),P=[];for(let i=0;i<26;i++)P.push([2.8+gauss(r)*1.3,2.8+gauss(r)*1.1,0].map((v,j)=>j<2?Math.max(.3,Math.min(j?6.7:9.7,v)):v));for(let i=0;i<26;i++)P.push([6.6+gauss(r)*1.3,4.2+gauss(r)*1.1,1].map((v,j)=>j<2?Math.max(.3,Math.min(j?6.7:9.7,v)):v));
