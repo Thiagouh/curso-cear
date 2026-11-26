@@ -247,7 +247,7 @@ if($('#wrongRow')){const row=(steps,col)=>steps.map((t,i)=>{const x=34+i*345;ret
  function stop(){clearInterval(timer);timer=null;$('#gdGo').textContent='▶ Descer'}
  FX.gd={init(){$$('#gdA button').forEach(b=>b.onclick=()=>{$$('#gdA button').forEach(x=>x.classList.toggle('on',x===b));a=+b.dataset.a;reset()});
   $('#gdStep').onclick=()=>{if(anim){cancelAnim();apply(pend);return}stop();if(w<W0||w>W1||Math.abs(w-WS)<0.004)reset();pend=next();animStep(pend,()=>apply(pend))};
-  $('#gdGo').onclick=()=>{if(anim){cancelAnim();apply(pend)}if(timer){stop();return}if(w<W0||w>W1||Math.abs(w-WS)<0.004||k>=40)reset();$('#gdGo').textContent='❚❚ Pausar';timer=setInterval(stepOnce,a<0.005?160:600)};$('#gdRst').onclick=reset;$('#gdBack').onclick=()=>{if(anim){cancelAnim();calc();return}stop();const h=hist.pop();if(!h)return;w=h.w;k=h.k;last=h.last;trail=h.trail;$('#gdMsg').innerHTML=h.msg;draw()};reset();addEventListener('mathjax-ready',()=>{if(!anim)draw()},{once:true})},leave(){stop();if(anim){cancelAnim();apply(pend)}}}}
+  $('#gdGo').onclick=()=>{if(anim){cancelAnim();apply(pend)}if(timer){stop();return}if(w<W0||w>W1||Math.abs(w-WS)<0.004||k>=40)reset();$('#gdGo').textContent='❚❚ Pausar';timer=setInterval(stepOnce,a<0.005?160:600)};$('#gdRst').onclick=reset;reset();addEventListener('mathjax-ready',()=>{if(!anim)draw()},{once:true})},leave(){stop();if(anim){cancelAnim();apply(pend)}}}}
 
 /* ---------- 14 KNN ---------- */
 {const r=rng(3),P=[];for(let i=0;i<26;i++)P.push([2.8+gauss(r)*1.3,2.8+gauss(r)*1.1,0].map((v,j)=>j<2?Math.max(.3,Math.min(j?6.7:9.7,v)):v));for(let i=0;i<26;i++)P.push([6.6+gauss(r)*1.3,4.2+gauss(r)*1.1,1].map((v,j)=>j<2?Math.max(.3,Math.min(j?6.7:9.7,v)):v));
