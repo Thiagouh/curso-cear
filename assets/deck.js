@@ -217,15 +217,15 @@ if($('#wrongRow')){const row=(steps,col)=>steps.map((t,i)=>{const x=34+i*345;ret
    [`${FR} = -2\\cdot x\\cdot \\text{erro}`,`${FR} = -2\\cdot 6\\cdot ${E}`,`${FR} = -2\\cdot 6\\cdot ${E} = \\cy{\\mathbf{${t(nf(c.g,1))}}}`],
    [`w_{\\text{novo}} = w - \\am{\\alpha}\\cdot ${FR}`,`w_{\\text{novo}} = ${t(nf(c.w))} - ${A}\\cdot ${Gs}`,`w_{\\text{novo}} = ${t(nf(c.w))} - ${A}\\cdot ${Gs} = \\am{\\mathbf{${t(nf(c.w1))}}}`]]};
  const sym=[`\\text{erro} = y - w\\cdot x`,`${FR} = -2\\cdot x\\cdot \\text{erro}`,`w_{\\text{novo}} = w - \\am{\\alpha}\\cdot ${FR}`];
- const put=(d,tex,fade)=>{if(!fade){d.innerHTML=TX(tex,fb(tex));return}d.style.opacity=.15;setTimeout(()=>{d.innerHTML=TX(tex,fb(tex));d.style.opacity=1},140)};
+ const put=(d,tex,fade)=>{if(!fade){d.innerHTML=TX(tex,fb(tex));return}d.style.opacity=.1;setTimeout(()=>{d.innerHTML=TX(tex,fb(tex));d.style.opacity=1},260)};
  function calc(){const el=$('#gdCalc');if(!el||anim)return;
   const R=last?rowsOf(last).map(r=>r[2]):sym;
-  el.innerHTML=R.map(()=>`<div class="gdl" style="transition:opacity .14s;min-height:46px;display:flex;align-items:center"></div>`).join('');[...el.children].forEach((d,i)=>put(d,R[i]))}
+  el.innerHTML=R.map(()=>`<div class="gdl" style="transition:opacity .26s;min-height:46px;display:flex;align-items:center"></div>`).join('');[...el.children].forEach((d,i)=>put(d,R[i]))}
  /* anima: para cada linha, fórmula → valores substituídos → resultado; no fim aplica o passo */
- function animStep(c,done){const el=$('#gdCalc'),R=rowsOf(c),D=750;anim=[];
-  el.innerHTML=R.map(()=>`<div class="gdl" style="transition:opacity .14s;min-height:46px;display:flex;align-items:center;opacity:.25"></div>`).join('');
+ function animStep(c,done){const el=$('#gdCalc'),R=rowsOf(c),D=1150;anim=[];
+  el.innerHTML=R.map(()=>`<div class="gdl" style="transition:opacity .26s;min-height:46px;display:flex;align-items:center;opacity:.25"></div>`).join('');
   const ds=[...el.children];ds.forEach((d,i)=>put(d,sym[i]));
-  let t=250;R.forEach((r,i)=>{anim.push(setTimeout(()=>{ds[i].style.opacity=1},t));t+=D*.8;
+  let t=400;R.forEach((r,i)=>{anim.push(setTimeout(()=>{ds[i].style.opacity=1},t));t+=D*.8;
    anim.push(setTimeout(()=>put(ds[i],r[1],1),t));t+=D;anim.push(setTimeout(()=>put(ds[i],r[2],1),t));t+=D});
   anim.push(setTimeout(()=>{anim=null;done()},t))}
  function cancelAnim(){if(anim){anim.forEach(clearTimeout);anim=null}}
