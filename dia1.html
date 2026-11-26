@@ -231,13 +231,13 @@
 </section>
 
 <!-- SCALE -->
-<section class="s" data-b="2" data-id="scale" data-notes="ESCALA (5 min). Quem é mais parecido com “você” (25 anos, R$ 3.000)? A tem 62 anos e ganha R$ 3.200; B tem 27 anos e ganha R$ 4.500. Sem padronizar, a distância é dominada pela renda (milhares de reais contra dezenas de anos) e A parece mais próxima — absurdo. Clique em Padronizar: z = (x − média) / desvio coloca as features na mesma escala e B passa a ser a mais próxima. Afeta KNN, K-Means, redes neurais e regularização; árvores não ligam para escala. A média e o desvio vêm do treino.">
+<section class="s" data-b="2" data-id="scale" data-notes="ESCALA (6 min). Quatro passos com a seta. (1) Unidades originais: “você” tem 25 anos e R$ 3.000; A tem 62 anos e R$ 3.200; B tem 27 anos e R$ 4.500. Faça a conta da distância no quadro: até A dá √(37² + 200²) ≈ 203, até B dá √(2² + 1.500²) ≈ 1.500. A renda responde por 97% de d² de A e praticamente 100% de B: A “ganha”, mesmo com 37 anos de diferença. No gráfico, na mesma régua (1 ano = R$ 1), os 37 anos viram poucos pixels. (2) Cada coluna tem sua régua: média e desvio (do treino). Idade: μ = 40, σ = 15; renda: μ = 4.000, σ = 2.000. Mostre as pessoas nas duas réguas. (3) z = (x − μ)/σ célula por célula: o gráfico se transforma. (4) Distância de novo, em z: até A ≈ 2,47, até B ≈ 0,76 — B é o mais parecido. Feche: KNN, K-Means, redes neurais, descida do gradiente e regularização dependem de escala; árvores não.">
   <h2>Quem é mais parecido com você?</h2>
-  <div class="row" style="gap:44px">
-    <div class="col" style="width:560px;gap:16px"><div id="scPeople" class="col" style="gap:12px"></div><div class="row" style="gap:16px;align-items:center;margin-top:6px"><button class="b" id="scBtn">Padronizar</button><span class="formula" style="font-size:24px;padding:12px 18px" data-tex="z = \frac{x-\mu}{\sigma}">z = (x − μ) / σ</span></div></div>
-    <div class="card" style="flex:1"><div class="lbl mu" style="font-size:14px">Distância até você · contribuição de cada feature</div><svg id="scSvg" viewBox="0 0 760 360" style="width:100%;height:360px;margin-top:10px"></svg><div id="scVerdict" class="big" style="font-size:32px;margin-top:6px"></div></div>
+  <div class="row" style="gap:34px;align-items:flex-start">
+    <div id="scPanel" class="col" style="width:770px;gap:14px"></div>
+    <div class="card" style="flex:1;padding:12px 14px"><svg id="scPlot" viewBox="0 0 620 480" style="width:100%;height:auto;display:block"></svg><div id="scCap" class="mu" style="font-size:16px;text-align:center;margin-top:4px"></div></div>
   </div>
-  <div class="note" style="margin-top:22px">Árvores não ligam para escala · KNN, K-Means, redes neurais e regularização ligam</div>
+  <i class="f" data-f="1"></i><i class="f" data-f="2"></i><i class="f" data-f="3"></i>
 </section>
 
 <!-- CMD PREP -->

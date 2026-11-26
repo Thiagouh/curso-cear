@@ -525,17 +525,66 @@ if($('#encTbl')){const R=[['Ana','noite','médio'],['Bruno','manhã','superior']
   $('#encTbl').innerHTML=tbl(H,rows);$('#encMsg').innerHTML=MSG[md].map(([c,t,d])=>`<div class="card" style="border-left:4px solid ${COL[c]}"><b style="color:${COL[c]};font-size:24px">${t}</b><div class="mu" style="font-size:19px;margin-top:6px">${d}</div></div>`).join('')}
  FX.enc={init(){$$('#encBtns button').forEach(b=>b.onclick=()=>{$$('#encBtns button').forEach(x=>x.classList.toggle('on',x===b));draw(b.dataset.m)});draw('raw')}}}
 
-/* ---------- escala ---------- */
-if($('#scSvg')){const PP=[['Você',25,3000,'tx'],['A',62,3200,'am'],['B',27,4500,'cy']],MU=[40,4000],SD=[15,2000];let std=0;
- const brl=v=>'R$ '+v.toLocaleString('pt-BR');
- function draw(){const z=p=>std?[(p[1]-MU[0])/SD[0],(p[2]-MU[1])/SD[1]]:[p[1],p[2]],me=z(PP[0]);
-  $('#scPeople').innerHTML=PP.map(p=>{const v=z(p);return `<div class="card row" style="justify-content:space-between;align-items:center;padding:18px 24px;border-left:5px solid ${COL[p[3]]}"><b style="font-size:28px;color:${COL[p[3]]}">${p[0]}</b><span class="mono" style="font-size:22px">${std?`z = ${fmt(v[0])}`:p[1]+' anos'}</span><span class="mono" style="font-size:22px">${std?`z = ${fmt(v[1])}`:brl(p[2])}</span></div>`}).join('');
-  const D=PP.slice(1).map(p=>{const v=z(p),a=(v[0]-me[0])**2,b=(v[1]-me[1])**2;return{p,a,b,d:Math.sqrt(a+b)}}),mx=Math.max(...D.map(x=>x.a+x.b));let h='';
-  D.forEach((x,i)=>{const y=40+i*150,wa=x.a/mx*560,wb=x.b/mx*560;h+=`<text x="0" y="${y+42}" font-size="30" font-weight="700" fill="${COL[x.p[3]]}">${x.p[0]}</text><rect x="60" y="${y}" width="${Math.max(2,wa)}" height="64" rx="6" fill="${COL.cy}"/><rect x="${60+wa}" y="${y}" width="${Math.max(2,wb)}" height="64" rx="6" fill="${COL.am}"/><text x="${70+wa+wb}" y="${y+42}" font-family="JetBrains Mono,monospace" font-size="22" font-weight="700">d = ${fmt(x.d,std?2:0)}</text>`});
-  h+=`<rect x="60" y="330" width="22" height="22" rx="5" fill="${COL.cy}"/><text x="92" y="348" font-size="18">idade²</text><rect x="200" y="330" width="22" height="22" rx="5" fill="${COL.am}"/><text x="232" y="348" font-size="18">renda²</text>`;
-  $('#scSvg').innerHTML=h;const w=D[0].d<D[1].d?D[0]:D[1];
-  $('#scVerdict').innerHTML=std?`<span class="gr">Mais parecido: B</span> <span class="mu" style="font-size:22px">idade e renda pesam igual</span>`:`<span class="rd">Mais parecido: ${w.p[0]}, de 62 anos?!</span> <span class="mu" style="font-size:22px">a renda domina</span>`}
- FX.scale={init(){$('#scBtn').onclick=()=>{std^=1;$('#scBtn').classList.toggle('on',!!std);$('#scBtn').textContent=std?'Voltar ao original':'Padronizar';draw()};draw()}}}
+/* ---------- escala: passo a passo ---------- */
+if($('#scPlot')){
+ const P=[['Você',25,3000,'tx'],['A',62,3200,'pk'],['B',27,4500,'cy']],MU=[40,4000],SD=[15,2000],CI=COL.vi,CR=COL.am;
+ const RAW=P.map(p=>[p[1],p[2]]),ZZ=P.map(p=>[(p[1]-MU[0])/SD[0],(p[2]-MU[1])/SD[1]]);
+ const W=620,H=480,br=v=>v.toLocaleString('pt-BR'),sg=v=>(v>0?'+':'')+fmt(v);
+ const view=pts=>{const xs=pts.map(p=>p[0]),ys=pts.map(p=>p[1]),x0=Math.min(...xs),x1=Math.max(...xs),y0=Math.min(...ys),y1=Math.max(...ys),
+   s=Math.min((W-200)/(x1-x0),(H-150)/(y1-y0)),cx=(x0+x1)/2,cy=(y0+y1)/2;return{s,cx,cy,m:([x,y])=>[W/2+(x-cx)*s,H/2+10-(y-cy)*s]}};
+ const VR=view(RAW),VZ=view(ZZ),SR=RAW.map(VR.m),SZ=ZZ.map(VZ.m);
+ let t=0,raf=0,stp=0;
+ const grid=(V,u)=>{let g='';const lo=x=>Math.ceil((x)/u)*u;
+   for(let x=lo(V.cx-W/2/V.s);x<V.cx+W/2/V.s;x+=u){const X=W/2+(x-V.cx)*V.s;g+=`<line x1="${X}" y1="0" x2="${X}" y2="${H}" stroke="${COL.ln}" stroke-width="1"/>`}
+   for(let y=lo(V.cy-H/2/V.s-1);y<V.cy+H/2/V.s+1;y+=u){const Y=H/2+10-(y-V.cy)*V.s;g+=`<line x1="0" y1="${Y}" x2="${W}" y2="${Y}" stroke="${COL.ln}" stroke-width="1"/>`}return g};
+ const T=(x,y,s,c,a='start',fs=19,w=700)=>`<text x="${x}" y="${y}" fill="${c}" font-size="${fs}" font-weight="${w}" text-anchor="${a}" font-family="JetBrains Mono,monospace">${s}</text>`;
+ function plot(){const S=SR.map((p,i)=>[p[0]+(SZ[i][0]-p[0])*t,p[1]+(SZ[i][1]-p[1])*t]),V=S[0],raw=t===0,z=t===1;let h='';
+  if(raw)h+=grid(VR,500);if(z)h+=grid(VZ,.5);
+  const tri=raw||(z&&stp>=3);
+  if(tri)[1,2].forEach(i=>{const Q=S[i],c=COL[P[i][3]];
+    h+=`<line x1="${V[0]}" y1="${V[1]}" x2="${Q[0]}" y2="${V[1]}" stroke="${CI}" stroke-width="6" stroke-linecap="round"/><line x1="${Q[0]}" y1="${V[1]}" x2="${Q[0]}" y2="${Q[1]}" stroke="${CR}" stroke-width="6" stroke-linecap="round"/><line x1="${V[0]}" y1="${V[1]}" x2="${Q[0]}" y2="${Q[1]}" stroke="${c}" stroke-width="2.5" stroke-dasharray="7 6"/>`});
+  S.forEach((p,i)=>{const c=COL[P[i][3]];h+=`<circle cx="${p[0]}" cy="${p[1]}" r="11" fill="${c}" stroke="${COL.bg}" stroke-width="3"/>`});
+  if(raw){const [a,b]=[S[1],S[2]];
+   h+=T(a[0]+22,a[1]+6,'A','#F472B6','start',24)+T(b[0]+22,b[1]+6,'B',COL.cy,'start',24)+T(V[0]-22,V[1]+8,'Você',COL.tx,'end',22);
+   h+=T(a[0]+22,(a[1]+V[1])/2+30,'Δrenda = 200',CR,'start',17)+T(b[0]-20,(b[1]+V[1])/2,'Δrenda = 1.500',CR,'end',17);
+   h+=T(b[0]+22,b[1]+34,'d ≈ 1.500','#cfe3ff','start',17,600)+T(a[0]+22,a[1]-16,'d ≈ 203','#cfe3ff','start',17,600);
+   h+=`<path d="M${V[0]} ${V[1]+26} v10 h${a[0]-V[0]} v-10" fill="none" stroke="${CI}" stroke-width="2"/>`+T(V[0]-24,V[1]+42,`Δidade = 37 anos → só ${Math.round(37*VR.s)} px`,CI,'end',17)}
+  if(z){const [a,b]=[S[1],S[2]];
+   h+=T(a[0]+20,a[1]+7,'A','#F472B6','start',24)+T(b[0]+20,b[1]-8,'B',COL.cy,'start',24)+T(V[0]-20,V[1]+8,'Você',COL.tx,'end',22);
+   if(stp>=3){h+=T((V[0]+a[0])/2,V[1]+34,'Δidade = 2,47',CI,'middle',17)+T(a[0]+12,a[1]+42,'Δrenda = 0,10',CR,'end',16)+T(b[0]+20,(b[1]+V[1])/2+8,'Δrenda = 0,75',CR,'start',17)+T((V[0]+b[0])/2,V[1]+30,'0,13',CI,'middle',16);
+    h+=T((V[0]+a[0])/2+30,(V[1]+a[1])/2-28,'d ≈ 2,47','#cfe3ff','middle',17,600)+T((V[0]+b[0])/2-26,(V[1]+b[1])/2-4,'d ≈ 0,76','#cfe3ff','end',17,600)}
+   else S.forEach((p,i)=>{h+=T(p[0],p[1]+(i===2?-34:40),`(${fmt(ZZ[i][0])}; ${fmt(ZZ[i][1])})`,COL.mu,'middle',16,500)})}
+  h+=T(W-8,H-10,'idade →',CI,'end',16)+`<text x="14" y="22" fill="${CR}" font-size="16" font-weight="700" font-family="JetBrains Mono,monospace">↑ renda</text>`;
+  $('#scPlot').innerHTML=h;
+  $('#scCap').innerHTML=raw?'<b>Mesma régua</b>: 1 ano vale o mesmo que R$ 1 · cada quadrado = 500':z?'<b>Mesma régua</b>, agora em desvios-padrão · cada quadrado = 0,5 σ':'padronizando…'}
+ const anim=to=>{cancelAnimationFrame(raf);const t0=t,st=performance.now(),D=900;const f=n=>{const k=Math.min(1,(n-st)/D),e=k<.5?2*k*k:1-(-2*k+2)**2/2;t=t0+(to-t0)*e;if(k<1){t=Math.min(Math.max(t,0),1);plot();raf=requestAnimationFrame(f)}else{t=to;plot()}};if(t0===to)plot();else raf=requestAnimationFrame(f)};
+ const pc=v=>v>99.5?'≈100':v<.5?'<1':Math.round(v);const share=(rows)=>rows.map(([n,c,a,b])=>{const pa=a/(a+b)*100;return `<div class="scsh"><b style="color:${c}">${n}</b><div class="bar"><i style="width:${pa}%;background:${CI}"></i><i style="width:${100-pa}%;background:${CR}"></i></div><span><span style="color:${CI}">idade ${pc(pa)}%</span> · <span style="color:${CR}">renda ${pc(100-pa)}%</span></span></div>`}).join('');
+ const X=(tex,fb)=>`<div class="sceq">${TX(tex,fb)}</div>`;
+ const STEPS=['unidades originais','a régua de cada coluna','z de cada pessoa','distância em z'];
+ const ruler=(nm,c,mu,sd,vals,lab)=>{const x=v=>40+(v-(mu-2*sd))/(4*sd)*640;let s=`<line x1="40" y1="34" x2="680" y2="34" stroke="${COL.mu}" stroke-width="2"/>`;
+   for(let k=-2;k<=2;k++){const X=x(mu+k*sd);s+=`<line x1="${X}" y1="26" x2="${X}" y2="42" stroke="${COL.mu}" stroke-width="2"/>`+T(X,64,lab(mu+k*sd),COL.mu,'middle',15,500)+T(X,88,k?(k>0?'+':'−')+Math.abs(k)+'σ':'μ',k?COL.tx:c,'middle',16)}
+   vals.forEach((v,i)=>{s+=`<circle cx="${x(v)}" cy="34" r="9" fill="${COL[P[i][3]]}" stroke="${COL.bg}" stroke-width="2.5"/>`});
+   return `<div class="scru"><b style="color:${c}">${nm}</b><svg viewBox="0 0 720 96">${s}</svg></div>`};
+ function panel(){let h=`<div class="scst">${STEPS.map((s,i)=>`<span class="${i===stp?'on':i<stp?'done':''}">${i+1} · ${s}</span>`).join('')}</div>`;
+  if(stp===0)h+=`<table class="dt sctb"><tr><th></th><th style="color:${CI}">idade</th><th style="color:${CR}">renda</th></tr>${P.map(p=>`<tr><td style="color:${COL[p[3]]};font-weight:700">${p[0]}</td><td>${p[1]} anos</td><td>R$ ${br(p[2])}</td></tr>`).join('')}</table>`
+   +X('d_A=\\sqrt{\\vi{(62-25)^2}+\\am{(3200-3000)^2}}=\\sqrt{\\vi{1369}+\\am{40000}}\\approx 203','d(você,A) = √(37² + 200²) ≈ 203')
+   +X('d_B=\\sqrt{\\vi{(27-25)^2}+\\am{(4500-3000)^2}}=\\sqrt{\\vi{4}+\\am{2250000}}\\approx 1500','d(você,B) = √(2² + 1500²) ≈ 1500')
+   +`<div class="lbl mu" style="font-size:13px;margin-top:4px">quem pesa dentro de d² (a soma dentro da raiz)</div>`+share([['A','#F472B6',1369,40000],['B',COL.cy,4,2250000]])
+   +`<div class="scv rd">Mais perto: A, de 62 anos?! <span>a renda (milhares) esmaga a idade (dezenas)</span></div>`;
+  if(stp===1)h+=`<p class="scp">Cada coluna tem a sua régua: a <b style="color:${CI}">média μ</b> diz onde fica o centro e o <b style="color:${CR}">desvio σ</b> diz o tamanho de um “passo típico”. Valores do treino:</p>`
+   +`<table class="dt sctb"><tr><th></th><th>média μ</th><th>desvio σ</th></tr><tr><td style="color:${CI};font-weight:700">idade</td><td>40 anos</td><td>15 anos</td></tr><tr><td style="color:${CR};font-weight:700">renda</td><td>R$ 4.000</td><td>R$ 2.000</td></tr></table>`
+   +ruler('idade',CI,40,15,P.map(p=>p[1]),v=>v+' a')+ruler('renda',CR,4000,2000,P.map(p=>p[2]),v=>'R$'+br(v))
+   +X('z=\\frac{x-\\mu}{\\sigma}\\quad\\Rightarrow\\quad\\text{quantos desvios a pessoa está da média}','z = (x − μ) / σ');
+  if(stp===2)h+=`<p class="scp">Aplicando <b>z = (x − μ) / σ</b> em cada célula:</p><div class="scz"><span></span><b style="color:${CI}">idade: μ = 40, σ = 15</b><b style="color:${CR}">renda: μ = 4.000, σ = 2.000</b>`
+   +P.map((p,i)=>`<b style="color:${COL[p[3]]}">${p[0]}</b><span>${TX(`\\frac{${p[1]}-40}{15}=${tn(sg(ZZ[i][0]))}`,`(${p[1]}−40)/15 = ${sg(ZZ[i][0])}`)}</span><span>${TX(`\\frac{${p[2]}-4000}{2000}=${tn(sg(ZZ[i][1]))}`,`(${p[2]}−4000)/2000 = ${sg(ZZ[i][1])}`)}</span>`).join('')+`</div>`
+   +`<div class="scv" style="color:${COL.tx}">Agora as duas colunas falam a mesma língua: <span>“quantos desvios da média”, sem anos nem reais</span></div>`;
+  if(stp===3)h+=X('d_A=\\sqrt{\\vi{(1{,}47+1{,}00)^2}+\\am{(-0{,}40+0{,}50)^2}}=\\sqrt{\\vi{6{,}08}+\\am{0{,}01}}\\approx 2{,}47','d(você,A) ≈ 2,47')
+   +X('d_B=\\sqrt{\\vi{(-0{,}87+1{,}00)^2}+\\am{(0{,}25+0{,}50)^2}}=\\sqrt{\\vi{0{,}02}+\\am{0{,}56}}\\approx 0{,}76','d(você,B) ≈ 0,76')
+   +`<div class="lbl mu" style="font-size:13px;margin-top:4px">quem pesa dentro de d² (a soma dentro da raiz)</div>`+share([['A','#F472B6',6.0844,.01],['B',COL.cy,.01778,.5625]])
+   +`<div class="scv gr">Mais perto: B <span>cada feature pesa pelo quanto realmente difere</span></div>`
+   +`<div class="note" style="font-size:17px;margin-top:6px">Árvores não ligam para escala · KNN, K-Means, redes neurais, descida do gradiente e regularização ligam</div>`;
+  $('#scPanel').innerHTML=h}
+ FX.scale={init(){addEventListener('mathjax-ready',()=>panel(),{once:true})},step(k){stp=k;panel();anim(k>=2?1:0)}}}
 
 /* ---------- validação cruzada ---------- */
 if($('#cvSvg')){const S=[.82,.79,.85,.80,.83],m=S.reduce((a,b)=>a+b)/5,sd=Math.sqrt(S.reduce((a,b)=>a+(b-m)**2,0)/5);let h='';

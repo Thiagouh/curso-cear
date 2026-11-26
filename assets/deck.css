@@ -213,3 +213,17 @@ input[type=range]{accent-color:var(--cy);width:260px;height:32px}
 .cmdR .cdoc .dtip,.cmdR .cdoc .dtip b{color:var(--am)}
 .cmdR.doc .cout{display:none}
 .csay{font-size:21px;padding:12px 18px}
+
+/* escala passo a passo */
+.scst{display:flex;gap:6px;flex-wrap:wrap}
+.scst span{font:600 14px Inter,sans-serif;padding:5px 11px;border-radius:99px;border:1px solid var(--ln);color:var(--dim)}
+.scst .on{color:var(--bg);background:var(--cy);border-color:var(--cy)}.scst .done{color:var(--mu)}
+.sctb{font-size:20px}.sctb th{text-transform:none;letter-spacing:.02em;font-size:16px}.sctb td,.sctb th{padding:6px 18px}
+.sceq{font-size:21px;line-height:1}
+.scsh{display:grid;grid-template-columns:28px 1fr 290px;gap:12px;align-items:center;font-size:16px}
+.scsh .bar{height:16px;display:flex;border-radius:5px;overflow:hidden;background:var(--p2)}.scsh .bar i{display:block;height:100%}
+.scv{font:700 28px Inter,sans-serif;margin-top:4px}.scv span{display:block;font-size:19px;color:var(--mu);font-weight:500;margin-top:2px}
+.scp{font-size:20px;line-height:1.4;margin:0}
+.scru{display:grid;grid-template-columns:76px 1fr;align-items:center;font-size:19px}.scru svg{width:100%;display:block}
+.scz{display:grid;grid-template-columns:70px 1fr 1fr;gap:14px 18px;align-items:center;font-size:21px}
+#scPlot{overflow:hidden}

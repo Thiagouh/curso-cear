@@ -165,12 +165,16 @@ MÓDULO 01 · DADOS & DATASETS
      categorias muito numerosas (ex.: CEP): one-hot gera colunas demais.
 
 [18] Quem é mais parecido com você?
-     Fala: Quem é mais parecido com “você” (25 anos, R$ 3.000)? A tem 62 anos e ganha R$
-     3.200; B tem 27 anos e ganha R$ 4.500. Sem padronizar, a distância é dominada pela
-     renda (milhares de reais contra dezenas de anos) e A parece mais próxima — absurdo.
-     Clique em Padronizar: z = (x − média) / desvio coloca as features na mesma escala e B
-     passa a ser a mais próxima. Afeta KNN, K-Means, redes neurais e regularização; árvores
-     não ligam para escala. A média e o desvio vêm do treino.
+     Fala: Quatro passos com a seta. (1) Unidades originais: “você” tem 25 anos e R$ 3.000;
+     A tem 62 anos e R$ 3.200; B tem 27 anos e R$ 4.500. Faça a conta da distância no
+     quadro: até A dá √(37² + 200²) ≈ 203, até B dá √(2² + 1.500²) ≈ 1.500. A renda responde
+     por 97% de d² de A e praticamente 100% de B: A “ganha”, mesmo com 37 anos de diferença.
+     No gráfico, na mesma régua (1 ano = R$ 1), os 37 anos viram poucos pixels. (2) Cada
+     coluna tem sua régua: média e desvio (do treino). Idade: μ = 40, σ = 15; renda: μ =
+     4.000, σ = 2.000. Mostre as pessoas nas duas réguas. (3) z = (x − μ)/σ célula por
+     célula: o gráfico se transforma. (4) Distância de novo, em z: até A ≈ 2,47, até B ≈
+     0,76 — B é o mais parecido. Feche: KNN, K-Means, redes neurais, descida do gradiente e
+     regularização dependem de escala; árvores não.
 
 [19] Encoding, faltantes e escala no código  [no notebook]
      Comandos:
