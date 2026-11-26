@@ -91,17 +91,17 @@ print('Bibliotecas prontas!' if not faltando else f'Instalado agora: {", ".join(
 lab00 = [
 md('''
 # Lab 00 · Arrume a casa antes de modelar
-**Machine Learning na Prática · Dia 1 · Módulo 01: Dados & Datasets** · ~35 min
+**Machine Learning na Prática · Dia 1 · Módulo 01: Dados & Datasets**
 
 Neste notebook você vai fazer o que todo projeto de ML faz **antes** de treinar qualquer modelo.
 Aqui **não há modelo nem métricas**: o objetivo é deixar os dados prontos. O treino começa no Lab 01, já com estes dados limpos.
 
-| Etapa | O que fazer | Tempo |
-|---|---|---|
-| 1. Inspecionar | formato, tipos, estatísticas, faltantes | 8 min |
-| 2. Limpar | duplicados, categorias, outliers, alvo faltante | 10 min |
-| 3. Explorar | histogramas, boxplot, correlação | 8 min |
-| 4. Preparar | features × alvo, split, one-hot, padronização e `Pipeline` sem vazamento | 9 min |
+| Etapa | O que fazer |
+|---|---|
+| 1. Inspecionar | formato, tipos, estatísticas, faltantes |
+| 2. Limpar | duplicados, categorias, outliers, alvo faltante |
+| 3. Explorar | histogramas, boxplot, correlação |
+| 4. Preparar | features × alvo, split, one-hot, padronização e `Pipeline` sem vazamento |
 
 Procure as células marcadas com **`# TODO`** e substitua os `___` pelo código certo.
 Rode as células em ordem (`Shift + Enter`).
@@ -513,16 +513,16 @@ nota('''
 lab01 = [
 md('''
 # Lab 01 · Faça a reta aprender
-**Machine Learning na Prática · Dia 1 · Módulo 02: Regressão Linear** · ~25 min
+**Machine Learning na Prática · Dia 1 · Módulo 02: Regressão Linear**
 
 Os dados de alunos já chegam **limpos**, do jeito que você deixou no Lab 00. Agora o foco é o modelo:
 
-| Etapa | O que fazer | Tempo |
-|---|---|---|
-| 1. Olhar | carregar os dados prontos e visualizar horas × nota | 5 min |
-| 2. Ajustar | descida do gradiente com NumPy, acompanhar a MSE, comparar com `LinearRegression` | 10 min |
-| 3. Avaliar | prever alunos novos; MAE, MSE e R² no teste; regressão múltipla | 5 min |
-| 4. Taxa de aprendizado | convergência, lentidão e divergência | 5 min |
+| Etapa | O que fazer |
+|---|---|
+| 1. Olhar | carregar os dados prontos e visualizar horas × nota |
+| 2. Ajustar | descida do gradiente com NumPy, acompanhar a MSE, comparar com `LinearRegression` |
+| 3. Avaliar | prever alunos novos; MAE, MSE e R² no teste; regressão múltipla |
+| 4. Taxa de aprendizado | convergência, lentidão e divergência |
 
 Procure as células marcadas com **`# TODO`** e substitua os `___`.
 '''),
@@ -802,17 +802,17 @@ nota('''
 lab02 = [
 md('''
 # Lab 02 · Mesmos dados. Três algoritmos
-**Machine Learning na Prática · Dia 1 · Módulo 03: KNN, Árvores & Random Forest** · ~25 min
+**Machine Learning na Prática · Dia 1 · Módulo 03: KNN, Árvores & Random Forest**
 
 Os dados já chegam **prontos**: o clássico **Iris** (150 flores, 4 medidas, 3 espécies), sem faltantes nem sujeira.
 O foco é comparar classificadores com honestidade.
 
-| Etapa | O que fazer | Tempo |
-|---|---|---|
-| 1. Olhar e separar | explorar o Iris e separar treino/teste com estratificação | 5 min |
-| 2. Comparar | KNN × Árvore × Random Forest com validação cruzada no treino | 8 min |
-| 3. Ajustar | variar K e profundidade: qualidade e variância | 7 min |
-| 4. Avaliar | o escolhido no teste: matriz de confusão e métricas | 5 min |
+| Etapa | O que fazer |
+|---|---|
+| 1. Olhar e separar | explorar o Iris e separar treino/teste com estratificação |
+| 2. Comparar | KNN × Árvore × Random Forest com validação cruzada no treino |
+| 3. Ajustar | variar K e profundidade: qualidade e variância |
+| 4. Avaliar | o escolhido no teste: matriz de confusão e métricas |
 
 Procure as células marcadas com **`# TODO`** e substitua os `___`.
 '''),
