@@ -580,7 +580,7 @@ $$('section[data-cmd]').forEach(build);
 
 /* ---------------- descida do gradiente, linha por linha ---------------- */
 if($('#gdcCode')){const SRC=['def descida_gradiente(x, y, alpha=⟨A⟩, epocas=3000):','    w, b = 0.0, 0.0','    historico = []','    for _ in range(epocas):','        y_hat = w * x + b','        erro = y - y_hat','        historico.append((erro ** 2).mean())','        dw = -2 * (x * erro).mean()','        db = -2 * erro.mean()','        w = w - alpha * dw','        b = b - alpha * db','    return w, b, historico'];
- const AL=[0.001,0.01,0.02,0.023,0.03];let a=0.02,pc,w,b,yh,er,dw,db,hist,ep,chg,timer=null,last;
+ const AL=[0.001,0.01,0.023,0.03];let a=0.01,pc,w,b,yh,er,dw,db,hist,ep,chg,timer=null,last;
  const V3=a=>a?`[${a.slice(0,4).map(v=>v.toFixed(2)).join(', ')}, …]`:'—',N=v=>v===null||v===undefined?'—':Math.abs(v)>1e5?v.toExponential(2):v.toFixed(4);
  function reset(){stop();pc=1;w=b=yh=er=dw=db=hist=null;ep=0;chg=[];last=-1;$('#gdcMsg').innerHTML='<span class="mu">Clique em “Próxima linha” para executar a função como o Python faz.</span>';draw()}
  function exec1(){last=pc;switch(pc){case 1:w=0;b=0;chg=['w','b'];pc=2;break;case 2:hist=[];chg=['historico'];pc=3;break;case 3:ep++;chg=['época'];pc=4;break;

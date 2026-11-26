@@ -331,23 +331,27 @@
 </section>
 
 <!-- 11 -->
-<section class="s" data-b="3" data-id="gd" data-notes="SLIDE 11 (4 min). Gradiente = direção de maior crescimento do erro; a descida vai no sentido contrário: w ← w − α·∂L/∂w. Rode com α pequeno (lento), bom (converge), grande (oscila) e grande demais (diverge). Cada passo aqui é uma atualização; uma época é uma passada por todos os dados de treino.">
+<section class="s" data-b="3" data-id="gd" data-notes="SLIDE 11 (4 min). Gradiente = direção em que o erro mais cresce; a descida vai no sentido contrário: w ← w − α·∂L/∂w. Para dar para fazer a conta na mão, o exemplo usa UM aluno (6 h de estudo, nota 4,6) e só o peso w (b fixo em 0): L(w) = (4,6 − 6w)². Clique “1 passo” e faça a conta do quadro junto com a turma: com α = 0,01, de w = 0 vai para 0,55 e depois 0,71, chegando ao mínimo 0,77. As taxas são as MESMAS do Lab 01: 0,001 lenta, 0,01 boa, 0,023 oscila (o w pula de um lado para o outro, mas a perda cai) e 0,03 diverge. No notebook, com os 296 alunos, o limite é ≈ 0,024; aqui, com um aluno, é 1/6² ≈ 0,028. Cada passo aqui é uma atualização; uma época é uma passada por todos os dados de treino.">
   <h2>Aprender é caminhar ladeira abaixo</h2>
   <div class="row" style="gap:44px">
     <svg id="gdPlot" viewBox="0 0 860 560" style="width:860px;height:560px"></svg>
-    <div class="col" style="flex:1;gap:20px">
-      <div class="formula" style="font-size:31px" data-tex="w \leftarrow w - \am{\alpha}\,\cy{\frac{\partial L}{\partial w}}">w ← w − <span class="am">α</span> · <span class="cy">∂L/∂w</span></div>
-      <div class="card col" style="gap:14px"><div class="lbl mu" style="font-size:14px">Taxa de aprendizado α</div>
-        <div class="row" id="gdA" style="gap:10px;flex-wrap:wrap"><button class="b" data-a="0.05">0,05</button><button class="b on" data-a="0.3">0,3</button><button class="b" data-a="0.9">0,9</button><button class="b" data-a="1.05">1,05</button></div>
-        <div class="row" style="gap:10px"><button class="b" id="gdGo">▶ Descer</button><button class="b" id="gdRst">Reiniciar</button></div></div>
-      <div class="card row" style="justify-content:space-between"><div><div class="lbl mu" style="font-size:14px">Passo</div><div class="big mono" id="gdK" style="font-size:52px">0</div></div><div><div class="lbl mu" style="font-size:14px">Perda L(w)</div><div class="big mono am" id="gdL" style="font-size:52px">—</div></div></div>
-      <div id="gdMsg" style="font-size:24px;font-weight:700;min-height:34px"></div>
+    <div class="col" style="flex:1;gap:14px">
+      <div class="card col" style="gap:8px;padding:16px 22px">
+        <div class="formula" style="font-size:26px;padding:0;background:none;border:0" data-tex="w \leftarrow w - \am{\alpha}\,\cy{\frac{\partial L}{\partial w}}">w ← w − <span class="am">α</span> · <span class="cy">∂L/∂w</span></div>
+        <div class="mu" style="font-size:15px">1 aluno: 6 h, nota 4,6 · b fixo em 0 · L(w) = (4,6 − 6w)²</div>
+        <div id="gdCalc" class="mono" style="font-size:18px;line-height:1.55"></div>
+      </div>
+      <div class="card col" style="gap:12px;padding:16px 22px"><div class="lbl mu" style="font-size:14px">Taxa de aprendizado α · as mesmas do Lab 01</div>
+        <div class="row" id="gdA" style="gap:10px;flex-wrap:wrap"><button class="b" data-a="0.001">0,001</button><button class="b on" data-a="0.01">0,01</button><button class="b" data-a="0.023">0,023</button><button class="b" data-a="0.03">0,03</button></div>
+        <div class="row" style="gap:10px"><button class="b" id="gdStep">1 passo</button><button class="b" id="gdGo">▶ Descer</button><button class="b" id="gdRst">Reiniciar</button></div></div>
+      <div class="card row" style="justify-content:space-between;padding:14px 22px"><div><div class="lbl mu" style="font-size:14px">Passo</div><div class="big mono" id="gdK" style="font-size:40px">0</div></div><div><div class="lbl mu" style="font-size:14px">w</div><div class="big mono" id="gdW" style="font-size:40px">0</div></div><div><div class="lbl mu" style="font-size:14px">Perda L(w)</div><div class="big mono am" id="gdL" style="font-size:40px">—</div></div></div>
+      <div id="gdMsg" style="font-size:22px;font-weight:700;min-height:30px"></div>
     </div>
   </div>
 </section>
 
 <!-- GDCODE -->
-<section class="s" data-b="3" data-id="gdc" data-notes="NO NOTEBOOK · DESCIDA DO GRADIENTE (6 min). É a função do Lab 01, executada como o Python faz. Clique “Próxima linha” algumas vezes na primeira época: w e b começam em 0, y_hat e erro viram arrays, dw e db são os gradientes, e w e b dão um passo contra eles. Depois use “Próxima época” e “100 épocas”. Troque alpha: 0,001 lento; 0,02 desce bem; 0,023 oscila; 0,03 diverge — os mesmos valores do item 4 do notebook.">
+<section class="s" data-b="3" data-id="gdc" data-notes="NO NOTEBOOK · DESCIDA DO GRADIENTE (6 min). É a função do Lab 01, executada como o Python faz. Clique “Próxima linha” algumas vezes na primeira época: w e b começam em 0, y_hat e erro viram arrays, dw e db são os gradientes, e w e b dão um passo contra eles. Depois use “Próxima época” e “100 épocas”. Troque alpha: 0,001 lento; 0,01 desce bem; 0,023 no limite; 0,03 diverge — os mesmos valores do slide da ladeira e do item 4 do notebook.">
   <h2>A descida do gradiente, linha por linha</h2>
   <div class="nbk">▸ Lab 01 · etapa 2</div>
   <div class="row" style="gap:30px;align-items:flex-start">
