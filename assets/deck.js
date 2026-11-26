@@ -158,7 +158,7 @@ if($('#wrongRow')){const row=(steps,col)=>steps.map((t,i)=>{const x=34+i*345;ret
  const fits=[];for(let d=1;d<=11;d++){const c=polyfit(d);fits[d]={c,tr:mse(c,tr),va:mse(c,va)}}
  const best=fits.reduce((b,f,d)=>f&&(!b||f.va<fits[b].va)?d:b,0);
  const m=mapper(70,20,730,470,-1,1,-1.8,1.8);
- function draw(d){const f=fits[d];let h=axes(m,70,20,730,470,'x','y');
+ function draw(d){const f=fits[d];let h=axes(m,70,20,730,470,'entrada x','saída y');
   let p='';for(let i=0;i<=300;i++){const x=-1+2*i/300;let y=ev(f.c,x);y=Math.max(-3,Math.min(3,y));p+=(i?'L':'M')+m.X(x).toFixed(1)+' '+m.Y(y).toFixed(1)}
   const tag=d<=2?['underfitting',COL.am]:(f.va<=fits[best].va*1.6&&f.tr>fits[best].tr*0.3?['bom ajuste',COL.gr]:['overfitting',COL.rd]);
   h+=`<path d="${p}" fill="none" stroke="${tag[1]}" stroke-width="4" clip-path="url(#clipFit)"/>`;
@@ -192,7 +192,7 @@ if($('#wrongRow')){const row=(steps,col)=>steps.map((t,i)=>{const x=34+i*345;ret
 {const D=[[1,2.1],[2,3.9],[3,3.2],[4,5.6],[5,5.0],[6,7.1],[7,6.4],[8,8.6],[9,8.9]];
  const m=mapper(70,20,720,470,0,10,0,11);let showR=0,showQ=0;
  function draw(){const w=+$('#rw').value,b=+$('#rb').value;$('#rwv').textContent=fmt(w);$('#rbv').textContent=fmt(b,1);
-  let h=axes(m,70,20,720,470,'x','y'),mse=0;const px=m.X(1)-m.X(0),py=m.Y(0)-m.Y(1);
+  let h=axes(m,70,20,720,470,'entrada x','resposta real y'),mse=0;const px=m.X(1)-m.X(0),py=m.Y(0)-m.Y(1);
   D.forEach(([x,y])=>{const yh=w*x+b,e=y-yh;mse+=e*e;const a=m.Y(y),c=m.Y(yh);
    if(showQ){const s=Math.abs(a-c);h+=`<rect x="${m.X(x)}" y="${Math.min(a,c)}" width="${s}" height="${s}" fill="${COL.am}" fill-opacity=".18" stroke="${COL.am}" stroke-opacity=".5"/>`}
    if(showR)h+=`<line x1="${m.X(x)}" y1="${a}" x2="${m.X(x)}" y2="${c}" stroke="${COL.am}" stroke-width="3.5"/>`});
@@ -204,22 +204,49 @@ if($('#wrongRow')){const row=(steps,col)=>steps.map((t,i)=>{const x=34+i*345;ret
  FX.resid={init(){$('#rw').oninput=draw;$('#rb').oninput=draw;$('#rOpt').onclick=opt;$('#rRst').onclick=()=>anim(0.4,4);draw()},step(k){showR=1;showQ=k>=1;draw()}}}
 
 /* ---------- 11 gradient descent ---------- */
-{const m=mapper(70,20,760,470,-4.2,4.2,0,18),L=w=>w*w+0.5;let a=0.3,w=-2.6,k=0,trail=[],timer=null;
- function draw(){let h=axes(m,70,20,760,470,'parâmetro w','perda L(w)');let p='';for(let i=0;i<=200;i++){const x=-4.2+8.4*i/200;p+=(i?'L':'M')+m.X(x)+' '+m.Y(L(x))}
-  h+=`<path d="${p}" fill="none" stroke="${COL.cy}" stroke-width="4"/>`;h+=`<circle cx="${m.X(0)}" cy="${m.Y(.5)}" r="9" fill="${COL.gr}"/><text x="${m.X(0)}" y="${m.Y(.5)+34}" text-anchor="middle" font-size="18" fill="${COL.gr}">mínimo</text>`;
-  const vis=trail.filter(v=>Math.abs(v)<=4.2);for(let i=1;i<vis.length;i++)h+=`<line x1="${m.X(vis[i-1])}" y1="${m.Y(L(vis[i-1]))-14}" x2="${m.X(vis[i])}" y2="${m.Y(L(vis[i]))-14}" stroke="${COL.am}" stroke-width="2.5" marker-end="url(#ara)" opacity=".8"/>`;
+{/* um aluno (x = 6 h, y = 4,6), b fixo em 0: L(w) = (y − w·x)², ∂L/∂w = −2·x·(y − w·x). Mínimo em w* = y/x ≈ 0,767; α limite = 1/x² ≈ 0,028 */
+ const X=6,Y=4.6,WS=Y/X,W0=-0.5,W1=2.05,m=mapper(70,20,760,470,W0,W1,0,62),L=w=>(Y-w*X)**2,G=w=>-2*X*(Y-w*X);
+ let a=0.01,w=0,k=0,trail=[],timer=null,last=null;
+ const br=v=>String(v).replace('.',',');
+ const nf=(v,d=2)=>br((Math.abs(v)<5e-4?0:v).toFixed(d)),ps=(v,d=2)=>v<0?`(${nf(v,d)})`:nf(v,d);
+ let anim=null;
+ const FR='\\cy{\\frac{\\partial L}{\\partial w}}';
+ const fb=s=>s.replace(/\\text\{([^}]*)\}/g,'$1').replace(/w_\{novo\}/g,'w novo').replace(/\\frac\{\\partial L\}\{\\partial w\}/g,'∂L/∂w').replace(/\\cdot/g,'·').replace(/\\alpha/g,'α').replace(/\\(cy|am|mathbf)\{/g,'{').replace(/\{,\}/g,',').replace(/\\;/g,' ').replace(/[{}]/g,'').replace(/-/g,'−');
+ const rowsOf=c=>{const t=v=>tn(v),pt=(v,d)=>v<0?`(${t(nf(v,d))})`:t(nf(v,d)),W=pt(c.w,2),E=pt(c.e,2),Gs=pt(c.g,1),A=`\\am{${t(br(String(c.a)))}}`;
+  return [[`\\text{erro} = y - w\\cdot x`,`\\text{erro} = 4{,}6 - ${W}\\cdot 6`,`\\text{erro} = 4{,}6 - ${W}\\cdot 6 = \\mathbf{${t(nf(c.e))}}`],
+   [`${FR} = -2\\cdot x\\cdot \\text{erro}`,`${FR} = -2\\cdot 6\\cdot ${E}`,`${FR} = -2\\cdot 6\\cdot ${E} = \\cy{\\mathbf{${t(nf(c.g,1))}}}`],
+   [`w_{\\text{novo}} = w - \\am{\\alpha}\\cdot ${FR}`,`w_{\\text{novo}} = ${t(nf(c.w))} - ${A}\\cdot ${Gs}`,`w_{\\text{novo}} = ${t(nf(c.w))} - ${A}\\cdot ${Gs} = \\am{\\mathbf{${t(nf(c.w1))}}}`]]};
+ const sym=[`\\text{erro} = y - w\\cdot x`,`${FR} = -2\\cdot x\\cdot \\text{erro}`,`w_{\\text{novo}} = w - \\am{\\alpha}\\cdot ${FR}`];
+ const put=(d,tex,fade)=>{if(!fade){d.innerHTML=TX(tex,fb(tex));return}d.style.opacity=.1;setTimeout(()=>{d.innerHTML=TX(tex,fb(tex));d.style.opacity=1},260)};
+ function calc(){const el=$('#gdCalc');if(!el||anim)return;
+  const R=last?rowsOf(last).map(r=>r[2]):sym;
+  el.innerHTML=R.map(()=>`<div class="gdl" style="transition:opacity .26s;min-height:46px;display:flex;align-items:center"></div>`).join('');[...el.children].forEach((d,i)=>put(d,R[i]))}
+ /* anima: para cada linha, fórmula → valores substituídos → resultado; no fim aplica o passo */
+ function animStep(c,done){const el=$('#gdCalc'),R=rowsOf(c),D=1150;anim=[];
+  el.innerHTML=R.map(()=>`<div class="gdl" style="transition:opacity .26s;min-height:46px;display:flex;align-items:center;opacity:.25"></div>`).join('');
+  const ds=[...el.children];ds.forEach((d,i)=>put(d,sym[i]));
+  let t=400;R.forEach((r,i)=>{anim.push(setTimeout(()=>{ds[i].style.opacity=1},t));t+=D*.8;
+   anim.push(setTimeout(()=>put(ds[i],r[1],1),t));t+=D;anim.push(setTimeout(()=>put(ds[i],r[2],1),t));t+=D});
+  anim.push(setTimeout(()=>{anim=null;done()},t))}
+ function cancelAnim(){if(anim){anim.forEach(clearTimeout);anim=null}}
+ function draw(){let h=axes(m,70,20,760,470,'parâmetro w','perda L(w)');let p='';for(let i=0;i<=200;i++){const x=W0+(W1-W0)*i/200;p+=(i?'L':'M')+m.X(x)+' '+m.Y(Math.min(62,L(x)))}
+  h+=`<path d="${p}" fill="none" stroke="${COL.cy}" stroke-width="4"/>`;h+=`<circle cx="${m.X(WS)}" cy="${m.Y(0)}" r="9" fill="${COL.gr}"/><text x="${m.X(WS)}" y="${m.Y(0)+34}" text-anchor="middle" font-size="18" fill="${COL.gr}">mínimo (w ≈ 0,77)</text>`;
+  const inR=v=>v>=W0&&v<=W1&&L(v)<=62,vis=trail.filter(inR);for(let i=1;i<vis.length;i++)h+=`<line x1="${m.X(vis[i-1])}" y1="${m.Y(L(vis[i-1]))-14}" x2="${m.X(vis[i])}" y2="${m.Y(L(vis[i]))-14}" stroke="${COL.am}" stroke-width="2.5" marker-end="url(#ara)" opacity=".8"/>`;
   vis.forEach((v,i)=>h+=`<circle cx="${m.X(v)}" cy="${m.Y(L(v))-14}" r="${i===vis.length-1?14:6}" fill="${COL.am}" opacity="${i===vis.length-1?1:.5}"/>`);
-  if(Math.abs(w)<=4.2){const g=2*w;h+=`<line x1="${m.X(w-0.8)}" y1="${m.Y(L(w)-g*0.8)}" x2="${m.X(w+0.8)}" y2="${m.Y(L(w)+g*0.8)}" stroke="${COL.tx}" stroke-width="2" stroke-dasharray="6 5"/>`}
-  $('#gdPlot').innerHTML=h;$('#gdK').textContent=k;$('#gdL').textContent=Math.abs(w)>50?'∞':fmt(L(w))}
- function reset(){clearInterval(timer);timer=null;w=-2.6;k=0;trail=[w];$('#gdMsg').textContent='';$('#gdGo').textContent='▶ Descer';draw()}
- function stepOnce(){w=w-a*2*w;k++;trail.push(w);draw();
-  const msg=$('#gdMsg');if(Math.abs(w)>4.2){msg.innerHTML='<span class="rd">Divergiu: cada passo piora o erro</span>';stop()}
-  else if(Math.abs(w)<0.02){msg.innerHTML='<span class="gr">Convergiu para o mínimo</span>';stop()}
-  else if(k>=40){msg.innerHTML='<span class="mu">Ainda descendo… α pequeno é lento</span>';stop()}
-  else if(a>0.5)msg.innerHTML='<span class="am">Oscila de um lado para o outro</span>'}
+  if(inR(w)){const g=G(w),d=0.2;h+=`<line x1="${m.X(w-d)}" y1="${m.Y(L(w)-g*d)}" x2="${m.X(w+d)}" y2="${m.Y(L(w)+g*d)}" stroke="${COL.tx}" stroke-width="2" stroke-dasharray="6 5"/>`}
+  $('#gdPlot').innerHTML=h;$('#gdK').textContent=k;$('#gdW').textContent=Math.abs(w)>50?'∞':nf(w);$('#gdL').textContent=Math.abs(w)>50?'∞':fmt(L(w));calc()}
+ function reset(){cancelAnim();clearInterval(timer);timer=null;w=0;k=0;last=null;trail=[w];$('#gdMsg').textContent='';$('#gdGo').textContent='▶ Descer';draw()}
+ const next=()=>{const g=G(w);return{w,e:Y-w*X,g,w1:w-a*g,a}};let pend=null;
+ function stepOnce(){apply(next())}
+ function apply(c){last=c;w=c.w1;k++;trail.push(w);draw();
+  const msg=$('#gdMsg');if(w<W0||w>W1){msg.innerHTML='<span class="rd">Divergiu: cada passo piora o erro</span>';stop()}
+  else if(Math.abs(w-WS)<0.004){msg.innerHTML='<span class="gr">Convergiu para o mínimo</span>';stop()}
+  else if(k>=40){msg.innerHTML=a*X*X>0.5?'<span class="am">Oscila e demora a assentar</span>':'<span class="mu">Ainda descendo… α pequeno é lento</span>';stop()}
+  else if(a*X*X>0.5)msg.innerHTML='<span class="am">Oscila de um lado para o outro</span>'}
  function stop(){clearInterval(timer);timer=null;$('#gdGo').textContent='▶ Descer'}
  FX.gd={init(){$$('#gdA button').forEach(b=>b.onclick=()=>{$$('#gdA button').forEach(x=>x.classList.toggle('on',x===b));a=+b.dataset.a;reset()});
-  $('#gdGo').onclick=()=>{if(timer){stop();return}if(Math.abs(w)>4.2||Math.abs(w)<0.02||k>=40)reset();$('#gdGo').textContent='❚❚ Pausar';timer=setInterval(stepOnce,a<0.1?180:550)};$('#gdRst').onclick=reset;reset()},leave:stop}}
+  $('#gdStep').onclick=()=>{if(anim){cancelAnim();apply(pend);return}stop();if(w<W0||w>W1||Math.abs(w-WS)<0.004)reset();pend=next();animStep(pend,()=>apply(pend))};
+  $('#gdGo').onclick=()=>{if(anim){cancelAnim();apply(pend)}if(timer){stop();return}if(w<W0||w>W1||Math.abs(w-WS)<0.004||k>=40)reset();$('#gdGo').textContent='❚❚ Pausar';timer=setInterval(stepOnce,a<0.005?160:600)};$('#gdRst').onclick=reset;reset();addEventListener('mathjax-ready',()=>{if(!anim)draw()},{once:true})},leave(){stop();if(anim){cancelAnim();apply(pend)}}}}
 
 /* ---------- 14 KNN ---------- */
 {const r=rng(3),P=[];for(let i=0;i<26;i++)P.push([2.8+gauss(r)*1.3,2.8+gauss(r)*1.1,0].map((v,j)=>j<2?Math.max(.3,Math.min(j?6.7:9.7,v)):v));for(let i=0;i<26;i++)P.push([6.6+gauss(r)*1.3,4.2+gauss(r)*1.1,1].map((v,j)=>j<2?Math.max(.3,Math.min(j?6.7:9.7,v)):v));
@@ -282,7 +309,7 @@ function kmeansFull(P,k,r){let best=null;for(let rep=0;rep<8;rep++){const C=[P[M
   const inr=P.reduce((s,p,i)=>s+d2(p,C[A[i]]),0);if(!best||inr<best.inr)best={inr,A,C:C.map(c=>[...c])}}return best}
 function silhouette(P,A,k){let s=0;P.forEach((p,i)=>{const dist=j=>{const g=P.filter((_,t)=>A[t]===j&&t!==i);return g.length?g.reduce((a,q)=>a+Math.sqrt(d2(p,q)),0)/g.length:0};const a=dist(A[i]);let b=Infinity;for(let j=0;j<k;j++)if(j!==A[i])b=Math.min(b,dist(j));const same=A.filter(x=>x===A[i]).length;s+=same>1?(b-a)/Math.max(a,b):0});return s/P.length}
 {const m=mapper(60,20,680,470,0,8.5,0,8.5),CC=[COL.cy,COL.am,COL.vi,COL.pk,COL.gr];let K=3,C=[],A=null,phase=0,it=0,trail=[],timer=null,r=rng(5);
- function draw(){let h=axes(m,60,20,680,470);KD.forEach((p,i)=>h+=`<circle cx="${m.X(p[0])}" cy="${m.Y(p[1])}" r="8" fill="${A?CC[A[i]]:COL.mu}" style="transition:fill .4s"/>`);
+ function draw(){let h=axes(m,60,20,680,470,'feature 1','feature 2');KD.forEach((p,i)=>h+=`<circle cx="${m.X(p[0])}" cy="${m.Y(p[1])}" r="8" fill="${A?CC[A[i]]:COL.mu}" style="transition:fill .4s"/>`);
   trail.forEach((tr,j)=>{for(let i=1;i<tr.length;i++)h+=`<line x1="${m.X(tr[i-1][0])}" y1="${m.Y(tr[i-1][1])}" x2="${m.X(tr[i][0])}" y2="${m.Y(tr[i][1])}" stroke="${CC[j]}" stroke-width="2.5" stroke-dasharray="6 5"/>`});
   C.forEach((c,j)=>h+=`<g transform="translate(${m.X(c[0])},${m.Y(c[1])})"><circle r="20" fill="${COL.bg}" stroke="${CC[j]}" stroke-width="4"/><path d="M-10 0H10M0 -10V10" stroke="${CC[j]}" stroke-width="4"/></g>`);$('#kmPlot').innerHTML=h}
  function init(){stop();C=[];for(let j=0;j<K;j++)C.push([0.8+r()*7,0.8+r()*7]);A=null;phase=0;it=0;trail=C.map(c=>[[...c]]);$('#kmPhase').innerHTML='<span class="gr">1</span> Centroides sorteados';$('#kmIt').textContent='iteração 0';draw()}
@@ -496,7 +523,7 @@ if($('#edaHist')){const r=rng(31),Hs=[],Ns=[];for(let i=0;i<200;i++){const h=Mat
  const q=(a,p)=>{const s=[...a].sort((x,y)=>x-y),i=(s.length-1)*p,lo=Math.floor(i);return s[lo]+(s[Math.ceil(i)]-s[lo])*(i-lo)};
  function draw(){const H=out?[...Hs,...OH]:Hs,N=out?[...Ns,...ON]:Ns,mu=mean(H),md=med(H);
   const bins=Array(16).fill(0);Hs.forEach(v=>bins[Math.min(15,Math.floor(v))]++);
-  const m=mapper(50,40,640,260,0,16,0,Math.max(...bins)*1.08);let h=axes(m,50,40,640,260,'','alunos');
+  const m=mapper(50,40,640,260,0,16,0,Math.max(...bins)*1.08);let h=axes(m,50,40,640,260,'horas de estudo por semana','nº de alunos');
   bins.forEach((c,i)=>h+=`<rect x="${m.X(i)+1}" y="${m.Y(c)}" width="${m.X(1)-m.X(0)-2}" height="${m.Y(0)-m.Y(c)}" rx="3" fill="${COL.cy}" opacity=".55"/>`);
   for(let v=0;v<=16;v+=4)h+=`<text x="${m.X(v)}" y="322" text-anchor="middle" font-size="15" fill="${COL.dim}">${v}${v===16?' h':''}</text>`;
   const ln=(v,c,t,dy)=>`<line x1="${m.X(Math.min(16,v))}" y1="40" x2="${m.X(Math.min(16,v))}" y2="300" stroke="${c}" stroke-width="3" stroke-dasharray="${c===COL.am?'8 6':'0'}"/><text x="${m.X(Math.min(16,v))+8}" y="${40+dy}" font-size="16" font-weight="700" fill="${c}">${t}</text>`;
@@ -551,7 +578,7 @@ if($('#cvSvg')){const S=[.82,.79,.85,.80,.83],m=S.reduce((a,b)=>a+b)/5,sd=Math.s
 if($('#mrSvg')){const W1=.6,W2=-.35,B0=4;
  function draw(){const hs=+$('#mrH').value,fa=+$('#mrF').value,a=W1*hs,b=W2*fa,y=B0+a+b;$('#mrHv').textContent=hs;$('#mrFv').textContent=fa;
   $('#mrCalc').innerHTML=TX(`\\am{\\hat{y}} = \\cy{0{,}6\\cdot ${tn(fmt(hs,1))}}\\;\\rd{-\\,0{,}35\\cdot ${fa}} + \\vi{4{,}0} = \\am{${tn(fmt(y))}}`,`ŷ = <span class="cy">0,6·${fmt(hs,1)}</span> <span class="rd">− 0,35·${fa}</span> + <span class="vi">4,0</span> = <span class="am">${fmt(y)}</span>`);
-  const m=mapper(80,20,640,440,0,4,0,12);let h=axes(m,80,20,640,440);for(let v=0;v<=12;v+=2)h+=`<text x="68" y="${m.Y(v)+5}" text-anchor="end" font-size="15" fill="${COL.dim}">${v}</text><line x1="80" y1="${m.Y(v)}" x2="720" y2="${m.Y(v)}" stroke="${COL.ln}" stroke-width="1" opacity=".5"/>`;
+  const m=mapper(80,20,640,440,0,4,0,12);let h=axes(m,80,20,640,440,'','nota (pontos)');for(let v=0;v<=12;v+=2)h+=`<text x="68" y="${m.Y(v)+5}" text-anchor="end" font-size="15" fill="${COL.dim}">${v}</text><line x1="80" y1="${m.Y(v)}" x2="720" y2="${m.Y(v)}" stroke="${COL.ln}" stroke-width="1" opacity=".5"/>`;
   const bars=[['b',0,B0,COL.vi,'4,0'],['horas',B0,B0+a,COL.cy,'+'+fmt(a)],['faltas',B0+a,y,COL.rd,fmt(b)],['ŷ',0,y,COL.am,fmt(y)]];
   bars.forEach(([t,y0,y1,c,l],i)=>{const x=m.X(i+.18),w=m.X(.64)-m.X(0),top=m.Y(Math.max(y0,y1));h+=`<rect x="${x}" y="${top}" width="${w}" height="${Math.max(2,Math.abs(m.Y(y0)-m.Y(y1)))}" rx="8" fill="${c}" fill-opacity="${i===3?.9:.75}"/><text x="${x+w/2}" y="${top-12}" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="21" font-weight="700" fill="${c}">${l}</text><text x="${x+w/2}" y="492" text-anchor="middle" font-size="19" font-weight="700">${t}</text>`;
    if(i<2)h+=`<line x1="${x+w}" y1="${m.Y(y1)}" x2="${m.X(i+1.18)}" y2="${m.Y(y1)}" stroke="${COL.mu}" stroke-dasharray="5 5" stroke-width="2"/>`});
@@ -563,7 +590,7 @@ if($('#regPlot')&&FITD){const {tr,va,solve,ev,mse}=FITD,D=11,m=mapper(70,20,730,
  function ridge(lam){const n=D+1,A=Array.from({length:n},()=>Array(n).fill(0)),b=Array(n).fill(0);for(const[x,y]of tr){const p=[];for(let k=0;k<n;k++)p.push(x**k);for(let i=0;i<n;i++){b[i]+=p[i]*y;for(let j=0;j<n;j++)A[i][j]+=p[i]*p[j]}}for(let i=0;i<n;i++)A[i][i]+=i?lam:1e-9;return solve(A,b)}
  const grid=[];for(let l=-7;l<=2.001;l+=.1)grid.push([l,mse(ridge(10**l),va)]);const best=grid.reduce((a,b)=>b[1]<a[1]?b:a);
  const c0=ridge(1e-7),cmax=Math.max(...c0.slice(1).map(Math.abs));
- function draw(){const L=+$('#regL').value,c=ridge(10**L),ftr=mse(c,tr),fva=mse(c,va);let h=axes(m,70,20,730,470,'','y'),p='';
+ function draw(){const L=+$('#regL').value,c=ridge(10**L),ftr=mse(c,tr),fva=mse(c,va);let h=axes(m,70,20,730,470,'entrada x','saída y'),p='';
   for(let i=0;i<=300;i++){const x=-1+2*i/300,y=Math.max(-3,Math.min(3,ev(c,x)));p+=(i?'L':'M')+m.X(x).toFixed(1)+' '+m.Y(y).toFixed(1)}
   const tag=fva<=best[1]*1.3?['bom ajuste',COL.gr]:L<best[0]?['overfitting',COL.rd]:['underfitting',COL.am];
   h+=`<path d="${p}" fill="none" stroke="${tag[1]}" stroke-width="4" clip-path="url(#clipFit)"/>`;

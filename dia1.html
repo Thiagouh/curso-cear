@@ -285,7 +285,7 @@
 <section class="s" data-b="2" data-pause="10" data-next="Deixe o Notebook 01 aberto" data-nochrome="1" data-notes="PAUSA (10 min). Clique em Iniciar."></section>
 
 <!-- M02 -->
-<section class="s sec" data-b="3" data-q="Como uma reta aprende com os próprios erros?" data-items="ŷ = w·x + b;Resíduos e MSE;Descida do gradiente;Regressão múltipla;Regularização;MAE, MSE e R²;lab:Lab 01" data-notes="CAPA DO MÓDULO 02 (1 min). Primeiro modelo do curso: a regressão linear. A ideia de perda + descida do gradiente vai reaparecer nas redes neurais e nos LLMs amanhã."></section>
+<section class="s sec" data-b="3" data-q="Como uma reta aprende com os próprios erros?" data-items="ŷ = w·x + b;Resíduos e MSE;MAE, MSE e R²;Descida do gradiente;Regressão múltipla;Regularização;lab:Lab 01" data-notes="CAPA DO MÓDULO 02 (1 min). Primeiro modelo do curso: a regressão linear. A ideia de perda + descida do gradiente vai reaparecer nas redes neurais e nos LLMs amanhã."></section>
 
 <!-- 09 -->
 <section class="s" data-b="3" data-id="line" data-notes="SLIDE 09 (4 min). ŷ = wx + b. w = inclinação, b = intercepto, x = entrada. Mova os controles. Exemplo: x = 6, w = 5, b = 20 → ŷ = 50 (exemplo matemático, não uma escala real de nota). O modelo precisa descobrir w e b a partir dos dados.">
@@ -323,10 +323,24 @@
   </div>
 </section>
 
-<!-- CMD LIB01 -->
-<section class="s" data-b="3" data-cmd="lib01" data-notes="FERRAMENTAS DO LAB 01 (2 min). Depois da reta e do erro, as ferramentas para calculá-los. Mostre só o que é novo em relação ao Lab 00: cross_val_score, PolynomialFeatures, LinearRegression/Ridge e as métricas. Use → para passar de comando em comando (ou clique na lista); os controles mudam o parâmetro destacado no código.">
-  <h2>As ferramentas do Lab 01</h2>
+<!-- 12 -->
+<section class="s" data-b="3" data-notes="SLIDE 12 (3 min). MAE: erro absoluto médio, na unidade original. MSE: penaliza mais os desvios grandes (unidade ao quadrado). R²: compara com prever sempre a média; 1 é perfeito, 0 é igual à média, pode ser negativo fora do treino. Nunca interprete uma métrica sozinha.">
+  <h2>Um modelo erra. Quanto, e em qual unidade?</h2>
+  <div class="grid3">
+    <div class="card f" data-f="1" style="min-height:470px"><div class="big cy" style="font-size:78px">MAE</div><div class="mono" style="font-size:30px;margin:14px 0 22px" data-tex="\frac{1}{n}\sum_{i=1}^{n}\left|y_i-\hat{y}_i\right|">1/n Σ |y − ŷ|</div>
+      <div style="display:flex;align-items:flex-end;gap:16px;height:110px"><i style="width:44px;height:36%;background:var(--cy)"></i><i style="width:44px;height:80%;background:var(--cy)"></i><i style="width:44px;height:27%;background:var(--cy)"></i><i style="width:44px;height:62%;background:var(--cy)"></i></div>
+      <h3 style="font-size:27px;margin-top:26px">Erro médio na unidade original</h3><div class="mu" style="font-style:italic">“erra 0,6 ponto, em média”</div></div>
+    <div class="card f" data-f="2" style="min-height:470px"><div class="big am" style="font-size:78px">MSE</div><div class="mono" style="font-size:30px;margin:14px 0 22px" data-tex="\frac{1}{n}\sum_{i=1}^{n}\left(y_i-\hat{y}_i\right)^2">1/n Σ (y − ŷ)²</div>
+      <div style="display:flex;align-items:flex-end;gap:16px;height:110px"><i style="width:44px;height:13%;background:var(--am)"></i><i style="width:44px;height:64%;background:var(--am)"></i><i style="width:44px;height:7%;background:var(--am)"></i><i style="width:44px;height:38%;background:var(--am)"></i></div>
+      <h3 style="font-size:27px;margin-top:26px">Penaliza erros grandes</h3><div class="mu" style="font-style:italic">unidade ao quadrado</div></div>
+    <div class="card f" data-f="3" style="min-height:470px"><div class="big vi" style="font-size:78px">R²</div><div class="mono" style="font-size:30px;margin:14px 0 22px" data-tex="1-\frac{\sum_i (y_i-\hat{y}_i)^2}{\sum_i (y_i-\bar{y})^2}">1 − SS<sub>res</sub> / SS<sub>tot</sub></div>
+      <div style="height:110px;display:flex;flex-direction:column;justify-content:center"><div style="height:26px;border-radius:13px;background:var(--ln)"><div style="width:82%;height:100%;border-radius:13px;background:var(--vi)"></div></div><div class="mono mu" style="display:flex;justify-content:space-between;font-size:16px;margin-top:8px"><span>0</span><span>0,82</span><span>1</span></div></div>
+      <h3 style="font-size:27px;margin-top:26px">Comparado a prever a média</h3><div class="mu" style="font-style:italic">pode ser negativo fora do treino</div></div>
+  </div>
+  <div class="f note" data-f="4" style="margin-top:28px;font-size:22px">Uma métrica sozinha não conta a história: olhe o problema</div>
 </section>
+
+<!-- CMD LIB01 -->
 
 <!-- CMD NP -->
 <section class="s" data-b="3" data-cmd="np" data-notes="NO NOTEBOOK · NUMPY (5 min). Os 10 primeiros alunos do treino do Lab 01. Mova w e b nos itens 2 a 4: o array ŷ, os resíduos e a MSE mudam juntos. Desafie a turma a achar o menor MSE (a dica mostra o mínimo). Termine no reshape(-1, 1), que aparece em todo o Lab 01. Use → para passar de comando em comando (ou clique na lista); os controles mudam o parâmetro destacado no código.">
@@ -334,23 +348,27 @@
 </section>
 
 <!-- 11 -->
-<section class="s" data-b="3" data-id="gd" data-notes="SLIDE 11 (4 min). Gradiente = direção de maior crescimento do erro; a descida vai no sentido contrário: w ← w − α·∂L/∂w. Rode com α pequeno (lento), bom (converge), grande (oscila) e grande demais (diverge). Cada passo aqui é uma atualização; uma época é uma passada por todos os dados de treino.">
+<section class="s" data-b="3" data-id="gd" data-notes="SLIDE 11 (4 min). Gradiente = direção em que o erro mais cresce; a descida vai no sentido contrário: w ← w − α·∂L/∂w. Para dar para fazer a conta na mão, o exemplo usa UM aluno (6 h de estudo, nota 4,6) e só o peso w (b fixo em 0): L(w) = (4,6 − 6w)². Clique “1 passo” e faça a conta do quadro junto com a turma: com α = 0,01, de w = 0 vai para 0,55 e depois 0,71, chegando ao mínimo 0,77. As taxas são as MESMAS do Lab 01: 0,001 lenta, 0,01 boa, 0,023 oscila (o w pula de um lado para o outro, mas a perda cai) e 0,03 diverge. No notebook, com os 296 alunos, o limite é ≈ 0,024; aqui, com um aluno, é 1/6² ≈ 0,028. Cada passo aqui é uma atualização; uma época é uma passada por todos os dados de treino.">
   <h2>Aprender é caminhar ladeira abaixo</h2>
   <div class="row" style="gap:44px">
     <svg id="gdPlot" viewBox="0 0 860 560" style="width:860px;height:560px"></svg>
-    <div class="col" style="flex:1;gap:20px">
-      <div class="formula" style="font-size:31px" data-tex="w \leftarrow w - \am{\alpha}\,\cy{\frac{\partial L}{\partial w}}">w ← w − <span class="am">α</span> · <span class="cy">∂L/∂w</span></div>
-      <div class="card col" style="gap:14px"><div class="lbl mu" style="font-size:14px">Taxa de aprendizado α</div>
-        <div class="row" id="gdA" style="gap:10px;flex-wrap:wrap"><button class="b" data-a="0.05">0,05</button><button class="b on" data-a="0.3">0,3</button><button class="b" data-a="0.9">0,9</button><button class="b" data-a="1.05">1,05</button></div>
-        <div class="row" style="gap:10px"><button class="b" id="gdGo">▶ Descer</button><button class="b" id="gdRst">Reiniciar</button></div></div>
-      <div class="card row" style="justify-content:space-between"><div><div class="lbl mu" style="font-size:14px">Passo</div><div class="big mono" id="gdK" style="font-size:52px">0</div></div><div><div class="lbl mu" style="font-size:14px">Perda L(w)</div><div class="big mono am" id="gdL" style="font-size:52px">—</div></div></div>
-      <div id="gdMsg" style="font-size:24px;font-weight:700;min-height:34px"></div>
+    <div class="col" style="flex:1;gap:14px">
+      <div class="card col" style="gap:8px;padding:16px 22px">
+        <div class="formula" style="font-size:26px;padding:0;background:none;border:0" data-tex="w \leftarrow w - \am{\alpha}\,\cy{\frac{\partial L}{\partial w}}">w ← w − <span class="am">α</span> · <span class="cy">∂L/∂w</span></div>
+        <div class="mu" style="font-size:15px">1 aluno: 6 h, nota 4,6 · b fixo em 0 · L(w) = (4,6 − 6w)²</div>
+        <div id="gdCalc" style="font-size:19px;line-height:1.4;display:flex;flex-direction:column;gap:8px;min-height:150px"></div>
+      </div>
+      <div class="card col" style="gap:12px;padding:16px 22px"><div class="lbl mu" style="font-size:14px">Taxa de aprendizado <span style="text-transform:none">α</span> · as mesmas do Lab 01</div>
+        <div class="row" id="gdA" style="gap:10px;flex-wrap:wrap"><button class="b" data-a="0.001">0,001</button><button class="b on" data-a="0.01">0,01</button><button class="b" data-a="0.023">0,023</button><button class="b" data-a="0.03">0,03</button></div>
+        <div class="row" style="gap:10px"><button class="b" id="gdStep">1 passo</button><button class="b" id="gdGo">▶ Descer</button><button class="b" id="gdRst">Reiniciar</button></div></div>
+      <div class="card row" style="justify-content:space-between;padding:14px 22px"><div><div class="lbl mu" style="font-size:14px">Passo</div><div class="big mono" id="gdK" style="font-size:40px">0</div></div><div><div class="lbl mu" style="font-size:14px">w</div><div class="big mono" id="gdW" style="font-size:40px">0</div></div><div><div class="lbl mu" style="font-size:14px">Perda L(w)</div><div class="big mono am" id="gdL" style="font-size:40px">—</div></div></div>
+      <div id="gdMsg" style="font-size:22px;font-weight:700;min-height:30px"></div>
     </div>
   </div>
 </section>
 
 <!-- GDCODE -->
-<section class="s" data-b="3" data-id="gdc" data-notes="NO NOTEBOOK · DESCIDA DO GRADIENTE (6 min). É a função do Lab 01, executada como o Python faz. Clique “Próxima linha” algumas vezes na primeira época: w e b começam em 0, y_hat e erro viram arrays, dw e db são os gradientes, e w e b dão um passo contra eles. Depois use “Próxima época” e “100 épocas”. Troque alpha: 0,001 lento; 0,02 desce bem; 0,023 oscila; 0,03 diverge — os mesmos valores do item 4 do notebook.">
+<section class="s" data-b="3" data-id="gdc" data-notes="NO NOTEBOOK · DESCIDA DO GRADIENTE (6 min). É a função do Lab 01, executada como o Python faz. Clique “Próxima linha” algumas vezes na primeira época: w e b começam em 0, y_hat e erro viram arrays, dw e db são os gradientes, e w e b dão um passo contra eles. Depois use “Próxima época” e “100 épocas”. Troque alpha: 0,001 lento; 0,01 desce bem; 0,023 no limite; 0,03 diverge — os mesmos valores do slide da ladeira e do item 4 do notebook.">
   <h2>A descida do gradiente, linha por linha</h2>
   <div class="nbk">▸ Lab 01 · etapa 2</div>
   <div class="row" style="gap:30px;align-items:flex-start">
@@ -397,22 +415,6 @@
   </div>
 </section>
 
-<!-- 12 -->
-<section class="s" data-b="3" data-notes="SLIDE 12 (3 min). MAE: erro absoluto médio, na unidade original. MSE: penaliza mais os desvios grandes (unidade ao quadrado). R²: compara com prever sempre a média; 1 é perfeito, 0 é igual à média, pode ser negativo fora do treino. Nunca interprete uma métrica sozinha.">
-  <h2>Um modelo erra. Quanto, e em qual unidade?</h2>
-  <div class="grid3">
-    <div class="card f" data-f="1" style="min-height:470px"><div class="big cy" style="font-size:78px">MAE</div><div class="mono" style="font-size:30px;margin:14px 0 22px" data-tex="\frac{1}{n}\sum_{i=1}^{n}\left|y_i-\hat{y}_i\right|">1/n Σ |y − ŷ|</div>
-      <div style="display:flex;align-items:flex-end;gap:16px;height:110px"><i style="width:44px;height:36%;background:var(--cy)"></i><i style="width:44px;height:80%;background:var(--cy)"></i><i style="width:44px;height:27%;background:var(--cy)"></i><i style="width:44px;height:62%;background:var(--cy)"></i></div>
-      <h3 style="font-size:27px;margin-top:26px">Erro médio na unidade original</h3><div class="mu" style="font-style:italic">“erra 0,6 ponto, em média”</div></div>
-    <div class="card f" data-f="2" style="min-height:470px"><div class="big am" style="font-size:78px">MSE</div><div class="mono" style="font-size:30px;margin:14px 0 22px" data-tex="\frac{1}{n}\sum_{i=1}^{n}\left(y_i-\hat{y}_i\right)^2">1/n Σ (y − ŷ)²</div>
-      <div style="display:flex;align-items:flex-end;gap:16px;height:110px"><i style="width:44px;height:13%;background:var(--am)"></i><i style="width:44px;height:64%;background:var(--am)"></i><i style="width:44px;height:7%;background:var(--am)"></i><i style="width:44px;height:38%;background:var(--am)"></i></div>
-      <h3 style="font-size:27px;margin-top:26px">Penaliza erros grandes</h3><div class="mu" style="font-style:italic">unidade ao quadrado</div></div>
-    <div class="card f" data-f="3" style="min-height:470px"><div class="big vi" style="font-size:78px">R²</div><div class="mono" style="font-size:30px;margin:14px 0 22px" data-tex="1-\frac{\sum_i (y_i-\hat{y}_i)^2}{\sum_i (y_i-\bar{y})^2}">1 − SS<sub>res</sub> / SS<sub>tot</sub></div>
-      <div style="height:110px;display:flex;flex-direction:column;justify-content:center"><div style="height:26px;border-radius:13px;background:var(--ln)"><div style="width:82%;height:100%;border-radius:13px;background:var(--vi)"></div></div><div class="mono mu" style="display:flex;justify-content:space-between;font-size:16px;margin-top:8px"><span>0</span><span>0,82</span><span>1</span></div></div>
-      <h3 style="font-size:27px;margin-top:26px">Comparado a prever a média</h3><div class="mu" style="font-style:italic">pode ser negativo fora do treino</div></div>
-  </div>
-  <div class="f note" data-f="4" style="margin-top:28px;font-size:22px">Uma métrica sozinha não conta a história: olhe o problema</div>
-</section>
 
 <!-- CMD SKL -->
 <section class="s" data-b="3" data-cmd="skl" data-notes="NO NOTEBOOK · SCIKIT-LEARN (5 min). O roteiro criar → fit → predict vale para todos os modelos do curso. coef_ e intercept_ reais (0,381 e 1,772) batem com a descida do gradiente. Arraste as horas no predict. Métricas: valores reais do teste do Lab 01; a ordem é sempre (real, previsto). Use → para passar de comando em comando (ou clique na lista); os controles mudam o parâmetro destacado no código.">
