@@ -258,7 +258,7 @@
 <section class="s" data-b="2" data-pause="10" data-next="Deixe o Notebook 01 aberto" data-nochrome="1" data-notes="PAUSA (10 min). Clique em Iniciar."></section>
 
 <!-- M02 -->
-<section class="s sec" data-b="3" data-q="Como uma reta aprende com os próprios erros?" data-items="ŷ = w·x + b;Resíduos e perda (MSE);Métricas: MAE, MSE e R²;Descida do gradiente;Regressão múltipla;Overfitting e regularização;Validação cruzada;lab:Lab 01" data-notes="CAPA DO MÓDULO 02 (1 min). Primeiro modelo do curso: a regressão linear. A ideia de perda + descida do gradiente vai reaparecer nas redes neurais e nos LLMs amanhã."></section>
+<section class="s sec" data-b="3" data-q="Como uma reta aprende com os próprios erros?" data-items="ŷ = w·x + b;Resíduos e perda (MSE);Overfitting;Métricas: MAE, MSE e R²;Descida do gradiente;Regressão múltipla;Regularização;Validação cruzada;lab:Lab 01" data-notes="CAPA DO MÓDULO 02 (1 min). Primeiro modelo do curso: a regressão linear. A ideia de perda + descida do gradiente vai reaparecer nas redes neurais e nos LLMs amanhã."></section>
 
 <!-- 09 -->
 <section class="s" data-b="3" data-id="line" data-notes="SLIDE 09 (4 min). ŷ = wx + b. w = inclinação, b = intercepto, x = entrada. Mova os controles. Exemplo: x = 6, w = 5, b = 20 → ŷ = 50 (exemplo matemático, não uma escala real de nota). O modelo precisa descobrir w e b a partir dos dados.">
@@ -292,6 +292,21 @@
         <div class="row" style="gap:12px"><button class="b" id="rOpt">Ajuste ótimo</button><button class="b" id="rRst">Reiniciar</button></div>
       </div>
       <div class="f" data-f="1" style="font-size:22px">Um erro <b class="am">2×</b> maior pesa <b class="am">4×</b></div>
+    </div>
+  </div>
+</section>
+
+<!-- 08 -->
+<section class="s" data-b="3" data-id="fit" data-notes="OVERFITTING (6 min). Com várias features (ou potências de x), o modelo fica mais flexível. Arraste a complexidade (grau do polinômio). Pontos brancos = treino; anéis âmbar = validação. Com grau alto, o erro de treino vai a quase zero e o de validação explode. “Qual curva vocês escolheriam?” A decisão precisa de dados de validação, não do olho.">
+  <h2>Acertar tudo no treino é sempre bom sinal?</h2>
+  <div class="row" style="gap:40px">
+    <svg id="fitPlot" viewBox="0 0 820 560" style="width:820px;height:560px"></svg>
+    <div class="col" style="flex:1;gap:22px">
+      <div class="card"><div class="lbl mu" style="font-size:14px">Complexidade do modelo</div>
+        <div class="row" style="align-items:center;margin-top:10px;gap:18px"><input id="deg" type="range" min="1" max="11" value="1" style="width:300px"><span class="mono big" id="degv" style="font-size:34px">grau 1</span></div>
+        <div id="fitTag" class="big" style="font-size:40px;margin-top:16px">underfitting</div></div>
+      <div class="card"><svg id="fitErr" viewBox="0 0 520 250" style="width:100%;height:250px"></svg></div>
+      <div class="note">Polinômios ajustados ao vivo por mínimos quadrados · dados sintéticos</div>
     </div>
   </div>
 </section>
@@ -372,21 +387,6 @@
       <div class="f col" data-f="1" style="gap:8px;font-size:21px"><div><b class="cy">Coeficiente</b> <span class="mu">efeito de uma feature com as outras fixas</span></div><div><b class="vi">2 features</b> <span class="mu">um plano · 100 features: um hiperplano</span></div><div><b class="am">Atenção</b> <span class="mu">coeficiente não prova causa</span></div></div>
     </div>
     <svg id="mrSvg" viewBox="0 0 740 540" style="width:740px;height:540px"></svg>
-  </div>
-</section>
-
-<!-- 08 -->
-<section class="s" data-b="3" data-id="fit" data-notes="OVERFITTING (6 min). Com várias features (ou potências de x), o modelo fica mais flexível. Arraste a complexidade (grau do polinômio). Pontos brancos = treino; anéis âmbar = validação. Com grau alto, o erro de treino vai a quase zero e o de validação explode. “Qual curva vocês escolheriam?” A decisão precisa de dados de validação, não do olho.">
-  <h2>Acertar tudo no treino é sempre bom sinal?</h2>
-  <div class="row" style="gap:40px">
-    <svg id="fitPlot" viewBox="0 0 820 560" style="width:820px;height:560px"></svg>
-    <div class="col" style="flex:1;gap:22px">
-      <div class="card"><div class="lbl mu" style="font-size:14px">Complexidade do modelo</div>
-        <div class="row" style="align-items:center;margin-top:10px;gap:18px"><input id="deg" type="range" min="1" max="11" value="1" style="width:300px"><span class="mono big" id="degv" style="font-size:34px">grau 1</span></div>
-        <div id="fitTag" class="big" style="font-size:40px;margin-top:16px">underfitting</div></div>
-      <div class="card"><svg id="fitErr" viewBox="0 0 520 250" style="width:100%;height:250px"></svg></div>
-      <div class="note">Polinômios ajustados ao vivo por mínimos quadrados · dados sintéticos</div>
-    </div>
   </div>
 </section>
 
