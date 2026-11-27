@@ -226,7 +226,7 @@
 </section>
 
 <!-- 07 -->
-<section class="s" data-b="2" data-notes="VAZAMENTO (5 min). Dois jeitos de “colar” na prova. (1) Usar o teste para preparar os dados: se a mediana, a média ou qualquer outra conta usa treino e teste juntos, o teste já influenciou o modelo antes da prova. Certo: separar primeiro, aprender o preparo só com o treino e só aplicá-lo no teste. No Lab 01, o Pipeline do scikit-learn garante essa ordem sozinho. (2) Uma feature que só existe depois da resposta: a coluna situacao (aprovado/reprovado) é calculada a partir da nota. “O teste é uma prova inédita, não uma cola para o estudo.”">
+<section class="s" data-b="2" data-notes="VAZAMENTO (5 min). Dois jeitos de “colar” na prova. (1) Usar o teste para preparar os dados: se a mediana, a média ou qualquer outra conta usa treino e teste juntos, o teste já influenciou o modelo antes da prova. Certo: separar primeiro, aprender o preparo só com o treino e só aplicá-lo no teste. No Lab 01, ajustar o Pipeline do scikit-learn somente no treino evita o vazamento de dados no pré-processamento: o teste usa as estatísticas aprendidas no treino. Na validação cruzada, o Pipeline reaprende o preparo somente na parte de treino de cada fold. Ele não corrige features que revelam o alvo. (2) Uma feature que só existe depois da resposta: a coluna situacao (aprovado/reprovado) é calculada a partir da nota. “O teste é uma prova inédita, não uma cola para o estudo.”">
   <h2>O teste não pode contar o futuro</h2>
   <svg viewBox="0 0 1408 540" style="width:1408px;height:540px">
     <g class="f" data-f="1">
@@ -242,7 +242,7 @@
       <g id="rightRow"></g>
     </g></g>
   </svg>
-  <div class="f" data-f="3" style="font-size:25px;margin-top:4px"><span class="mono cy" style="font-weight:700">Pipeline</span> <span class="mu">faz essa ordem por você: é o que o Lab 01 usa</span></div>
+  <div class="f" data-f="3" style="font-size:25px;margin-top:4px"><span class="mono cy" style="font-weight:700">Pipeline</span> <span class="mu">evita vazamento no pré-processamento: aprende no treino e só transforma o teste</span></div>
   <div class="f" data-f="4" style="font-size:25px;margin-top:10px"><span class="mono rd" style="font-weight:700">situacao</span> <span class="mu">também vaza: aprovado ⇔ nota ≥ 6. Ela só existe depois da resposta</span></div>
 </section>
 
@@ -258,7 +258,7 @@
 <section class="s" data-b="2" data-pause="10" data-next="Deixe o Notebook 01 aberto" data-nochrome="1" data-notes="PAUSA (10 min). Clique em Iniciar."></section>
 
 <!-- M02 -->
-<section class="s sec" data-b="3" data-q="Como uma reta aprende com os próprios erros?" data-items="ŷ = w·x + b;Resíduos e perda (MSE);Overfitting;Métricas: MAE, MSE e R²;Descida do gradiente;Regressão múltipla;Regularização;Validação cruzada;lab:Lab 01" data-notes="CAPA DO MÓDULO 02 (1 min). Primeiro modelo do curso: a regressão linear. A ideia de perda + descida do gradiente vai reaparecer nas redes neurais e nos LLMs amanhã."></section>
+<section class="s sec" data-b="3" data-q="Como uma reta aprende com os próprios erros?" data-items="ŷ = w·x + b;Resíduos e perda (MSE);Overfitting;Métricas: MAE, MSE e R²;Descida do gradiente;Regressão múltipla;Validação cruzada;lab:Lab 01" data-notes="CAPA DO MÓDULO 02 (1 min). Primeiro modelo do curso: a regressão linear. A ideia de perda + descida do gradiente vai reaparecer nas redes neurais e nos LLMs amanhã."></section>
 
 <!-- 09 -->
 <section class="s" data-b="3" data-id="line" data-notes="SLIDE 09 (4 min). ŷ = wx + b. w = inclinação, b = intercepto, x = entrada. Mova os controles. Exemplo: x = 6, w = 5, b = 20 → ŷ = 50 (exemplo matemático, não uma escala real de nota). O modelo precisa descobrir w e b a partir dos dados.">
@@ -390,20 +390,6 @@
   </div>
 </section>
 
-<!-- REG -->
-<section class="s" data-b="3" data-id="reg" data-notes="REGULARIZAÇÃO (5 min). Mesmos dados do slide de overfitting, agora com um polinômio de grau 11 fixo. A regularização L2 (Ridge) soma à perda uma penalidade λ·Σw²: pesos grandes custam caro. Arraste λ: perto de zero a curva decora o treino; com λ moderado ela suaviza e o erro de validação cai; com λ enorme vira quase uma reta (underfitting). As barras mostram os coeficientes encolhendo. Lasso (L1) pode zerar coeficientes e serve também para selecionar features.">
-  <h2>Regularização: freando um modelo complexo</h2>
-  <div class="row" style="gap:40px">
-    <svg id="regPlot" viewBox="0 0 820 560" style="width:820px;height:560px"></svg>
-    <div class="col" style="flex:1;gap:18px">
-      <div class="formula" style="font-size:26px" data-tex="\text{Perda} = \mathrm{MSE} + \am{\lambda}\sum_{j} w_j^2">Perda = MSE + <span class="am">λ</span>·Σw²</div>
-      <div class="card"><div class="lbl mu" style="font-size:14px">Força da regularização λ</div><div class="row" style="align-items:center;gap:16px;margin-top:10px"><input id="regL" type="range" min="-7" max="2" step="0.1" value="-7" style="width:280px"><span class="mono big am" id="regLv" style="font-size:30px"></span></div><div class="row mono" style="gap:26px;margin-top:14px;font-size:19px"><span>treino <b id="regTr"></b></span><span class="am">validação <b id="regVa"></b></span></div><div id="regTag" class="big" style="font-size:32px;margin-top:12px"></div></div>
-      <div class="card"><div class="lbl mu" style="font-size:14px">Tamanho dos coeficientes |w|</div><svg id="regCoef" viewBox="0 0 520 150" style="width:100%;height:150px;margin-top:8px"></svg></div>
-    </div>
-  </div>
-</section>
-
-
 <!-- CMD SKL -->
 <section class="s" data-b="3" data-cmd="skl" data-notes="NO NOTEBOOK · SCIKIT-LEARN (5 min). O roteiro criar → fit → predict vale para todos os modelos do curso. coef_ e intercept_ reais (0,381 e 1,772) batem com a descida do gradiente. Arraste as horas no predict. Métricas: valores reais do teste do Lab 01; a ordem é sempre (real, previsto). Use → para passar de comando em comando (ou clique na lista); os controles mudam o parâmetro destacado no código.">
   <h2>Scikit-learn: criar, treinar, prever, medir</h2>
@@ -417,8 +403,8 @@
 </section>
 
 <!-- CMD CV -->
-<section class="s" data-b="3" data-cmd="cv" data-notes="NO NOTEBOOK · PIPELINE, VALIDAÇÃO E RIDGE (6 min). Pipeline: alterne fit × predict. No fit, cada etapa aprende só com o treino (a mediana, a média e o desvio, os pesos); no predict, o teste só é transformado. É aqui que os faltantes deixados no Lab 00 são preenchidos — a ordem certa do slide “o teste não pode contar o futuro”. cross_val_score: troque cv=3/5/10 e alterne o sinal — explique o neg_ (o scikit-learn sempre maximiza). PolynomialFeatures com x = 2 mostra as potências. Ridge: alpha é o λ do slide de regularização, não a taxa de aprendizado. Coeficientes reais da regressão múltipla via named_steps. Use → para passar de comando em comando (ou clique na lista); os controles mudam o parâmetro destacado no código.">
-  <h2>Pipeline, validação cruzada e Ridge</h2>
+<section class="s" data-b="3" data-cmd="cv" data-notes="NO NOTEBOOK · PIPELINE, VALIDAÇÃO E REGRESSÃO POLINOMIAL (5 min). Pipeline: alterne fit × predict. No fit, cada etapa aprende só com o treino (a mediana, a média e o desvio, os pesos); no predict, o teste só é transformado. Isso evita vazamento de dados no pré-processamento. Na validação cruzada, o Pipeline ajusta o preparo separadamente em cada fold, usando apenas sua parte de treino. É aqui que os faltantes deixados no Lab 00 são preenchidos — a ordem certa do slide “o teste não pode contar o futuro”. cross_val_score: troque cv=3/5/10 e alterne o sinal — explique o neg_ (o scikit-learn sempre maximiza). PolynomialFeatures com x = 2 mostra as potências. Coeficientes reais da regressão múltipla via named_steps. Use → para passar de comando em comando (ou clique na lista); os controles mudam o parâmetro destacado no código.">
+  <h2>Pipeline, validação cruzada e polinômios</h2>
 </section>
 
 <!-- 13 LAB01 -->

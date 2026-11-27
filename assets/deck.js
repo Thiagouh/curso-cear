@@ -616,7 +616,7 @@ if($('#scPlot')){
    +X('d_B=\\sqrt{\\vi{(-0{,}60+0{,}80)^2}+\\am{(-0{,}40-0{,}40)^2}}=\\sqrt{\\vi{0{,}04}+\\am{0{,}64}}\\approx 0{,}82','d(nova,B) ≈ 0,82')
    +`<div class="lbl mu" style="font-size:13px;margin-top:4px">quem pesa dentro de d² (a soma dentro da raiz)</div>`+share([['A','#F472B6',5.76,.0064],['B',COL.cy,.04,.64]])
    +`<div class="scv gr">Mais perto: B, a calma <span>cada medida pesa pelo quanto realmente difere: a nova vai para Relaxar</span></div>`
-   +`<div class="note" style="font-size:17px;margin-top:6px">Árvores não ligam para escala · KNN, K-Means, redes neurais, descida do gradiente e regularização ligam</div>`;
+   +`<div class="note" style="font-size:17px;margin-top:6px">Árvores não ligam para escala · KNN, K-Means, redes neurais, descida do gradiente ligam</div>`;
   $('#scPanel').innerHTML=h}
  FX.scale={init(){addEventListener('mathjax-ready',()=>panel(),{once:true})},step(k){stp=k;panel();anim(k>=2?1:0)}}}
 
@@ -640,21 +640,6 @@ if($('#mrSvg')){const W1=.6,W2=-.35,B0=4;
    if(i<2)h+=`<line x1="${x+w}" y1="${m.Y(y1)}" x2="${m.X(i+1.18)}" y2="${m.Y(y1)}" stroke="${COL.mu}" stroke-dasharray="5 5" stroke-width="2"/>`});
   $('#mrSvg').innerHTML=h}
  FX.mreg={init(){$('#mrH').oninput=draw;$('#mrF').oninput=draw;draw()}}}
-
-/* ---------- regularização ---------- */
-if($('#regPlot')&&FITD){const {tr,va,solve,ev,mse}=FITD,D=11,m=mapper(70,20,730,470,-1,1,-1.8,1.8);
- function ridge(lam){const n=D+1,A=Array.from({length:n},()=>Array(n).fill(0)),b=Array(n).fill(0);for(const[x,y]of tr){const p=[];for(let k=0;k<n;k++)p.push(x**k);for(let i=0;i<n;i++){b[i]+=p[i]*y;for(let j=0;j<n;j++)A[i][j]+=p[i]*p[j]}}for(let i=0;i<n;i++)A[i][i]+=i?lam:1e-9;return solve(A,b)}
- const grid=[];for(let l=-7;l<=2.001;l+=.1)grid.push([l,mse(ridge(10**l),va)]);const best=grid.reduce((a,b)=>b[1]<a[1]?b:a);
- const c0=ridge(1e-7),cmax=Math.max(...c0.slice(1).map(Math.abs));
- function draw(){const L=+$('#regL').value,c=ridge(10**L),ftr=mse(c,tr),fva=mse(c,va);let h=axes(m,70,20,730,470,'entrada x','saída y'),p='';
-  for(let i=0;i<=300;i++){const x=-1+2*i/300,y=Math.max(-3,Math.min(3,ev(c,x)));p+=(i?'L':'M')+m.X(x).toFixed(1)+' '+m.Y(y).toFixed(1)}
-  const tag=fva<=best[1]*1.3?['bom ajuste',COL.gr]:L<best[0]?['overfitting',COL.rd]:['underfitting',COL.am];
-  h+=`<path d="${p}" fill="none" stroke="${tag[1]}" stroke-width="4" clip-path="url(#clipFit)"/>`;
-  va.forEach(([x,y])=>h+=`<circle cx="${m.X(x)}" cy="${m.Y(y)}" r="7" fill="none" stroke="${COL.am}" stroke-width="2.5"/>`);tr.forEach(([x,y])=>h+=`<circle cx="${m.X(x)}" cy="${m.Y(y)}" r="8" fill="${COL.tx}"/>`);
-  h+=`<circle cx="100" cy="530" r="8" fill="${COL.tx}"/><text x="116" y="536" font-size="18">treino</text><circle cx="210" cy="530" r="7" fill="none" stroke="${COL.am}" stroke-width="2.5"/><text x="226" y="536" font-size="18">validação</text><text x="800" y="536" text-anchor="end" font-size="18" fill="${COL.mu}">polinômio de grau 11</text>`;
-  $('#regPlot').innerHTML=h;$('#regLv').textContent=L<=-6.95?'≈ 0':'10^'+fmt(L,1);$('#regTr').textContent=fmt(ftr,3);$('#regVa').textContent=fmt(fva,3);$('#regTag').textContent=tag[0];$('#regTag').style.color=tag[1];
-  let g='';const lg=v=>Math.max(0,(Math.log10(v+1e-3)+3)/(Math.log10(cmax+1e-3)+3));c.slice(1).forEach((w,k)=>{const hh=lg(Math.abs(w))*120;g+=`<rect x="${10+k*46}" y="${130-hh}" width="34" height="${Math.max(2,hh)}" rx="4" fill="${COL.am}" opacity=".8"/><text x="${27+k*46}" y="148" text-anchor="middle" font-size="12" fill="${COL.dim}">w${k+1}</text>`});$('#regCoef').innerHTML=g}
- FX.reg={init(){$('#regL').oninput=draw;draw()}}}
 
 /* ---------- flores sintéticas no estilo Iris (as mesmas do slide da árvore) ---------- */
 const FLW=(()=>{const r=rng(11),D=[];[[1.46,.17,.25,.1,0],[4.26,.47,1.33,.2,1],[5.55,.55,2.03,.27,2]].forEach(([ml,sl,mw,sw,c])=>{for(let i=0;i<30;i++)D.push([Math.max(1,ml+gauss(r)*sl),Math.max(.1,mw+gauss(r)*sw),c])});return D})();
@@ -729,7 +714,7 @@ if($('#c3Plot')){const D=FLW,mu=[0,1].map(f=>D.reduce((a,d)=>a+d[f],0)/D.length)
  FX.cmp3={init(){$$('#c3M button').forEach(b=>b.onclick=()=>{$$('#c3M button').forEach(x=>x.classList.toggle('on',x===b));M=b.dataset.m;draw()});$('#c3S').onclick=()=>{seed++;draw()};draw()}}}
 
 /* ---------- fim do dia 1 ---------- */
-if($('#d1recap')){const T={2:'Inspecionar, limpar, olhar e separar antes de tudo. O teste é uma prova inédita.',3:'A perda mede o erro, o gradiente diz para onde ajustar; validação e regularização seguram o overfitting.',4:'O KNN vota, a árvore pergunta, a floresta combina. Cada um erra de um jeito: quem escolhe é a validação.'};
+if($('#d1recap')){const T={2:'Inspecionar, limpar, olhar e separar antes de tudo. O teste é uma prova inédita.',3:'A perda mede o erro, o gradiente diz para onde ajustar; a validação ajuda a detectar overfitting e escolher a complexidade.',4:'O KNN vota, a árvore pergunta, a floresta combina. Cada um erra de um jeito: quem escolhe é a validação.'};
  $('#d1recap').innerHTML=[2,3,4].map(b=>`<div class="card" style="border-top:4px solid ${COL[BLK[b][2]]}"><span class="mono big" style="font-size:30px;color:${COL[BLK[b][2]]}">${BLK[b][0]}</span> <b style="font-size:24px">${BLK[b][3]}</b><div class="mu" style="font-size:20px;margin-top:12px">${T[b]}</div></div>`).join('');
  $('#d1next').innerHTML=`<span class="lbl mu" style="font-size:15px;margin-right:6px">Amanhã</span>`+[5,6,7,8].map(b=>`<span class="pill" style="color:${COL[BLK[b][2]]}">${BLK[b][0]} · ${BLK[b][3]}</span>`).join('')}
 
