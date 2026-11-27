@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parent.parent
 NBS = ['00_dados_e_datasets', '01_regressao_linear', '02_classificacao']
 IGNORAR = {'gerar_dados', 'limpar'}     # corpo das funções de geração de dados
 TRIVIAIS = {'print', 'len'}             # básicos demais para exigir explicação própria
-DO_ALUNO = {'descida_gradiente', 'treino_vs_cv', 'mais_parecido', 'poli'}   # funções escritas no próprio notebook
+DO_ALUNO = {'descida_gradiente', 'treino_vs_cv', 'poli'}   # funções escritas no próprio notebook
 
 
 class Coletor(ast.NodeVisitor):
@@ -35,8 +35,9 @@ def usados(nb):
     d = json.loads((ROOT / 'notebooks' / f'{nb}_gabarito.ipynb').read_text(encoding='utf-8'))
     col = Coletor()
     for c in d['cells']:
-        if c['cell_type'] == 'code':
-            col.visit(ast.parse(c['source'] if isinstance(c['source'], str) else ''.join(c['source'])))
+        src = c['source'] if isinstance(c['source'], str) else ''.join(c['source'])
+        if c['cell_type'] == 'code' and 'importlib.util.find_spec' not in src:   # pula a célula pronta que instala as bibliotecas
+            col.visit(ast.parse(src))
     return col.n - TRIVIAIS - DO_ALUNO
 
 
