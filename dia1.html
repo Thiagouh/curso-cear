@@ -279,19 +279,35 @@
 </section>
 
 <!-- 10 -->
-<section class="s" data-b="3" data-id="resid" data-notes="SLIDE 10 (4 min). A distância vertical entre ponto real e previsão é o resíduo. MSE = média dos quadrados: os quadrados no gráfico são literalmente cada erro ao quadrado. Pergunte: “Se eu deslocar a reta, o erro melhora ou piora?” — e mova os controles. Depois clique em “Ajuste ótimo” (mínimos quadrados).">
+<section class="s" data-b="3" data-id="resid" data-notes="SLIDE 10 (4 min). Mova w e b e alterne as três métricas mantendo a mesma reta. MSE: quadrados dos resíduos (um erro duas vezes maior pesa quatro vezes mais). MAE: comprimento absoluto dos resíduos, na unidade original. R²: compare os resíduos ao redor da reta com os desvios em relação à média real (linha violeta); 1 é perfeito, 0 empata com prever a média e abaixo de 0 é pior. O botão Ajuste ótimo encontra o melhor ajuste para a métrica selecionada entre os valores dos controles; MSE e R² têm o mesmo ótimo, MAE pode ter outro.">
   <h2>Como uma reta sabe que está errada?</h2>
-  <div class="row" style="gap:44px">
-    <svg id="resPlot" viewBox="0 0 820 560" style="width:820px;height:560px"></svg>
-    <div class="col" style="flex:1;gap:22px">
-      <div class="formula f" data-f="2" style="font-size:28px" data-tex="\mathrm{MSE} = \frac{1}{n}\sum_{i=1}^{n}\am{\left(y_i-\hat{y}_i\right)^2}">MSE = <span class="mu">1/n</span> Σ <span class="am">(y − ŷ)²</span></div>
-      <div class="card"><div class="lbl mu" style="font-size:14px">Erro quadrático médio agora</div><div class="big am" id="mseV" style="font-size:84px;margin-top:8px">0</div></div>
-      <div class="card col" style="gap:12px">
-        <label class="ctl"><span class="mono cy" style="width:40px;font-weight:700">w</span><input id="rw" type="range" min="0" max="1.6" step="0.02" value="0.4"><span class="mono" id="rwv"></span></label>
-        <label class="ctl"><span class="mono vi" style="width:40px;font-weight:700">b</span><input id="rb" type="range" min="-2" max="6" step="0.1" value="4"><span class="mono" id="rbv"></span></label>
+  <div class="row" style="gap:44px;align-items:flex-start">
+    <svg id="resPlot" viewBox="0 0 820 580" style="width:820px;height:580px" role="img" aria-label="Reta, observações e representação da métrica selecionada"></svg>
+    <div class="col" style="flex:1;min-width:0;gap:12px">
+      <div class="row" id="rMetrics" role="group" aria-label="Métrica de regressão" style="gap:10px">
+        <button class="b on" data-metric="mse" aria-pressed="true" style="flex:1">MSE</button>
+        <button class="b" data-metric="mae" aria-pressed="false" style="flex:1">MAE</button>
+        <button class="b" data-metric="r2" aria-pressed="false" style="flex:1">R²</button>
+      </div>
+      <div class="formula" style="font-size:26px;padding:14px 22px;min-height:90px;display:flex;align-items:center">
+        <div data-rformula="mse" data-tex="\mathrm{MSE} = \frac{1}{n}\sum_{i=1}^{n}\am{(y_i-\hat{y}_i)^2}">MSE = 1/n Σ <span class="am">(y − ŷ)²</span></div>
+        <div data-rformula="mae" data-tex="\mathrm{MAE} = \frac{1}{n}\sum_{i=1}^{n}\am{\left|y_i-\hat{y}_i\right|}" hidden>MAE = 1/n Σ <span class="am">|y − ŷ|</span></div>
+        <div data-rformula="r2" data-tex="R^2 = 1-\frac{\am{\sum_i(y_i-\hat{y}_i)^2}}{\vi{\sum_i(y_i-\bar{y})^2}}" hidden>R² = 1 − <span class="am">Σ(y − ŷ)²</span> / <span class="vi">Σ(y − ȳ)²</span></div>
+      </div>
+      <div class="card" style="padding:16px 22px">
+        <div class="lbl mu" id="rMetricName" style="font-size:13px">Erro quadrático médio</div>
+        <div class="row" style="align-items:center;gap:18px;margin-top:5px">
+          <div class="big am" id="rScore" style="font-size:68px">0</div>
+          <div id="rScoreInfo" class="mu" style="font-size:17px;line-height:1.4;flex:1"></div>
+        </div>
+        <div id="rBreakdown" class="mono" style="font-size:16px;margin-top:8px" hidden></div>
+      </div>
+      <div class="card col" style="gap:8px;padding:14px 22px">
+        <label class="ctl"><span class="mono cy" style="width:40px;font-weight:700">w</span><input id="rw" aria-label="Inclinação w" type="range" min="0" max="1.6" step="0.02" value="0.4"><span class="mono" id="rwv"></span></label>
+        <label class="ctl"><span class="mono vi" style="width:40px;font-weight:700">b</span><input id="rb" aria-label="Intercepto b" type="range" min="-2" max="6" step="0.1" value="4"><span class="mono" id="rbv"></span></label>
         <div class="row" style="gap:12px"><button class="b" id="rOpt">Ajuste ótimo</button><button class="b" id="rRst">Reiniciar</button></div>
       </div>
-      <div class="f" data-f="1" style="font-size:22px">Um erro <b class="am">2×</b> maior pesa <b class="am">4×</b></div>
+      <div id="rExplain" style="font-size:20px;line-height:1.35;min-height:54px">Um erro <b class="am">2×</b> maior pesa <b class="am">4×</b>.</div>
     </div>
   </div>
 </section>
