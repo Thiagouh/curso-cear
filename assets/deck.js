@@ -204,7 +204,7 @@ if($('#wrongRow')){const row=(steps,col)=>steps.map((t,i)=>{const x=34+i*345;ret
   // Keep the original scale whenever possible; expand it for extreme predictions.
   let lo=Math.floor(Math.min(0,b,w*10+b)),hi=Math.ceil(Math.max(11,b,w*10+b));
   const maxE=Math.max(...D.map(([x,y])=>Math.abs(y-w*x-b)));
-  if(mode==='mse'&&maxE*470/(hi-lo)>340)hi=lo+Math.ceil(maxE*470/340);
+  if(maxE*470/(hi-lo)>340)hi=lo+Math.ceil(maxE*470/340);
   const m=mapper(70,20,720,470,0,10,lo,hi);
   let h=axes(m,70,20,720,470,'entrada x','resposta real y');
   const tick=Math.max(1,Math.ceil((hi-lo)/5));
