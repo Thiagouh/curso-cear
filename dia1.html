@@ -226,7 +226,7 @@
 </section>
 
 <!-- 07 -->
-<section class="s" data-b="2" data-notes="VAZAMENTO (5 min). Dois jeitos de “colar” na prova. (1) Usar o teste para preparar os dados: se a mediana, a média ou qualquer outra conta usa treino e teste juntos, o teste já influenciou o modelo antes da prova. Certo: separar primeiro, aprender o preparo só com o treino e só aplicá-lo no teste. No Lab 01, o Pipeline do scikit-learn garante essa ordem sozinho. (2) Uma feature que só existe depois da resposta: a coluna situacao (aprovado/reprovado) é calculada a partir da nota. “O teste é uma prova inédita, não uma cola para o estudo.”">
+<section class="s" data-b="2" data-notes="VAZAMENTO (5 min). Dois jeitos de “colar” na prova. (1) Usar o teste para preparar os dados: se a mediana, a média ou qualquer outra conta usa treino e teste juntos, o teste já influenciou o modelo antes da prova. Certo: separar primeiro, aprender o preparo só com o treino e só aplicá-lo no teste. No Lab 01, ajustar o Pipeline do scikit-learn somente no treino evita o vazamento de dados no pré-processamento: o teste usa as estatísticas aprendidas no treino. Na validação cruzada, o Pipeline reaprende o preparo somente na parte de treino de cada fold. Ele não corrige features que revelam o alvo. (2) Uma feature que só existe depois da resposta: a coluna situacao (aprovado/reprovado) é calculada a partir da nota. “O teste é uma prova inédita, não uma cola para o estudo.”">
   <h2>O teste não pode contar o futuro</h2>
   <svg viewBox="0 0 1408 540" style="width:1408px;height:540px">
     <g class="f" data-f="1">
@@ -242,7 +242,7 @@
       <g id="rightRow"></g>
     </g></g>
   </svg>
-  <div class="f" data-f="3" style="font-size:25px;margin-top:4px"><span class="mono cy" style="font-weight:700">Pipeline</span> <span class="mu">faz essa ordem por você: é o que o Lab 01 usa</span></div>
+  <div class="f" data-f="3" style="font-size:25px;margin-top:4px"><span class="mono cy" style="font-weight:700">Pipeline</span> <span class="mu">evita vazamento no pré-processamento: aprende no treino e só transforma o teste</span></div>
   <div class="f" data-f="4" style="font-size:25px;margin-top:10px"><span class="mono rd" style="font-weight:700">situacao</span> <span class="mu">também vaza: aprovado ⇔ nota ≥ 6. Ela só existe depois da resposta</span></div>
 </section>
 
@@ -403,7 +403,7 @@
 </section>
 
 <!-- CMD CV -->
-<section class="s" data-b="3" data-cmd="cv" data-notes="NO NOTEBOOK · PIPELINE, VALIDAÇÃO E REGRESSÃO POLINOMIAL (5 min). Pipeline: alterne fit × predict. No fit, cada etapa aprende só com o treino (a mediana, a média e o desvio, os pesos); no predict, o teste só é transformado. É aqui que os faltantes deixados no Lab 00 são preenchidos — a ordem certa do slide “o teste não pode contar o futuro”. cross_val_score: troque cv=3/5/10 e alterne o sinal — explique o neg_ (o scikit-learn sempre maximiza). PolynomialFeatures com x = 2 mostra as potências. Coeficientes reais da regressão múltipla via named_steps. Use → para passar de comando em comando (ou clique na lista); os controles mudam o parâmetro destacado no código.">
+<section class="s" data-b="3" data-cmd="cv" data-notes="NO NOTEBOOK · PIPELINE, VALIDAÇÃO E REGRESSÃO POLINOMIAL (5 min). Pipeline: alterne fit × predict. No fit, cada etapa aprende só com o treino (a mediana, a média e o desvio, os pesos); no predict, o teste só é transformado. Isso evita vazamento de dados no pré-processamento. Na validação cruzada, o Pipeline ajusta o preparo separadamente em cada fold, usando apenas sua parte de treino. É aqui que os faltantes deixados no Lab 00 são preenchidos — a ordem certa do slide “o teste não pode contar o futuro”. cross_val_score: troque cv=3/5/10 e alterne o sinal — explique o neg_ (o scikit-learn sempre maximiza). PolynomialFeatures com x = 2 mostra as potências. Coeficientes reais da regressão múltipla via named_steps. Use → para passar de comando em comando (ou clique na lista); os controles mudam o parâmetro destacado no código.">
   <h2>Pipeline, validação cruzada e polinômios</h2>
 </section>
 
