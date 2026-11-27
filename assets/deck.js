@@ -188,20 +188,63 @@ if($('#wrongRow')){const row=(steps,col)=>steps.map((t,i)=>{const x=34+i*345;ret
   $('#linePlot').innerHTML=h}
  FX.line={init(){['#lw','#lb','#lx'].forEach(q=>$(q).oninput=draw);draw()}}}
 
-/* ---------- 10 residuals ---------- */
+/* ---------- 10 residuals / regression metrics ---------- */
 {const D=[[1,2.1],[2,3.9],[3,3.2],[4,5.6],[5,5.0],[6,7.1],[7,6.4],[8,8.6],[9,8.9]];
- const m=mapper(70,20,720,470,0,10,0,11);let showR=0,showQ=0;
- function draw(){const w=+$('#rw').value,b=+$('#rb').value;$('#rwv').textContent=fmt(w);$('#rbv').textContent=fmt(b,1);
-  let h=axes(m,70,20,720,470,'entrada x','resposta real y'),mse=0;const px=m.X(1)-m.X(0),py=m.Y(0)-m.Y(1);
-  D.forEach(([x,y])=>{const yh=w*x+b,e=y-yh;mse+=e*e;const a=m.Y(y),c=m.Y(yh);
-   if(showQ){const s=Math.abs(a-c);h+=`<rect x="${m.X(x)}" y="${Math.min(a,c)}" width="${s}" height="${s}" fill="${COL.am}" fill-opacity=".18" stroke="${COL.am}" stroke-opacity=".5"/>`}
-   if(showR)h+=`<line x1="${m.X(x)}" y1="${a}" x2="${m.X(x)}" y2="${c}" stroke="${COL.am}" stroke-width="3.5"/>`});
+ const n=D.length,mean=D.reduce((s,[,y])=>s+y,0)/n,sst=D.reduce((s,[,y])=>s+(y-mean)**2,0);
+ const scores=(w,b)=>{let sse=0,sae=0;D.forEach(([x,y])=>{const e=y-(w*x+b);sse+=e*e;sae+=Math.abs(e)});return {mse:sse/n,mae:sae/n,r2:1-sse/sst,sse}};
+ const modes={
+  mse:{name:'Erro quadrático médio',info:'Menor é melhor · unidade ao quadrado',explain:'Um erro <b class="am">2×</b> maior pesa <b class="am">4×</b>.'},
+  mae:{name:'Erro absoluto médio',info:'Menor é melhor · unidade original',explain:'Um erro <b class="am">2×</b> maior pesa <b class="am">2×</b>.'},
+  r2:{name:'Coeficiente de determinação',info:'Maior é melhor · sem unidade',explain:'<b class="am">1</b> = perfeito · <b>0</b> = igual à média · negativo = pior que a média.'}
+ };
+ let mode='mse',frame=null;
+ function draw(){
+  const w=+$('#rw').value,b=+$('#rb').value,v=scores(w,b);
+  $('#rwv').textContent=fmt(w);$('#rbv').textContent=fmt(b,1);
+  // Keep the original scale whenever possible; expand it for extreme predictions.
+  let lo=Math.floor(Math.min(0,b,w*10+b)),hi=Math.ceil(Math.max(11,b,w*10+b));
+  const maxE=Math.max(...D.map(([x,y])=>Math.abs(y-w*x-b)));
+  if(mode==='mse'&&maxE*470/(hi-lo)>340)hi=lo+Math.ceil(maxE*470/340);
+  const m=mapper(70,20,720,470,0,10,lo,hi);
+  let h=axes(m,70,20,720,470,'entrada x','resposta real y');
+  const tick=Math.max(1,Math.ceil((hi-lo)/5));
+  for(let y=Math.ceil(lo/tick)*tick;y<=hi;y+=tick){
+   const py=m.Y(y);h+=`<path d="M64 ${py}H70" stroke="${COL.dim}"/><text x="56" y="${py+5}" font-size="13" fill="${COL.mu}" text-anchor="end">${y}</text>`;
+  }
+  if(mode==='r2'){
+   h+=`<path d="M70 ${m.Y(mean)}H790" stroke="${COL.vi}" stroke-width="2.5" stroke-dasharray="8 6"/><text x="782" y="${m.Y(mean)-9}" text-anchor="end" font-size="16" fill="${COL.vi}">média real = ${fmt(mean)}</text>`;
+   D.forEach(([x,y])=>{h+=`<line x1="${m.X(x)-9}" y1="${m.Y(y)}" x2="${m.X(x)-9}" y2="${m.Y(mean)}" stroke="${COL.vi}" stroke-width="3" stroke-dasharray="5 4"/>`});
+  }
+  D.forEach(([x,y])=>{
+   const px=m.X(x),a=m.Y(y),c=m.Y(w*x+b),s=Math.abs(a-c);
+   if(mode==='mse'){const left=px+s<=790?px:px-s;h+=`<rect x="${left}" y="${Math.min(a,c)}" width="${s}" height="${s}" fill="${COL.am}" fill-opacity=".17" stroke="${COL.am}" stroke-opacity=".55"/>`;}
+   h+=`<line x1="${px}" y1="${a}" x2="${px}" y2="${c}" stroke="${COL.am}" stroke-width="${mode==='mae'?5:3.5}"/>`;
+   if(mode==='mae')h+=`<path d="M${px-5} ${c}h10" stroke="${COL.am}" stroke-width="2"/>`;
+  });
   h+=`<line x1="${m.X(0)}" y1="${m.Y(b)}" x2="${m.X(10)}" y2="${m.Y(w*10+b)}" stroke="${COL.cy}" stroke-width="4.5"/>`;
   D.forEach(([x,y])=>h+=`<circle cx="${m.X(x)}" cy="${m.Y(y)}" r="9" fill="${COL.tx}"/>`);
-  $('#resPlot').innerHTML=h;$('#mseV').textContent=fmt(mse/D.length)}
- function opt(){const n=D.length,mx=D.reduce((s,d)=>s+d[0],0)/n,my=D.reduce((s,d)=>s+d[1],0)/n;let sxy=0,sxx=0;D.forEach(([x,y])=>{sxy+=(x-mx)*(y-my);sxx+=(x-mx)**2});const w=sxy/sxx,b=my-w*mx;anim(w,b)}
- function anim(w1,b1){const w0=+$('#rw').value,b0=+$('#rb').value,t0=performance.now();const f=t=>{const k=Math.min(1,(t-t0)/900),e=1-(1-k)**3;$('#rw').value=w0+(w1-w0)*e;$('#rb').value=b0+(b1-b0)*e;draw();if(k<1)requestAnimationFrame(f)};requestAnimationFrame(f)}
- FX.resid={init(){$('#rw').oninput=draw;$('#rb').oninput=draw;$('#rOpt').onclick=opt;$('#rRst').onclick=()=>anim(0.4,4);draw()},step(k){showR=1;showQ=k>=1;draw()}}}
+  h+=`<circle cx="82" cy="552" r="7" fill="${COL.tx}"/><text x="95" y="558" font-size="16">real</text><path d="M165 552h26" stroke="${COL.cy}" stroke-width="4"/><text x="199" y="558" font-size="16">previsão</text>`;
+  if(mode==='mse')h+=`<rect x="300" y="542" width="18" height="18" fill="${COL.am}" fill-opacity=".25" stroke="${COL.am}"/><text x="327" y="558" font-size="16">erro² (área)</text>`;
+  else if(mode==='mae')h+=`<path d="M305 542v19" stroke="${COL.am}" stroke-width="5"/><text x="320" y="558" font-size="16">|erro| (distância)</text>`;
+  else h+=`<path d="M300 542v19" stroke="${COL.am}" stroke-width="4"/><text x="314" y="558" font-size="16">resíduo</text><path d="M410 542v19" stroke="${COL.vi}" stroke-width="3" stroke-dasharray="4 3"/><text x="424" y="558" font-size="16">desvio da média</text>`;
+  $('#resPlot').innerHTML=h;
+  $('#rScore').textContent=fmt(v[mode]);$('#rScoreInfo').textContent=modes[mode].info;
+  $('#rBreakdown').hidden=mode!=='r2';
+  if(mode==='r2')$('#rBreakdown').innerHTML=`<span class="am">Σ resíduos² = ${fmt(v.sse)}</span> · <span class="vi">Σ desvios² = ${fmt(sst)}</span>`;
+ }
+ function select(key){mode=key;$$('#rMetrics button').forEach(el=>{const on=el.dataset.metric===key;el.classList.toggle('on',on);el.setAttribute('aria-pressed',String(on))});$$('[data-rformula]').forEach(el=>el.hidden=el.dataset.rformula!==key);
+  $('#rMetricName').textContent=modes[key].name;$('#rExplain').innerHTML=modes[key].explain;draw()}
+ function stop(){if(frame!==null){cancelAnimationFrame(frame);frame=null}}
+ function anim(w1,b1){stop();const w0=+$('#rw').value,b0=+$('#rb').value,t0=performance.now();
+  const f=t=>{const k=Math.min(1,(t-t0)/650),e=1-(1-k)**3;$('#rw').value=w0+(w1-w0)*e;$('#rb').value=b0+(b1-b0)*e;draw();frame=k<1?requestAnimationFrame(f):null};frame=requestAnimationFrame(f)}
+ // Search the discrete slider grid: exact minimum of the available settings.
+ // R² is maximized at the same settings that minimize MSE.
+ function optimum(key){let best=Infinity,choice=[0,0];for(let wi=0;wi<=80;wi++)for(let bi=-20;bi<=60;bi++){
+  const w=wi/50,b=bi/10,v=scores(w,b),loss=key==='mae'?v.mae:v.mse;
+  if(loss<best){best=loss;choice=[w,b]}
+ }return choice}
+ FX.resid={init(){['#rw','#rb'].forEach(q=>$(q).oninput=()=>{stop();draw()});$$('#rMetrics button').forEach(el=>{el.onclick=()=>select(el.dataset.metric);el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' ')e.stopPropagation()})});$('#rOpt').onclick=()=>anim(...optimum(mode));$('#rRst').onclick=()=>anim(0.4,4);select('mse')},leave:stop};
+}
 
 /* ---------- 11 gradient descent ---------- */
 {/* um aluno (x = 6 h, y = 4,6), b fixo em 0: L(w) = (y − w·x)², ∂L/∂w = −2·x·(y − w·x). Mínimo em w* = y/x ≈ 0,767; α limite = 1/x² ≈ 0,028 */
