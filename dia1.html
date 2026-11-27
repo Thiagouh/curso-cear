@@ -46,12 +46,12 @@
 </section>
 
 <!-- 02 -->
-<section class="s" data-b="1" data-notes="SLIDE 02 (4 min). Pergunte: “Quem já usou ChatGPT, Gemini ou outra IA? E quem já treinou um modelo?” Espere respostas. A meta não é só importar uma biblioteca: é entender dados, parâmetros, perda, avaliação e inferência.">
+<section class="s" data-b="1" data-notes="SLIDE 02 (4 min). Pergunte: “Quem já usou ChatGPT, Gemini ou outra IA? E quem já treinou um modelo?” Espere respostas. Depois, conte os três cards como uma receita só: “Todo modelo que vamos ver hoje segue a mesma receita. Primeiro, ele recebe exemplos com respostas: horas de estudo e a nota que o aluno tirou. Depois, ele chuta, erra e se corrige, ajustando uns números até errar pouco. E o ChatGPT? Isso fica para amanhã, mas já adianto: é exatamente isso, só que a resposta é a próxima palavra, e os exemplos são boa parte da internet.” Não precisa explicar os termos entre parênteses agora: eles voltam nos módulos de hoje. O card de tokens é só a promessa do dia 2.">
   <h1 style="font-size:76px;line-height:1.08;margin-top:60px"><span class="mu">Você sabe usar IA.</span> <br>Mas sabe como ela aprende?</h1>
   <div class="grid3" style="margin-top:80px">
-    <div class="card f" data-f="1"><div class="big cy" style="font-size:46px">dados</div><h3 style="font-size:30px;margin:18px 0 10px">O que o modelo recebe</h3><div class="mu">features, alvo e a divisão treino/teste</div></div>
-    <div class="card f" data-f="2"><div class="big am" style="font-size:46px">erro</div><h3 style="font-size:30px;margin:18px 0 10px">Como ele aprende</h3><div class="mu">parâmetros, perda e gradiente, medidos em dados novos</div></div>
-    <div class="card f" data-f="3"><div class="big vi" style="font-size:46px">tokens</div><h3 style="font-size:30px;margin:18px 0 10px">Chegar aos LLMs</h3><div class="mu">a mesma lógica, em escala gigante</div></div>
+    <div class="card f" data-f="1"><div class="big cy" style="font-size:46px">exemplos</div><h3 style="font-size:30px;margin:18px 0 10px">Ele vê as respostas</h3><div class="mu">milhares de casos com a resposta certa <i>(features e alvo)</i></div></div>
+    <div class="card f" data-f="2"><div class="big am" style="font-size:46px">erro</div><h3 style="font-size:30px;margin:18px 0 10px">Ele erra e se corrige</h3><div class="mu">compara o palpite com a resposta e ajusta os números <i>(perda e gradiente)</i></div></div>
+    <div class="card f" data-f="3"><div class="big vi" style="font-size:46px;display:flex;align-items:center;justify-content:space-between">tokens<span style="font-size:17px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#a78bfa;border:1.5px solid rgba(139,92,246,.55);border-radius:999px;padding:6px 16px">dia 2</span></div><h3 style="font-size:30px;margin:18px 0 10px">O ChatGPT faz o mesmo</h3><div class="mu">prevê a próxima palavra, com bilhões de exemplos</div></div>
   </div>
 </section>
 
@@ -95,13 +95,13 @@
 </section>
 
 <!-- 04 -->
-<section class="s" data-b="1" data-notes="SLIDE 04 (5 min). IA é o campo amplo; ML é uma abordagem dentro dele; Deep Learning usa redes neurais profundas; LLMs atuais são Deep Learning aplicado à linguagem. IA generativa não é sinônimo de LLM: há modelos de imagem, áudio e vídeo.">
-  <h2>Onde um LLM se encaixa na IA?</h2>
+<section class="s" data-b="1" data-notes="SLIDE 04 (5 min). Cada círculo tem exemplos: aponte onde ficam os modelos do DIA 1 (o anel de Machine Learning: regressão, KNN, árvores) e o que fica para o DIA 2 (redes neurais, CNNs e LLMs). IA é o campo amplo — inclui até regras escritas à mão, sem aprendizado nenhum; ML é uma abordagem dentro dele; Deep Learning usa redes neurais profundas; LLMs atuais são Deep Learning aplicado à linguagem. IA generativa não é sinônimo de LLM: há modelos de imagem, áudio e vídeo.">
+  <h2>IA, ML e Deep Learning: onde fica cada um?</h2>
   <svg viewBox="0 0 860 620" style="position:absolute;left:70px;top:200px;width:860px;height:620px">
-    <g class="f" data-f="1"><ellipse cx="430" cy="350" rx="420" ry="270" fill="#5A6488" fill-opacity=".1" stroke="#5A6488" stroke-width="2"/><text x="430" y="118" text-anchor="middle" font-size="24" font-weight="700" fill="#8A94B8">Inteligência Artificial</text></g>
-    <g class="f" data-f="2"><ellipse cx="430" cy="400" rx="330" ry="215" fill="#22D3EE" fill-opacity=".1" stroke="#22D3EE" stroke-width="2"/><text x="430" y="225" text-anchor="middle" font-size="24" font-weight="700" fill="#22D3EE">Machine Learning</text></g>
-    <g class="f" data-f="3"><ellipse cx="430" cy="450" rx="235" ry="160" fill="#8B5CF6" fill-opacity=".15" stroke="#8B5CF6" stroke-width="2"/><text x="430" y="330" text-anchor="middle" font-size="24" font-weight="700" fill="#8B5CF6">Deep Learning</text></g>
-    <g class="f" data-f="4"><ellipse cx="430" cy="505" rx="140" ry="98" fill="#F472B6" fill-opacity=".28" stroke="#F472B6" stroke-width="2.5"/><text x="430" y="505" text-anchor="middle" font-size="36" font-weight="700">LLMs</text><text x="430" y="540" text-anchor="middle" font-size="16" fill="#8A94B8" font-family="JetBrains Mono,monospace">texto → próximo token</text></g>
+    <g class="f" data-f="1"><ellipse cx="430" cy="350" rx="420" ry="270" fill="#5A6488" fill-opacity=".1" stroke="#5A6488" stroke-width="2"/><text x="430" y="118" text-anchor="middle" font-size="24" font-weight="700" fill="#8A94B8">Inteligência Artificial</text><text x="430" y="150" text-anchor="middle" font-size="16" fill="#8A94B8" font-family="JetBrains Mono,monospace">regras escritas à mão · busca · xadrez clássico</text></g>
+    <g class="f" data-f="2"><ellipse cx="430" cy="400" rx="330" ry="215" fill="#22D3EE" fill-opacity=".1" stroke="#22D3EE" stroke-width="2"/><text x="430" y="225" text-anchor="middle" font-size="24" font-weight="700" fill="#22D3EE">Machine Learning</text><text x="430" y="256" text-anchor="middle" font-size="16" fill="#B6C2E2" font-family="JetBrains Mono,monospace">regressão linear · KNN · árvores · random forest</text><g transform="translate(605 225)"><rect x="-44" y="-17" width="88" height="26" rx="13" fill="#11152E" stroke="#22D3EE" stroke-width="1.5"/><text x="0" y="2" text-anchor="middle" font-size="13" font-weight="700" fill="#22D3EE" letter-spacing="1">DIA 1</text></g></g>
+    <g class="f" data-f="3"><ellipse cx="430" cy="450" rx="235" ry="160" fill="#8B5CF6" fill-opacity=".15" stroke="#8B5CF6" stroke-width="2"/><text x="430" y="330" text-anchor="middle" font-size="24" font-weight="700" fill="#8B5CF6">Deep Learning</text><text x="430" y="362" text-anchor="middle" font-size="16" fill="#B6C2E2" font-family="JetBrains Mono,monospace">redes neurais · CNNs para imagens</text><g transform="translate(590 330)"><rect x="-44" y="-17" width="88" height="26" rx="13" fill="#11152E" stroke="#8B5CF6" stroke-width="1.5"/><text x="0" y="2" text-anchor="middle" font-size="13" font-weight="700" fill="#8B5CF6" letter-spacing="1">DIA 2</text></g></g>
+    <g class="f" data-f="4"><ellipse cx="430" cy="505" rx="140" ry="98" fill="#F472B6" fill-opacity=".28" stroke="#F472B6" stroke-width="2.5"/><text x="430" y="492" text-anchor="middle" font-size="34" font-weight="700">LLMs</text><text x="430" y="528" text-anchor="middle" font-size="16" fill="#8A94B8" font-family="JetBrains Mono,monospace">texto → próximo token</text><text x="430" y="566" text-anchor="middle" font-size="14" fill="#EAF0FF" font-family="JetBrains Mono,monospace">ChatGPT · Gemini · Claude</text></g>
   </svg>
   <div class="f col" data-f="5" style="position:absolute;right:96px;top:250px;width:520px;gap:14px">
     <div class="lbl am">IA generativa ≠ LLM</div>
@@ -143,17 +143,17 @@
 </section>
 
 <!-- M01 -->
-<section class="s sec" data-b="2" data-q="O que um modelo realmente recebe para aprender?" data-items="Features e target;Dados bagunçados;EDA: olhar antes de modelar;Encoding e escala;Vazamento e overfitting;Validação cruzada;lab:Lab 00" data-notes="CAPA DO MÓDULO 01 (1 min). Agora começamos a falar de dados. Todo modelo, da regressão ao LLM, depende de como os dados são coletados, limpos, transformados, divididos e avaliados. É o módulo mais longo do dia — e o mais importante na prática."></section>
+<section class="s sec" data-b="2" data-q="O que um modelo realmente recebe para aprender?" data-items="Features e target;Dados bagunçados;Olhar antes de modelar;Categorias viram números;Treino × teste sem vazamento;lab:Lab 00" data-notes="CAPA DO MÓDULO 01 (1 min). Agora começamos a falar de dados. Todo modelo, da regressão ao LLM, depende de como os dados são coletados, limpos e divididos. Neste módulo ainda não há modelo: só pandas e bom senso."></section>
 
 <!-- DATASETS -->
-<section class="s" data-b="2" data-notes="DATASETS (4 min). Apresente os conjuntos de dados que aparecem ao longo do curso. Cada linha é um exemplo; cada coluna, uma feature. Destaque que imagens e textos também viram tabelas de números (módulos 05 e 06). Iris e Wine são datasets clássicos do Scikit-learn; os sintéticos foram gerados para a aula; MNIST aparece como exemplo nos slides de visão.">
+<section class="s" data-b="2" data-notes="DATASETS (3 min). Apresente os conjuntos de dados que aparecem ao longo do curso. Cada linha é um exemplo; cada coluna, uma feature. Destaque que imagens e textos também viram tabelas de números (módulos 05 e 06). Iris e Wine são datasets clássicos do Scikit-learn; os sintéticos foram gerados para a aula; MNIST aparece como exemplo nos slides de visão.">
   <h2>Os datasets que vamos usar hoje</h2>
   <div id="dsGrid" class="grid3" style="gap:22px"></div>
   <div class="note f" data-f="1" style="margin-top:24px;font-size:22px">Tabela, imagem ou texto: para o modelo, tudo vira linhas e colunas de números</div>
 </section>
 
 <!-- 06 -->
-<section class="s" data-b="2" data-id="tblx" data-notes="SLIDE 06 (9 min). Feature = informação disponível antes da previsão; target = o que queremos estimar. Numérico vs categórico. Treino ajusta parâmetros; validação orienta escolhas (modelo, hiperparâmetros); teste estima o desempenho final em dados não usados na seleção.">
+<section class="s" data-b="2" data-id="tblx" data-notes="FEATURES E TARGET (7 min). Feature = informação disponível antes da previsão; target = o que queremos estimar. Numérico vs categórico. Treino ajusta parâmetros; validação orienta escolhas (modelo, hiperparâmetros); teste estima o desempenho final em dados não usados na seleção.">
   <h2>Uma linha de dados. Uma decisão a tomar</h2>
   <div class="row" style="gap:70px">
     <table id="tbl" style="border-collapse:separate;border-spacing:8px 0;font-size:25px;width:680px">
@@ -181,7 +181,7 @@
 </section>
 
 <!-- MESSY -->
-<section class="s" data-b="2" data-id="messy" data-notes="DADOS BAGUNÇADOS (6 min). Dados reais quase nunca chegam limpos. Avance passo a passo: (1) valores faltantes — imputar (ex.: mediana) ou remover; se faltar o alvo, a linha não serve para treino; (2) linhas duplicadas — contam duas vezes e distorcem o modelo; (3) outliers — 80 horas de estudo? Investigue: pode ser erro de digitação (8,0); (4) categorias inconsistentes — “manhã”, “Manhã”, “MANHÃ ” e “manha” são a mesma coisa para nós e valores diferentes para o computador. Último passo: a tabela limpa. Registre cada decisão de limpeza.">
+<section class="s" data-b="2" data-id="messy" data-notes="DADOS BAGUNÇADOS (5 min). Dados reais quase nunca chegam limpos. Avance passo a passo: (1) valores faltantes — imputar (ex.: mediana) ou remover; se faltar o alvo, a linha não serve para treino; (2) linhas duplicadas — contam duas vezes e distorcem o modelo; (3) outliers — 80 horas de estudo? Investigue: pode ser erro de digitação (8,0); (4) categorias inconsistentes — “manhã”, “Manhã”, “MANHÃ ” e “manha” são a mesma coisa para nós e valores diferentes para o computador. Último passo: a tabela limpa. Registre cada decisão de limpeza.">
   <h2>Dados do mundo real chegam bagunçados</h2>
   <div class="row" style="gap:40px;align-items:flex-start">
     <div id="messyTbl" style="width:780px"></div>
@@ -190,23 +190,18 @@
   <i class="f" data-f="5"></i>
 </section>
 
-<!-- CMD LIB00 -->
-<section class="s" data-b="2" data-cmd="lib00" data-notes="FERRAMENTAS DO LAB 00 (3 min). Os problemas já foram mostrados; agora, com que ferramentas vamos resolvê-los. Esta é a primeira célula do notebook, linha por linha. numpy, pandas e matplotlib com seus apelidos de sempre; do scikit-learn, importamos só as peças. Reforce: no Colab tudo já vem instalado. Use → para passar de comando em comando (ou clique na lista); os controles mudam o parâmetro destacado no código.">
-  <h2>As ferramentas do Lab 00</h2>
-</section>
-
 <!-- CMD INSP -->
-<section class="s" data-b="2" data-cmd="insp" data-notes="NO NOTEBOOK · INSPECIONAR (5 min). Os mesmos 8 alunos do slide anterior, agora como o pandas mostra. head(n) muda o n ao vivo; shape sem parênteses (atributo); info() denuncia os faltantes pelo Non-Null; describe() mostra o máximo de 80 h; isna() e depois .sum() mostra o encadeamento; value_counts revela 4 grafias de manhã. Cada item traz o número real do notebook. Use → para passar de comando em comando (ou clique na lista); os controles mudam o parâmetro destacado no código.">
+<section class="s" data-b="2" data-cmd="insp" data-notes="NO NOTEBOOK · INSPECIONAR (5 min). Primeiro a célula de imports: os três apelidos de sempre e uma peça do scikit-learn. Depois, os mesmos 8 alunos do slide anterior, agora como o pandas mostra: head(n) muda o n ao vivo; info() denuncia os faltantes pelo Non-Null; describe() mostra o máximo de 80 h; isna() e depois .sum() mostra o encadeamento; value_counts revela 4 grafias de manhã. As dicas trazem os números reais do notebook. Use → para passar de comando em comando (ou clique na lista); os controles mudam o parâmetro destacado no código.">
   <h2>Encontrar os problemas com pandas</h2>
 </section>
 
 <!-- CMD LIMP -->
-<section class="s" data-b="2" data-cmd="limp" data-notes="NO NOTEBOOK · LIMPAR (6 min). As operações são cumulativas, na ordem do Lab 00. Destaque: (1) sem “df = …” o resultado não fica salvo; (2) o índice não é renumerado; (3) monte a cadeia .str.strip().str.lower() botão por botão; (4) no df.loc, arraste o limite para 6 e mostre que horas normais viram NaN; (5) no dropna, compare com e sem subset. Use → para passar de comando em comando (ou clique na lista); os controles mudam o parâmetro destacado no código.">
+<section class="s" data-b="2" data-cmd="limp" data-notes="NO NOTEBOOK · LIMPAR (5 min). As operações são cumulativas, na ordem do Lab 00. Destaque: (1) sem “df = …” o resultado não fica salvo, e o índice não é renumerado; (2) monte a cadeia .str.strip().str.lower() botão por botão; (3) no df.loc, arraste o limite para 6 e mostre que horas normais viram NaN; (4) no dropna, compare com e sem subset. Use → para passar de comando em comando (ou clique na lista); os controles mudam o parâmetro destacado no código.">
   <h2>Limpar com pandas, passo a passo</h2>
 </section>
 
 <!-- EDA -->
-<section class="s" data-b="2" data-id="eda" data-notes="EDA (6 min). Antes de modelar, olhe os dados. O histograma mostra as horas de estudo de 200 alunos (sintéticos); o boxplot resume quartis e marca pontos extremos. Clique em “Adicionar outliers”: a média se desloca, a mediana quase não muda — por isso a mediana é boa para imputar faltantes. À direita, horas × nota: a correlação r mede relação linear (de −1 a 1). Correlação não é causalidade.">
+<section class="s" data-b="2" data-id="eda" data-notes="EDA (5 min). Antes de modelar, olhe os dados. O histograma mostra as horas de estudo de 200 alunos (sintéticos); o boxplot resume quartis e marca pontos extremos. Clique em “Adicionar outliers”: a média se desloca, a mediana quase não muda — por isso a mediana é boa para preencher faltantes (é o que o Lab 01 vai fazer). À direita, horas × nota: a correlação r mede relação linear (de −1 a 1). Correlação não é causalidade.">
   <h2>Olhe os dados antes de modelar</h2>
   <div class="row" style="gap:32px">
     <div class="card" style="width:780px;padding:22px 24px"><div class="row" style="justify-content:space-between;align-items:center"><div class="lbl cy" style="font-size:14px">Horas de estudo por semana · 200 alunos</div><button class="b" id="edaOut">Adicionar outliers</button></div><svg id="edaHist" viewBox="0 0 720 450" style="width:100%;height:450px;margin-top:8px"></svg></div>
@@ -219,42 +214,27 @@
 </section>
 
 <!-- CMD EXPL -->
-<section class="s" data-b="2" data-cmd="expl" data-notes="NO NOTEBOOK · EXPLORAR (5 min). bins do histograma ao vivo; média × mediana na renda (valores reais do Lab 00); alpha do scatter; matriz de correlação real; groupby com uma ou duas colunas; agg mostrando que situacao entrega a nota (gancho para vazamento). Use → para passar de comando em comando (ou clique na lista); os controles mudam o parâmetro destacado no código.">
-  <h2>Explorar no código</h2>
+<section class="s" data-b="2" data-cmd="expl" data-notes="NO NOTEBOOK · OLHAR (3 min). Três comandos, um gráfico cada: bins do histograma ao vivo; alpha do scatter; a matriz de correlação real do Lab 00 (horas × nota = 0,62; faltas = −0,31). Use → para passar de comando em comando (ou clique na lista); os controles mudam o parâmetro destacado no código.">
+  <h2>Olhar no código</h2>
 </section>
 
 <!-- ENC -->
-<section class="s" data-b="2" data-id="enc" data-notes="ENCODING (5 min). Modelos fazem contas, então categorias precisam virar números. Label encoding (noite = 0, manhã = 1, tarde = 2) cria uma ordem falsa: para o modelo, “tarde” seria maior que “manhã”. One-hot cria uma coluna 0/1 por categoria, sem ordem. Quando a ordem é real (fundamental < médio < superior), o encoding ordinal faz sentido. Cuidado com categorias muito numerosas (ex.: CEP): one-hot gera colunas demais.">
+<section class="s" data-b="2" data-id="enc" data-notes="ENCODING (4 min). Modelos fazem contas, então categorias precisam virar números. Label encoding (noite = 0, manhã = 1, tarde = 2) cria uma ordem falsa: para o modelo, “tarde” seria maior que “manhã”. One-hot cria uma coluna 0/1 por categoria, sem ordem. Quando a ordem é real (fundamental < médio < superior), o encoding ordinal faz sentido. Cuidado com categorias muito numerosas (ex.: CEP): one-hot gera colunas demais.">
   <h2>Categorias precisam virar números</h2>
   <div class="row" id="encBtns" style="gap:10px;margin-bottom:28px"><button class="b on" data-m="raw">Original</button><button class="b" data-m="label">Label encoding</button><button class="b" data-m="onehot">One-hot</button><button class="b" data-m="ord">Ordinal</button></div>
   <div class="row" style="gap:40px;align-items:flex-start"><div id="encTbl" style="width:840px"></div><div id="encMsg" class="col" style="flex:1;gap:14px"></div></div>
 </section>
 
-<!-- SCALE -->
-<section class="s" data-b="2" data-id="scale" data-notes="ESCALA (6 min). Quatro passos com a seta. (1) Unidades originais: “você” tem 25 anos e R$ 3.000; A tem 62 anos e R$ 3.200; B tem 27 anos e R$ 4.500. Faça a conta da distância no quadro: até A dá √(37² + 200²) ≈ 203, até B dá √(2² + 1.500²) ≈ 1.500. A renda responde por 97% de d² de A e praticamente 100% de B: A “ganha”, mesmo com 37 anos de diferença. No gráfico, na mesma régua (1 ano = R$ 1), os 37 anos viram poucos pixels. (2) Cada coluna tem sua régua: média e desvio (do treino). Idade: μ = 40, σ = 15; renda: μ = 4.000, σ = 2.000. Mostre as pessoas nas duas réguas. (3) z = (x − μ)/σ célula por célula: o gráfico se transforma. (4) Distância de novo, em z: até A ≈ 2,47, até B ≈ 0,76 — B é o mais parecido. Feche: KNN, K-Means, redes neurais, descida do gradiente e regularização dependem de escala; árvores não.">
-  <h2>Quem é mais parecido com você?</h2>
-  <div class="row" style="gap:34px;align-items:flex-start">
-    <div id="scPanel" class="col" style="width:770px;gap:14px"></div>
-    <div class="card" style="flex:1;padding:12px 14px"><svg id="scPlot" viewBox="0 0 620 480" style="width:100%;height:auto;display:block"></svg><div id="scCap" class="mu" style="font-size:16px;text-align:center;margin-top:4px"></div></div>
-  </div>
-  <i class="f" data-f="1"></i><i class="f" data-f="2"></i><i class="f" data-f="3"></i>
-</section>
-
-<!-- CMD PREP -->
-<section class="s" data-b="2" data-cmd="prep" data-notes="NO NOTEBOOK · ENCODING E ESCALA (5 min). get_dummies × map (a ordem falsa do slide de encoding); OneHotEncoder com handle_unknown: troque para error e mostre o erro com a categoria nova; SimpleImputer com as três estratégias; StandardScaler nas 3 pessoas do slide anterior, com mean_ e scale_. Use → para passar de comando em comando (ou clique na lista); os controles mudam o parâmetro destacado no código.">
-  <h2>Encoding, faltantes e escala no código</h2>
-</section>
-
 <!-- 07 -->
-<section class="s" data-b="2" data-notes="SLIDE 07 (8 min). Padronizar o dataset inteiro antes de separar vaza média e desvio do teste para o treino. Certo: separar; ajustar (fit) o scaler só no treino; transformar treino e teste com ele. O Pipeline do Scikit-learn garante essa ordem, inclusive na validação cruzada. “O teste é uma prova inédita, não uma cola para o estudo.”">
+<section class="s" data-b="2" data-notes="VAZAMENTO (5 min). Dois jeitos de “colar” na prova. (1) Usar o teste para preparar os dados: se a mediana, a média ou qualquer outra conta usa treino e teste juntos, o teste já influenciou o modelo antes da prova. Certo: separar primeiro, aprender o preparo só com o treino e só aplicá-lo no teste. No Lab 01, o Pipeline do scikit-learn garante essa ordem sozinho. (2) Uma feature que só existe depois da resposta: a coluna situacao (aprovado/reprovado) é calculada a partir da nota. “O teste é uma prova inédita, não uma cola para o estudo.”">
   <h2>O teste não pode contar o futuro</h2>
-  <svg viewBox="0 0 1408 560" style="width:1408px;height:560px">
+  <svg viewBox="0 0 1408 540" style="width:1408px;height:540px">
     <g class="f" data-f="1">
       <rect x="0" y="0" width="1408" height="230" rx="20" fill="#141B33" stroke="#F87171" stroke-width="2"/>
       <text x="34" y="48" font-size="20" font-weight="700" letter-spacing="3" fill="#F87171">✕  ERRADO</text>
       <g id="wrongRow"></g>
       <path id="leak" d="M529 184 C480 236 262 236 200 189" fill="none" stroke="#F59E0B" stroke-width="3" stroke-dasharray="10 8" style="animation:flow 1s linear infinite" marker-end="url(#ara)"/>
-      <text x="420" y="48" font-size="19" font-style="italic" fill="#F59E0B">a média e o desvio do teste vazam para o treino</text>
+      <text x="420" y="48" font-size="19" font-style="italic" fill="#F59E0B">o teste já influenciou o preparo antes da prova</text>
     </g>
     <g class="f" data-f="2"><g transform="translate(0,290)">
       <rect x="0" y="0" width="1408" height="230" rx="20" fill="#141B33" stroke="#34D399" stroke-width="2"/>
@@ -262,49 +242,23 @@
       <g id="rightRow"></g>
     </g></g>
   </svg>
-  <div class="f" data-f="3" style="font-size:26px;margin-top:6px"><span class="mono cy" style="font-weight:700">Pipeline(scaler, modelo)</span> <span class="mu">faz isso por você, inclusive dentro da validação cruzada</span></div>
+  <div class="f" data-f="3" style="font-size:25px;margin-top:4px"><span class="mono cy" style="font-weight:700">Pipeline</span> <span class="mu">faz essa ordem por você: é o que o Lab 01 usa</span></div>
+  <div class="f" data-f="4" style="font-size:25px;margin-top:10px"><span class="mono rd" style="font-weight:700">situacao</span> <span class="mu">também vaza: aprovado ⇔ nota ≥ 6. Ela só existe depois da resposta</span></div>
 </section>
 
-<!-- CMD PIPE -->
-<section class="s" data-b="2" data-cmd="pipe" data-notes="NO NOTEBOOK · SPLIT E PIPELINE (6 min). train_test_split: mude test_size e random_state (None sorteia diferente a cada clique). fit × transform: alterne certo/errado — o μ muda porque o teste entrou no fit. ColumnTransformer: num, cat e as 9 colunas de saída reais. Pipeline: fit (fit_transform em cada etapa) × predict (só transform). to_csv com e sem index. Use → para passar de comando em comando (ou clique na lista); os controles mudam o parâmetro destacado no código.">
-  <h2>Separar, preparar e encadear</h2>
-</section>
-
-<!-- CMD CONF -->
-<section class="s" data-b="2" data-cmd="conf" data-notes="NO NOTEBOOK · CONFERIR E SALVAR (4 min). Etapas 4.4 a 5.1 do Lab 00. Fatiamento de array e mean(axis=0) para conferir a padronização (o teste fica perto de 0, não exato); named_transformers_ para ler o μ aprendido; fillna + scaler no dataset inteiro para mostrar o jeito errado; to_csv; e o desafio da distância com iloc, np.sqrt e idxmin — alterne sem/com padronização. Use → para passar de comando em comando (ou clique na lista); os controles mudam o parâmetro destacado no código. O cartão à esquerda descreve o comando por escrito.">
-  <h2>Conferir o que o fit aprendeu e salvar</h2>
-</section>
-
-<!-- 08 -->
-<section class="s" data-b="2" data-id="fit" data-notes="SLIDE 08 (8 min). Arraste a complexidade (grau do polinômio). Pontos brancos = treino; anéis âmbar = validação. Com grau alto, o erro de treino vai a quase zero e o de validação explode. “Qual curva vocês escolheriam?” A decisão precisa de dados de validação, não do olho.">
-  <h2>Acertar tudo no treino é sempre bom sinal?</h2>
-  <div class="row" style="gap:40px">
-    <svg id="fitPlot" viewBox="0 0 820 560" style="width:820px;height:560px"></svg>
-    <div class="col" style="flex:1;gap:22px">
-      <div class="card"><div class="lbl mu" style="font-size:14px">Complexidade do modelo</div>
-        <div class="row" style="align-items:center;margin-top:10px;gap:18px"><input id="deg" type="range" min="1" max="11" value="1" style="width:300px"><span class="mono big" id="degv" style="font-size:34px">grau 1</span></div>
-        <div id="fitTag" class="big" style="font-size:40px;margin-top:16px">underfitting</div></div>
-      <div class="card"><svg id="fitErr" viewBox="0 0 520 250" style="width:100%;height:250px"></svg></div>
-      <div class="note">Polinômios ajustados ao vivo por mínimos quadrados · dados sintéticos</div>
-    </div>
-  </div>
-</section>
-
-<!-- CV -->
-<section class="s" data-b="2" data-id="cv" data-notes="VALIDAÇÃO CRUZADA (5 min). Um único corte de validação pode dar sorte ou azar. Na validação cruzada k-fold (aqui k = 5), o treino é dividido em 5 partes e cada parte vira validação uma vez. Avance para ver as 5 rodadas. O resultado é a média e o desvio das 5 notas — mais confiável para comparar modelos e escolher hiperparâmetros. O teste continua guardado até o fim. Notas ilustrativas.">
-  <h2>Uma divisão pode dar sorte. Cinco, nem tanto</h2>
-  <svg id="cvSvg" viewBox="0 0 1408 480" style="width:1408px;height:480px"></svg>
-  <div class="row f" data-f="6" style="gap:24px;margin-top:18px;align-items:center"><span class="mono cy" style="font-size:24px;font-weight:700">cross_val_score(pipe, X_treino, y_treino, cv=5)</span><span class="mu" style="font-size:22px">o teste continua guardado</span></div>
+<!-- CMD PREP -->
+<section class="s" data-b="2" data-cmd="prep" data-notes="NO NOTEBOOK · SEPARAR (4 min). Etapa 4 do Lab 00. drop: a coluna situacao sai junto com o alvo (vazamento). get_dummies: as categorias viram colunas 0/1; 6 colunas entram e 9 saem (são as 5 primeiras linhas reais). train_test_split: mude test_size e random_state (None sorteia diferente a cada clique). to_csv com e sem index. Use → para passar de comando em comando (ou clique na lista); os controles mudam o parâmetro destacado no código.">
+  <h2>Separar features, alvo, treino e teste</h2>
 </section>
 
 <!-- LAB00 -->
-<section class="s lab" data-b="2" data-lab="00|Arrume a casa antes de modelar|00_dados_e_datasets.ipynb|35|cy" data-steps="00–08|Carregar e inspecionar: formato, tipos, describe() e faltantes;08–18|Limpar: duplicados, categorias, outliers e faltantes;18–26|Explorar: histogramas, boxplot e correlação;26–35|Preparar: features × alvo, split, one-hot, padronização e Pipeline sem vazamento" data-q="Qual decisão de limpeza muda os dados que o modelo vai receber?" data-notes="LAB 00 (35 min). Abra notebooks/00_dados_e_datasets.ipynb (versão do aluno). O dataset é gerado dentro do notebook (não depende de download) e reproduz os problemas do slide “dados bagunçados”. O gabarito está em 00_dados_e_datasets_gabarito.ipynb — não mostre antes."></section>
+<section class="s lab" data-b="2" data-lab="00|Arrume a casa antes de modelar|00_dados_e_datasets.ipynb|20|cy" data-steps="00–05|Inspecionar: tipos, describe(), faltantes e categorias;05–12|Limpar: duplicados, categorias, outliers e alvo faltante;12–16|Olhar: histogramas, dispersão e correlação;16–20|Separar: features × alvo, one-hot e treino/teste" data-q="Qual decisão de limpeza muda os dados que o modelo vai receber?" data-notes="LAB 00 (20 min). Abra notebooks/00_dados_e_datasets.ipynb (versão do aluno). O dataset é gerado dentro do notebook (não depende de download) e reproduz os problemas do slide “dados bagunçados”. O gabarito está em 00_dados_e_datasets_gabarito.ipynb — não mostre antes."></section>
 
 <!-- PAUSE1 -->
 <section class="s" data-b="2" data-pause="10" data-next="Deixe o Notebook 01 aberto" data-nochrome="1" data-notes="PAUSA (10 min). Clique em Iniciar."></section>
 
 <!-- M02 -->
-<section class="s sec" data-b="3" data-q="Como uma reta aprende com os próprios erros?" data-items="ŷ = w·x + b;Resíduos e MSE;Descida do gradiente;Regressão múltipla;Regularização;MAE, MSE e R²;lab:Lab 01" data-notes="CAPA DO MÓDULO 02 (1 min). Primeiro modelo do curso: a regressão linear. A ideia de perda + descida do gradiente vai reaparecer nas redes neurais e nos LLMs amanhã."></section>
+<section class="s sec" data-b="3" data-q="Como uma reta aprende com os próprios erros?" data-items="ŷ = w·x + b;Resíduos e perda (MSE);Métricas: MAE, MSE e R²;Descida do gradiente;Regressão múltipla;Overfitting e regularização;Validação cruzada;lab:Lab 01" data-notes="CAPA DO MÓDULO 02 (1 min). Primeiro modelo do curso: a regressão linear. A ideia de perda + descida do gradiente vai reaparecer nas redes neurais e nos LLMs amanhã."></section>
 
 <!-- 09 -->
 <section class="s" data-b="3" data-id="line" data-notes="SLIDE 09 (4 min). ŷ = wx + b. w = inclinação, b = intercepto, x = entrada. Mova os controles. Exemplo: x = 6, w = 5, b = 20 → ŷ = 50 (exemplo matemático, não uma escala real de nota). O modelo precisa descobrir w e b a partir dos dados.">
@@ -342,10 +296,24 @@
   </div>
 </section>
 
-<!-- CMD LIB01 -->
-<section class="s" data-b="3" data-cmd="lib01" data-notes="FERRAMENTAS DO LAB 01 (2 min). Depois da reta e do erro, as ferramentas para calculá-los. Mostre só o que é novo em relação ao Lab 00: cross_val_score, PolynomialFeatures, LinearRegression/Ridge e as métricas. Use → para passar de comando em comando (ou clique na lista); os controles mudam o parâmetro destacado no código.">
-  <h2>As ferramentas do Lab 01</h2>
+<!-- 12 -->
+<section class="s" data-b="3" data-notes="SLIDE 12 (3 min). MAE: erro absoluto médio, na unidade original. MSE: penaliza mais os desvios grandes (unidade ao quadrado). R²: compara com prever sempre a média; 1 é perfeito, 0 é igual à média, pode ser negativo fora do treino. Nunca interprete uma métrica sozinha.">
+  <h2>Um modelo erra. Quanto, e em qual unidade?</h2>
+  <div class="grid3">
+    <div class="card f" data-f="1" style="min-height:470px"><div class="big cy" style="font-size:78px">MAE</div><div class="mono" style="font-size:30px;margin:14px 0 22px" data-tex="\frac{1}{n}\sum_{i=1}^{n}\left|y_i-\hat{y}_i\right|">1/n Σ |y − ŷ|</div>
+      <div style="display:flex;align-items:flex-end;gap:16px;height:110px"><i style="width:44px;height:36%;background:var(--cy)"></i><i style="width:44px;height:80%;background:var(--cy)"></i><i style="width:44px;height:27%;background:var(--cy)"></i><i style="width:44px;height:62%;background:var(--cy)"></i></div>
+      <h3 style="font-size:27px;margin-top:26px">Erro médio na unidade original</h3><div class="mu" style="font-style:italic">“erra 0,6 ponto, em média”</div></div>
+    <div class="card f" data-f="2" style="min-height:470px"><div class="big am" style="font-size:78px">MSE</div><div class="mono" style="font-size:30px;margin:14px 0 22px" data-tex="\frac{1}{n}\sum_{i=1}^{n}\left(y_i-\hat{y}_i\right)^2">1/n Σ (y − ŷ)²</div>
+      <div style="display:flex;align-items:flex-end;gap:16px;height:110px"><i style="width:44px;height:13%;background:var(--am)"></i><i style="width:44px;height:64%;background:var(--am)"></i><i style="width:44px;height:7%;background:var(--am)"></i><i style="width:44px;height:38%;background:var(--am)"></i></div>
+      <h3 style="font-size:27px;margin-top:26px">Penaliza erros grandes</h3><div class="mu" style="font-style:italic">unidade ao quadrado</div></div>
+    <div class="card f" data-f="3" style="min-height:470px"><div class="big vi" style="font-size:78px">R²</div><div class="mono" style="font-size:30px;margin:14px 0 22px" data-tex="1-\frac{\sum_i (y_i-\hat{y}_i)^2}{\sum_i (y_i-\bar{y})^2}">1 − SS<sub>res</sub> / SS<sub>tot</sub></div>
+      <div style="height:110px;display:flex;flex-direction:column;justify-content:center"><div style="height:26px;border-radius:13px;background:var(--ln)"><div style="width:82%;height:100%;border-radius:13px;background:var(--vi)"></div></div><div class="mono mu" style="display:flex;justify-content:space-between;font-size:16px;margin-top:8px"><span>0</span><span>0,82</span><span>1</span></div></div>
+      <h3 style="font-size:27px;margin-top:26px">Comparado a prever a média</h3><div class="mu" style="font-style:italic">pode ser negativo fora do treino</div></div>
+  </div>
+  <div class="f note" data-f="4" style="margin-top:28px;font-size:22px">Uma métrica sozinha não conta a história: olhe o problema</div>
 </section>
+
+<!-- CMD LIB01 -->
 
 <!-- CMD NP -->
 <section class="s" data-b="3" data-cmd="np" data-notes="NO NOTEBOOK · NUMPY (5 min). Os 10 primeiros alunos do treino do Lab 01. Mova w e b nos itens 2 a 4: o array ŷ, os resíduos e a MSE mudam juntos. Desafie a turma a achar o menor MSE (a dica mostra o mínimo). Termine no reshape(-1, 1), que aparece em todo o Lab 01. Use → para passar de comando em comando (ou clique na lista); os controles mudam o parâmetro destacado no código.">
@@ -353,29 +321,33 @@
 </section>
 
 <!-- 11 -->
-<section class="s" data-b="3" data-id="gd" data-notes="SLIDE 11 (4 min). Gradiente = direção de maior crescimento do erro; a descida vai no sentido contrário: w ← w − α·∂L/∂w. Rode com α pequeno (lento), bom (converge), grande (oscila) e grande demais (diverge). Cada passo aqui é uma atualização; uma época é uma passada por todos os dados de treino.">
+<section class="s" data-b="3" data-id="gd" data-notes="SLIDE 11 (4 min). Gradiente = direção em que o erro mais cresce; a descida vai no sentido contrário: w ← w − α·∂L/∂w. Para dar para fazer a conta na mão, o exemplo usa UM aluno (6 h de estudo, nota 4,6) e só o peso w (b fixo em 0): L(w) = (4,6 − 6w)². Clique “1 passo” e faça a conta do quadro junto com a turma: com α = 0,01, de w = 0 vai para 0,55 e depois 0,71, chegando ao mínimo 0,77. As taxas são as MESMAS do Lab 01: 0,001 lenta, 0,01 boa, 0,023 oscila (o w pula de um lado para o outro, mas a perda cai) e 0,03 diverge. No notebook, com os 296 alunos, o limite é ≈ 0,024; aqui, com um aluno, é 1/6² ≈ 0,028. Cada passo aqui é uma atualização; uma época é uma passada por todos os dados de treino.">
   <h2>Aprender é caminhar ladeira abaixo</h2>
   <div class="row" style="gap:44px">
     <svg id="gdPlot" viewBox="0 0 860 560" style="width:860px;height:560px"></svg>
-    <div class="col" style="flex:1;gap:20px">
-      <div class="formula" style="font-size:31px" data-tex="w \leftarrow w - \am{\alpha}\,\cy{\frac{\partial L}{\partial w}}">w ← w − <span class="am">α</span> · <span class="cy">∂L/∂w</span></div>
-      <div class="card col" style="gap:14px"><div class="lbl mu" style="font-size:14px">Taxa de aprendizado α</div>
-        <div class="row" id="gdA" style="gap:10px;flex-wrap:wrap"><button class="b" data-a="0.05">0,05</button><button class="b on" data-a="0.3">0,3</button><button class="b" data-a="0.9">0,9</button><button class="b" data-a="1.05">1,05</button></div>
-        <div class="row" style="gap:10px"><button class="b" id="gdGo">▶ Descer</button><button class="b" id="gdRst">Reiniciar</button></div></div>
-      <div class="card row" style="justify-content:space-between"><div><div class="lbl mu" style="font-size:14px">Passo</div><div class="big mono" id="gdK" style="font-size:52px">0</div></div><div><div class="lbl mu" style="font-size:14px">Perda L(w)</div><div class="big mono am" id="gdL" style="font-size:52px">—</div></div></div>
-      <div id="gdMsg" style="font-size:24px;font-weight:700;min-height:34px"></div>
+    <div class="col" style="flex:1;gap:14px">
+      <div class="card col" style="gap:8px;padding:16px 22px">
+        <div class="formula" style="font-size:26px;padding:0;background:none;border:0" data-tex="w \leftarrow w - \am{\alpha}\,\cy{\frac{\partial L}{\partial w}}">w ← w − <span class="am">α</span> · <span class="cy">∂L/∂w</span></div>
+        <div class="mu" style="font-size:15px">1 aluno: 6 h, nota 4,6 · b fixo em 0 · L(w) = (4,6 − 6w)²</div>
+        <div id="gdCalc" style="font-size:19px;line-height:1.4;display:flex;flex-direction:column;gap:8px;min-height:150px"></div>
+      </div>
+      <div class="card col" style="gap:12px;padding:16px 22px"><div class="lbl mu" style="font-size:14px">Taxa de aprendizado <span style="text-transform:none">α</span> · as mesmas do Lab 01</div>
+        <div class="row" id="gdA" style="gap:10px;flex-wrap:wrap"><button class="b" data-a="0.001">0,001</button><button class="b on" data-a="0.01">0,01</button><button class="b" data-a="0.023">0,023</button><button class="b" data-a="0.03">0,03</button></div>
+        <div class="row" style="gap:10px"><button class="b" id="gdStep">1 passo</button><button class="b" id="gdGo">▶ Descer</button><button class="b" id="gdRst">Reiniciar</button></div></div>
+      <div class="card row" style="justify-content:space-between;padding:14px 22px"><div><div class="lbl mu" style="font-size:14px">Passo</div><div class="big mono" id="gdK" style="font-size:40px">0</div></div><div><div class="lbl mu" style="font-size:14px">w</div><div class="big mono" id="gdW" style="font-size:40px">0</div></div><div><div class="lbl mu" style="font-size:14px">Perda L(w)</div><div class="big mono am" id="gdL" style="font-size:40px">—</div></div></div>
+      <div id="gdMsg" style="font-size:22px;font-weight:700;min-height:30px"></div>
     </div>
   </div>
 </section>
 
 <!-- GDCODE -->
-<section class="s" data-b="3" data-id="gdc" data-notes="NO NOTEBOOK · DESCIDA DO GRADIENTE (6 min). É a função do Lab 01, executada como o Python faz. Clique “Próxima linha” algumas vezes na primeira época: w e b começam em 0, y_hat e erro viram arrays, dw e db são os gradientes, e w e b dão um passo contra eles. Depois use “Próxima época” e “100 épocas”. Troque alpha: 0,001 lento; 0,02 desce bem; 0,023 oscila; 0,03 diverge — os mesmos valores do item 4 do notebook.">
+<section class="s" data-b="3" data-id="gdc" data-notes="NO NOTEBOOK · DESCIDA DO GRADIENTE (6 min). É a função do Lab 01, executada como o Python faz. Clique “Próxima linha” algumas vezes na primeira época: w e b começam em 0, y_hat e erro viram arrays, dw e db são os gradientes, e w e b dão um passo contra eles. Depois use “Próxima época” e “100 épocas”. Troque alpha: 0,001 lento; 0,01 desce bem; 0,023 no limite; 0,03 diverge — os mesmos valores do slide da ladeira e do item 4 do notebook.">
   <h2>A descida do gradiente, linha por linha</h2>
   <div class="nbk">▸ Lab 01 · etapa 2</div>
   <div class="row" style="gap:30px;align-items:flex-start">
     <div class="col" style="width:740px;gap:14px">
       <div class="nbcell gdcode"><div class="in">[ ]:</div><pre class="code" id="gdcCode"></pre></div>
-      <div class="row" style="gap:10px;flex-wrap:wrap"><button class="b" id="gdcLine">↓ Próxima linha</button><button class="b" id="gdcEp">⏭ Próxima época</button><button class="b" id="gdcRun">▶ 100 épocas</button><button class="b" id="gdcRst">Reiniciar</button></div>
+      <div class="row" style="gap:8px;white-space:nowrap"><button class="b" id="gdcBack">↑ Voltar</button><button class="b" id="gdcLine">↓ Próxima linha</button><button class="b" id="gdcEp">⏭ Próxima época</button><button class="b" id="gdcRun">▶ 100 épocas</button><button class="b" id="gdcRst" title="Reiniciar">↺</button></div>
       <div class="row" style="gap:10px;align-items:center"><span class="mu mono" style="font-size:17px">alpha =</span><span id="gdcA" class="row" style="gap:6px"></span></div>
       <div id="gdcMsg" style="font-size:20px;min-height:28px"></div>
     </div>
@@ -403,6 +375,21 @@
   </div>
 </section>
 
+<!-- 08 -->
+<section class="s" data-b="3" data-id="fit" data-notes="OVERFITTING (6 min). Com várias features (ou potências de x), o modelo fica mais flexível. Arraste a complexidade (grau do polinômio). Pontos brancos = treino; anéis âmbar = validação. Com grau alto, o erro de treino vai a quase zero e o de validação explode. “Qual curva vocês escolheriam?” A decisão precisa de dados de validação, não do olho.">
+  <h2>Acertar tudo no treino é sempre bom sinal?</h2>
+  <div class="row" style="gap:40px">
+    <svg id="fitPlot" viewBox="0 0 820 560" style="width:820px;height:560px"></svg>
+    <div class="col" style="flex:1;gap:22px">
+      <div class="card"><div class="lbl mu" style="font-size:14px">Complexidade do modelo</div>
+        <div class="row" style="align-items:center;margin-top:10px;gap:18px"><input id="deg" type="range" min="1" max="11" value="1" style="width:300px"><span class="mono big" id="degv" style="font-size:34px">grau 1</span></div>
+        <div id="fitTag" class="big" style="font-size:40px;margin-top:16px">underfitting</div></div>
+      <div class="card"><svg id="fitErr" viewBox="0 0 520 250" style="width:100%;height:250px"></svg></div>
+      <div class="note">Polinômios ajustados ao vivo por mínimos quadrados · dados sintéticos</div>
+    </div>
+  </div>
+</section>
+
 <!-- REG -->
 <section class="s" data-b="3" data-id="reg" data-notes="REGULARIZAÇÃO (5 min). Mesmos dados do slide de overfitting, agora com um polinômio de grau 11 fixo. A regularização L2 (Ridge) soma à perda uma penalidade λ·Σw²: pesos grandes custam caro. Arraste λ: perto de zero a curva decora o treino; com λ moderado ela suaviza e o erro de validação cai; com λ enorme vira quase uma reta (underfitting). As barras mostram os coeficientes encolhendo. Lasso (L1) pode zerar coeficientes e serve também para selecionar features.">
   <h2>Regularização: freando um modelo complexo</h2>
@@ -416,31 +403,22 @@
   </div>
 </section>
 
-<!-- 12 -->
-<section class="s" data-b="3" data-notes="SLIDE 12 (3 min). MAE: erro absoluto médio, na unidade original. MSE: penaliza mais os desvios grandes (unidade ao quadrado). R²: compara com prever sempre a média; 1 é perfeito, 0 é igual à média, pode ser negativo fora do treino. Nunca interprete uma métrica sozinha.">
-  <h2>Um modelo erra. Quanto, e em qual unidade?</h2>
-  <div class="grid3">
-    <div class="card f" data-f="1" style="min-height:470px"><div class="big cy" style="font-size:78px">MAE</div><div class="mono" style="font-size:30px;margin:14px 0 22px" data-tex="\frac{1}{n}\sum_{i=1}^{n}\left|y_i-\hat{y}_i\right|">1/n Σ |y − ŷ|</div>
-      <div style="display:flex;align-items:flex-end;gap:16px;height:110px"><i style="width:44px;height:36%;background:var(--cy)"></i><i style="width:44px;height:80%;background:var(--cy)"></i><i style="width:44px;height:27%;background:var(--cy)"></i><i style="width:44px;height:62%;background:var(--cy)"></i></div>
-      <h3 style="font-size:27px;margin-top:26px">Erro médio na unidade original</h3><div class="mu" style="font-style:italic">“erra 0,6 ponto, em média”</div></div>
-    <div class="card f" data-f="2" style="min-height:470px"><div class="big am" style="font-size:78px">MSE</div><div class="mono" style="font-size:30px;margin:14px 0 22px" data-tex="\frac{1}{n}\sum_{i=1}^{n}\left(y_i-\hat{y}_i\right)^2">1/n Σ (y − ŷ)²</div>
-      <div style="display:flex;align-items:flex-end;gap:16px;height:110px"><i style="width:44px;height:13%;background:var(--am)"></i><i style="width:44px;height:64%;background:var(--am)"></i><i style="width:44px;height:7%;background:var(--am)"></i><i style="width:44px;height:38%;background:var(--am)"></i></div>
-      <h3 style="font-size:27px;margin-top:26px">Penaliza erros grandes</h3><div class="mu" style="font-style:italic">unidade ao quadrado</div></div>
-    <div class="card f" data-f="3" style="min-height:470px"><div class="big vi" style="font-size:78px">R²</div><div class="mono" style="font-size:30px;margin:14px 0 22px" data-tex="1-\frac{\sum_i (y_i-\hat{y}_i)^2}{\sum_i (y_i-\bar{y})^2}">1 − SS<sub>res</sub> / SS<sub>tot</sub></div>
-      <div style="height:110px;display:flex;flex-direction:column;justify-content:center"><div style="height:26px;border-radius:13px;background:var(--ln)"><div style="width:82%;height:100%;border-radius:13px;background:var(--vi)"></div></div><div class="mono mu" style="display:flex;justify-content:space-between;font-size:16px;margin-top:8px"><span>0</span><span>0,82</span><span>1</span></div></div>
-      <h3 style="font-size:27px;margin-top:26px">Comparado a prever a média</h3><div class="mu" style="font-style:italic">pode ser negativo fora do treino</div></div>
-  </div>
-  <div class="f note" data-f="4" style="margin-top:28px;font-size:22px">Uma métrica sozinha não conta a história: olhe o problema</div>
-</section>
 
 <!-- CMD SKL -->
 <section class="s" data-b="3" data-cmd="skl" data-notes="NO NOTEBOOK · SCIKIT-LEARN (5 min). O roteiro criar → fit → predict vale para todos os modelos do curso. coef_ e intercept_ reais (0,381 e 1,772) batem com a descida do gradiente. Arraste as horas no predict. Métricas: valores reais do teste do Lab 01; a ordem é sempre (real, previsto). Use → para passar de comando em comando (ou clique na lista); os controles mudam o parâmetro destacado no código.">
   <h2>Scikit-learn: criar, treinar, prever, medir</h2>
 </section>
 
+<!-- CV -->
+<section class="s" data-b="3" data-id="cv" data-notes="VALIDAÇÃO CRUZADA (4 min). Um único corte de validação pode dar sorte ou azar. Na validação cruzada k-fold (aqui k = 5), o treino é dividido em 5 partes e cada parte vira validação uma vez. Avance para ver as 5 rodadas. O resultado é a média e o desvio das 5 notas — mais confiável para comparar modelos e escolher hiperparâmetros. O teste continua guardado até o fim. Notas ilustrativas; no código, é o cross_val_score dos próximos slides.">
+  <h2>Uma divisão pode dar sorte. Cinco, nem tanto</h2>
+  <svg id="cvSvg" viewBox="0 0 1408 480" style="width:1408px;height:480px"></svg>
+  <div class="row f" data-f="6" style="gap:24px;margin-top:18px;align-items:center"><span class="mono cy" style="font-size:24px;font-weight:700">cross_val_score(pipe, X_treino, y_treino, cv=5)</span><span class="mu" style="font-size:22px">o teste continua guardado</span></div>
+</section>
+
 <!-- CMD CV -->
-<section class="s" data-b="3" data-cmd="cv" data-notes="NO NOTEBOOK · VALIDAÇÃO E RIDGE (5 min). cross_val_score: troque cv=3/5/10 e alterne o sinal — explique o neg_ (o scikit-learn sempre maximiza). PolynomialFeatures com x = 2 mostra as potências. Ridge: alpha é o λ do slide de regularização, não a taxa de aprendizado. Coeficientes reais da regressão múltipla via named_steps. Use → para passar de comando em comando (ou clique na lista); os controles mudam o parâmetro destacado no código.">
-  <h2>Validação cruzada, polinômios e Ridge</h2>
+<section class="s" data-b="3" data-cmd="cv" data-notes="NO NOTEBOOK · PIPELINE, VALIDAÇÃO E RIDGE (6 min). Pipeline: alterne fit × predict. No fit, cada etapa aprende só com o treino (a mediana, a média e o desvio, os pesos); no predict, o teste só é transformado. É aqui que os faltantes deixados no Lab 00 são preenchidos — a ordem certa do slide “o teste não pode contar o futuro”. cross_val_score: troque cv=3/5/10 e alterne o sinal — explique o neg_ (o scikit-learn sempre maximiza). PolynomialFeatures com x = 2 mostra as potências. Ridge: alpha é o λ do slide de regularização, não a taxa de aprendizado. Coeficientes reais da regressão múltipla via named_steps. Use → para passar de comando em comando (ou clique na lista); os controles mudam o parâmetro destacado no código.">
+  <h2>Pipeline, validação cruzada e Ridge</h2>
 </section>
 
 <!-- 13 LAB01 -->
@@ -450,40 +428,34 @@
 <section class="s" data-b="3" data-pause="10" data-next="Deixe o Notebook 02 aberto" data-nochrome="1" data-notes="PAUSA (10 min). Clique em Iniciar."></section>
 
 <!-- M03 -->
-<section class="s sec" data-b="4" data-q="Como decidir a classe de algo que nunca vimos?" data-items="KNN e distâncias;Árvore de decisão e Gini;Random Forest;Matriz de confusão;Precision × recall e limiar;lab:Lab 02" data-notes="CAPA DO MÓDULO 03 (1 min). Classificação: o KNN decide pela vizinhança; as árvores fazem perguntas; a Random Forest junta várias árvores. Depois, como medir se a classificação está boa de verdade — e como escolher o limiar."></section>
+<section class="s sec" data-b="4" data-q="Como decidir a classe de algo que nunca vimos?" data-items="KNN e escala;Árvore: a melhor pergunta;Random Forest: o voto;Os três lado a lado;Matriz de confusão;lab:Lab 02" data-notes="CAPA DO MÓDULO 03 (1 min). Classificação: como cada modelo decide. O KNN vota com os vizinhos, a árvore faz perguntas e a floresta junta várias árvores. Depois, os três no código e como medir se a classificação está boa de verdade."></section>
 
 <!-- 14 -->
-<section class="s" data-b="4" data-id="knn" data-notes="SLIDE 14 (4 min). Clique no gráfico para mover o ponto novo; troque K. As cores de fundo mostram como cada região seria classificada. K pequeno é sensível a ruído (fronteira recortada); K grande suaviza. Normalizar muda as distâncias. O KNN não ajusta pesos: ele guarda os exemplos e compara.">
-  <h2>Seus vizinhos podem decidir quem você é</h2>
+<section class="s" data-b="4" data-id="knn" data-notes="KNN (4 min). Um app de música descreve cada faixa por números, como a energia (de 0 a 1) e o andamento (BPM, batidas por minuto). Cada ponto é uma música que já está numa playlist: ● Relaxar ou ▲ Festa. A ★ é uma música nova: em qual playlist ela entra? O KNN olha as K músicas mais parecidas e faz uma votação. Clique no gráfico para mover a ★; troque K. O fundo mostra a playlist que cada ponto do plano receberia. K pequeno é sensível a ruído (fronteira recortada); K grande suaviza. O KNN não ajusta pesos: ele guarda os exemplos e compara. Gancho: o que é “parecido” quando uma medida vai de 0 a 1 e a outra de 60 a 180? É o próximo slide.">
+  <h2>Em qual playlist entra esta música?</h2>
   <div class="row" style="gap:40px">
     <svg id="knnPlot" viewBox="0 0 860 560" style="width:860px;height:560px;cursor:crosshair"></svg>
     <div class="col" style="flex:1;gap:20px">
       <div class="card"><div class="lbl mu" style="font-size:14px">Número de vizinhos K</div><div class="row" id="knnK" style="gap:10px;margin-top:12px"><button class="b" data-k="1">1</button><button class="b on" data-k="3">3</button><button class="b" data-k="5">5</button><button class="b" data-k="9">9</button><button class="b" data-k="15">15</button></div></div>
       <div class="card"><div class="lbl mu" style="font-size:14px">Votação</div><div id="knnVote" style="font-size:28px;margin-top:10px"></div><div id="knnRes" class="big" style="font-size:44px;margin-top:10px"></div></div>
-      <div class="col" style="gap:8px;font-size:21px"><div><b class="cy">K pequeno</b> sensível a ruído</div><div><b class="cy">Escala</b> normalizar muda as distâncias</div><div><b class="cy">Sem pesos</b> guarda os exemplos e compara</div></div>
-      <div class="note">Clique no gráfico para mover o ponto ★</div>
+      <div class="col" style="gap:8px;font-size:21px"><div><b class="cy">K pequeno</b> sensível a ruído</div><div><b class="cy">Sem pesos</b> guarda as músicas e compara</div><div><b class="cy">Escala</b> energia vai de 0 a 1; BPM, de 60 a 180</div></div>
+      <div class="note">Clique no gráfico para mover a música nova ★ · distâncias com as duas medidas padronizadas (próximo slide)</div>
     </div>
   </div>
 </section>
 
-<!-- DIST -->
-<section class="s" data-b="4" data-id="dist" data-notes="DISTÂNCIAS (4 min). O KNN depende de como medimos “perto”. Clique no gráfico para mover o ponto B. Euclidiana = linha reta (Pitágoras); Manhattan = soma dos deslocamentos em cada eixo, como andar por quarteirões. Troque a métrica e veja a região de raio 3 ao redor de A: na Manhattan ela vira um losango — e os pontos considerados vizinhos mudam. Para textos e embeddings usamos muito a similaridade do cosseno, que compara direções (dia 2).">
-  <h2>“Perto” depende de como você mede</h2>
-  <div class="row" style="gap:40px">
-    <svg id="distSvg" viewBox="0 0 760 560" style="width:760px;height:560px;cursor:crosshair"></svg>
-    <div class="col" style="flex:1;gap:18px">
-      <div class="row" id="distM" style="gap:10px"><button class="b on" data-m="e">Euclidiana</button><button class="b" data-m="m">Manhattan</button></div>
-      <div class="card"><div class="lbl cy" style="font-size:14px">Euclidiana</div><div class="mono" style="font-size:24px;margin-top:6px;display:flex;align-items:center;gap:10px"><span data-tex="\sqrt{\Delta x^2+\Delta y^2} =">√(Δx² + Δy²) =</span> <b class="cy" id="dE"></b></div></div>
-      <div class="card"><div class="lbl am" style="font-size:14px">Manhattan</div><div class="mono" style="font-size:24px;margin-top:6px;display:flex;align-items:center;gap:10px"><span data-tex="|\Delta x| + |\Delta y| =">|Δx| + |Δy| =</span> <b class="am" id="dM"></b></div></div>
-      <div class="card"><div class="lbl vi" style="font-size:14px">Cosseno · dia 2</div><div class="mu" style="font-size:19px;margin-top:6px">compara a direção dos vetores: usado em textos e embeddings</div></div>
-      <div class="mono" id="dCnt" style="font-size:21px"></div>
-      <div class="note">Clique para mover B · região = até 3 unidades de A</div>
-    </div>
+<!-- SCALE -->
+<section class="s" data-b="4" data-id="scale" data-notes="ESCALA (5 min). A mesma música nova do slide anterior: energia 0,30 (calma) e 120 BPM. Compare com duas músicas da biblioteca: A, de festa (energia 0,90, 122 BPM), e B, calma (energia 0,35, 100 BPM). Quatro passos com a seta. (1) Unidades originais: pela distância, A “ganha” (≈ 2,09 contra ≈ 20). O BPM, em dezenas, esmaga a energia, em décimos: a diferença enorme de energia (0,60) quase não conta. O KNN mandaria a música calma para a festa! (2) Cada coluna tem sua régua: média e desvio do treino (energia: μ = 0,5, σ = 0,25; BPM: μ = 110, σ = 25). (3) z = (x − μ)/σ célula por célula: o gráfico se transforma. (4) Distância de novo, em z: até A ≈ 2,40, até B ≈ 0,82 — B é a mais parecida. Feche: é por isso que no Lab 02 o KNN vai num Pipeline com StandardScaler. Árvores não ligam para escala.">
+  <h2>Qual música é mais parecida com a nova?</h2>
+  <div class="row" style="gap:34px;align-items:flex-start">
+    <div id="scPanel" class="col" style="width:770px;gap:14px"></div>
+    <div class="card" style="flex:1;padding:12px 14px"><svg id="scPlot" viewBox="0 0 620 480" style="width:100%;height:auto;display:block"></svg><div id="scCap" class="mu" style="font-size:16px;text-align:center;margin-top:4px"></div></div>
   </div>
+  <i class="f" data-f="1"></i><i class="f" data-f="2"></i><i class="f" data-f="3"></i>
 </section>
 
 <!-- 15 -->
-<section class="s" data-b="4" data-id="tree" data-notes="SLIDE 15 (4 min). Avance: cada divisão procura grupos mais homogêneos; o Gini (calculado ao vivo nos pontos do gráfico) cai a cada pergunta. 0 = nó puro. Árvore profunda demais decora o treino (overfitting). Dados sintéticos no estilo Iris; regras didáticas.">
+<section class="s" data-b="4" data-id="tree" data-notes="ÁRVORE (4 min). Avance: cada divisão procura grupos mais homogêneos; o Gini (calculado ao vivo nos pontos do gráfico) cai a cada pergunta. 0 = nó puro, todo de uma espécie. Árvore profunda demais decora o treino (overfitting). No próximo slide, a turma escolhe a pergunta. Dados sintéticos no estilo Iris; regras didáticas.">
   <h2>Que pergunta separa melhor estas flores?</h2>
   <div class="row" style="gap:36px">
     <svg id="treePlot" viewBox="0 0 700 560" style="width:700px;height:560px"></svg>
@@ -491,31 +463,55 @@
   </div>
 </section>
 
+<!-- SPLIT -->
+<section class="s" data-b="4" data-id="split" data-notes="A MELHOR PERGUNTA (4 min). Agora a turma faz o trabalho da árvore. Escolha a medida e arraste o corte: à direita, quantas flores de cada espécie caem de cada lado e o Gini de cada grupo. O Gini ponderado (a média dos dois lados, pesada pelo tamanho) é a nota do corte: quanto menor, melhor. A curva embaixo mostra essa nota para todos os cortes possíveis. Pergunte: “onde vocês cortariam?”. Depois clique em “Melhor corte”: é exatamente o que o algoritmo faz — testa todos os cortes de todas as medidas, fica com o menor e repete a busca dentro de cada lado.">
+  <h2>Como a árvore escolhe a pergunta?</h2>
+  <div class="row" style="gap:34px;align-items:flex-start">
+    <svg id="spPlot" viewBox="0 0 760 560" style="width:760px;height:560px"></svg>
+    <div class="col" style="flex:1;gap:14px">
+      <div class="row" id="spF" style="gap:10px"><button class="b on" data-f="0">comprimento da pétala</button><button class="b" data-f="1">largura da pétala</button></div>
+      <div class="card" style="padding:14px 20px"><div class="row" style="align-items:center;gap:16px"><span class="lbl mu" style="font-size:14px">Corte</span><input id="spT" type="range" min="0.6" max="7.4" step="0.05" value="3.6" style="flex:1"><span class="mono big" id="spTv" style="font-size:30px;min-width:150px;text-align:right"></span></div></div>
+      <div id="spSides" class="row" style="gap:14px"></div>
+      <div class="card" style="padding:12px 16px"><div class="row" style="justify-content:space-between;align-items:baseline"><span class="lbl mu" style="font-size:13px">Gini ponderado de cada corte possível</span><span class="mono" id="spG" style="font-size:20px"></span></div><svg id="spCurve" viewBox="0 0 560 150" style="width:100%;height:150px;margin-top:6px"></svg></div>
+      <div class="row" style="gap:14px;align-items:center"><button class="b" id="spBest" style="white-space:nowrap">Melhor corte</button><span id="spMsg" style="font-size:19px"></span></div>
+    </div>
+  </div>
+</section>
+
 <!-- 16 -->
-<section class="s" data-b="4" data-id="forest" data-notes="SLIDE 16 (3 min). Random Forest: muitas árvores, cada uma treinada com amostras e features sorteadas. Avance para ver a votação. A combinação tende a reduzir a variância em relação a uma árvore só, mas não garante acerto. Troca: perde-se interpretabilidade.">
+<section class="s" data-b="4" data-id="forest" data-notes="FLORESTA (3 min). Uma árvore sozinha muda muito se os dados mudam um pouco. A Random Forest treina muitas árvores, cada uma com uma amostra sorteada das linhas (com repetição) e um sorteio de features em cada pergunta; depois, todas votam. Avance para ver a votação. A combinação tende a reduzir a variância, mas não garante acerto. Troca: perde-se interpretabilidade.">
   <h2>E se várias árvores votassem juntas?</h2>
   <svg id="forestSvg" viewBox="0 0 1408 480" style="width:1408px;height:480px"></svg>
   <div class="row" style="justify-content:space-between;font-size:23px;margin-top:20px"><div><b class="cy">1 árvore</b> <span class="mu">fácil de ler, alta variância</span></div><div><b class="gr">Floresta</b> <span class="mu">menor variância, menos interpretável</span></div></div>
 </section>
 
-<!-- CMD LIB02 -->
-<section class="s" data-b="4" data-cmd="lib02" data-notes="FERRAMENTAS DO LAB 02 (2 min). Depois de KNN, árvore e floresta, as peças que os implementam: datasets (Iris e câncer de mama), os três classificadores (neighbors, tree, ensemble) e as métricas de classificação. Use → para passar de comando em comando (ou clique na lista); os controles mudam o parâmetro destacado no código.">
-  <h2>As ferramentas do Lab 02</h2>
+<!-- CMP3 -->
+<section class="s" data-b="4" data-id="cmp3" data-notes="OS TRÊS LADO A LADO (5 min). Mesmas flores, três jeitos de decidir. O fundo mostra a espécie que o modelo daria para cada ponto do plano. KNN: a fronteira segue os vizinhos, em curvas. Árvore: só cortes retos (perguntas sim/não), em degraus. Floresta: a soma de muitos degraus. Clique em “Sortear outro treino” algumas vezes: cada clique treina com 60 das 90 flores, sorteadas, e o mapa muda. O número ao lado é a variação típica na região das flores (média de vários sorteios): a árvore troca cerca de 10% do mapa; a floresta com 100 árvores, cerca de 6%; uma “floresta” de 1 árvore, 18% — sozinha, ela vê só uma amostra sorteada. Mais árvores votando = decisão mais estável. Feche com o quadro: não existe o melhor modelo, existe o melhor para o problema — e quem decide é a validação.">
+  <h2>Mesmos dados, três jeitos de decidir</h2>
+  <div class="row" style="gap:34px;align-items:flex-start">
+    <svg id="c3Plot" viewBox="0 0 720 540" style="width:720px;height:540px"></svg>
+    <div class="col" style="flex:1;gap:14px">
+      <div class="row" id="c3M" style="gap:10px"><button class="b on" data-m="knn">KNN</button><button class="b" data-m="tree">Árvore</button><button class="b" data-m="rf">Floresta</button></div>
+      <div class="card" style="padding:14px 18px"><div class="lbl mu" id="c3PL" style="font-size:14px"></div><div class="row" id="c3P" style="gap:10px;margin-top:10px"></div></div>
+      <div class="row" style="gap:14px;align-items:center"><button class="b" id="c3S" style="white-space:nowrap">Sortear outro treino</button><span id="c3Chg" style="font-size:19px"></span></div>
+      <div id="c3Info" class="col" style="gap:8px"></div>
+    </div>
+  </div>
 </section>
 
 <!-- CMD IRIS -->
-<section class="s" data-b="4" data-cmd="iris" data-notes="NO NOTEBOOK · IRIS (4 min). as_frame=True × arrays; as 4 medidas; classes 0/1/2 e target_names; o scatter das pétalas (dados reais); stratify=y × None com as contagens reais do split. Use → para passar de comando em comando (ou clique na lista); os controles mudam o parâmetro destacado no código.">
-  <h2>Carregar e separar o Iris</h2>
+<section class="s" data-b="4" data-cmd="iris" data-notes="NO NOTEBOOK · IRIS (4 min). A célula de imports: cada modelo mora num módulo do scikit-learn (neighbors, tree, ensemble). as_frame=True × arrays; classes 0/1/2 e target_names; o scatter das pétalas (dados reais); stratify=y × None com as contagens reais do split. Use → para passar de comando em comando (ou clique na lista); os controles mudam o parâmetro destacado no código.">
+  <h2>As peças e os dados do Lab 02</h2>
 </section>
 
 <!-- CMD CLF -->
-<section class="s" data-b="4" data-cmd="clf" data-notes="NO NOTEBOOK · CLASSIFICADORES (6 min). Todas as acurácias são reais do Lab 02. KNN: K = 1 dá 100% no treino, mas a validação não melhora; K = 61 despenca. Árvore: max_depth=None decora. Floresta: mais árvores, menor desvio. plot_tree real com profundidade 2. predict × predict_proba nas 5 primeiras flores do teste. Use → para passar de comando em comando (ou clique na lista); os controles mudam o parâmetro destacado no código.">
+<section class="s" data-b="4" data-cmd="clf" data-notes="NO NOTEBOOK · CLASSIFICADORES (5 min). Todas as acurácias são reais do Lab 02. O dicionário de modelos mostra a interface comum: um único for avalia os três. KNN: K = 1 dá 100% no treino, mas a validação não melhora; K = 61 despenca. Árvore: max_depth=None decora. Floresta: mais árvores, voto mais estável (as barrinhas de desvio encolhem). Use → para passar de comando em comando (ou clique na lista); os controles mudam o parâmetro destacado no código.">
   <h2>Três classificadores, a mesma interface</h2>
 </section>
 
 <!-- CMD CMP -->
-<section class="s" data-b="4" data-cmd="cmp" data-notes="NO NOTEBOOK · COMPARAR E INSPECIONAR (4 min). Etapas 3 e 4 do Lab 02. score no treino × validação cruzada (valores reais); plt.subplots com ax[0]/ax[1] — alterne set_xscale log/linear; plot_tree real; predict × predict_proba nas 5 primeiras flores. Use → para passar de comando em comando (ou clique na lista); os controles mudam o parâmetro destacado no código. O cartão à esquerda descreve o comando por escrito.">
-  <h2>Comparar, desenhar e prever</h2>
+<section class="s" data-b="4" data-cmd="cmp" data-notes="NO NOTEBOOK · AJUSTAR, DESENHAR E PREVER (5 min). Etapas 3 e 5 do Lab 02, com valores reais. treino_vs_cv: alterne KNN e árvore e leia a coluna diferença. plot_tree com profundidade 2: compare com o slide da melhor pergunta. Uma flor nova: predict × predict_proba (na floresta, a fração de árvores que votou em cada espécie). feature_importances_: as pétalas fazem quase todo o trabalho. Use → para passar de comando em comando (ou clique na lista); os controles mudam o parâmetro destacado no código. O cartão à esquerda descreve o comando por escrito.">
+  <h2>Ajustar, desenhar e prever</h2>
 </section>
 
 <!-- 17 -->
@@ -538,21 +534,13 @@
   <style>.cell{height:190px;border-radius:16px;background:var(--p2);display:flex;flex-direction:column;justify-content:center}.cell b{font:700 64px "Space Grotesk",Inter,sans-serif}.cell small{font:16px "JetBrains Mono",monospace;color:var(--tx)}</style>
 </section>
 
-<!-- THR -->
-<section class="s" data-b="4" data-id="thr" data-notes="LIMIAR (5 min). Um classificador costuma devolver uma probabilidade; nós escolhemos o limiar a partir do qual dizemos “positivo”. Cada ponto é um paciente (ilustrativo): na linha de cima, os realmente positivos; embaixo, os negativos; a posição horizontal é o score do modelo. Arraste o limiar: baixando, o recall sobe (achamos mais positivos), mas a precision cai (mais alarmes falsos); subindo, o contrário. Não existe limiar certo: depende do custo de cada erro (triagem de câncer × filtro de spam).">
-  <h2>Precision × recall: quem escolhe é o limiar</h2>
-  <svg id="thrSvg" viewBox="0 0 1408 320" style="width:1408px;height:320px"></svg>
-  <div class="row" style="gap:24px;margin-top:6px;align-items:center"><span class="lbl mu" style="font-size:14px">Limiar</span><input id="thrT" type="range" min="0.02" max="0.98" step="0.01" value="0.5" style="width:460px"><span class="big mono" id="thrTv" style="font-size:40px"></span></div>
-  <div class="row" style="gap:20px;margin-top:22px" id="thrStats"></div>
-</section>
-
 <!-- CMD AVAL -->
-<section class="s" data-b="4" data-cmd="aval" data-notes="NO NOTEBOOK · AVALIAÇÃO (5 min). Matriz de confusão e classification_report reais do Random Forest no Iris. predict_proba(...)[:, 1] pega a coluna da classe positiva. No limiar, arraste: são os números reais do desafio 5.1 (câncer de mama). Use → para passar de comando em comando (ou clique na lista); os controles mudam o parâmetro destacado no código.">
-  <h2>Avaliar a classificação no código</h2>
+<section class="s" data-b="4" data-cmd="aval" data-notes="NO NOTEBOOK · AVALIAÇÃO (3 min). Matriz de confusão e classification_report reais do Random Forest no Iris: 3 virginicas confundidas com versicolor, por isso o recall de virginica é 0,77. Use → para passar de comando em comando (ou clique na lista).">
+  <h2>Avaliar no teste</h2>
 </section>
 
 <!-- 18 LAB02 -->
-<section class="s lab" data-b="4" data-lab="02|Mesmos dados. Três algoritmos|02_classificacao.ipynb|25|pk" data-steps="00–05|Explorar o Iris e separar treino/teste com estratificação;05–13|KNN × Árvore × Random Forest com validação cruzada no treino (pipeline ao padronizar);13–20|Variar K e profundidade: qualidade e variância;20–25|Avaliar o escolhido no teste: matriz de confusão e métricas" data-q="O modelo que foi melhor no treino deve necessariamente ser o escolhido?" data-notes="SLIDE 18 — LAB 02 (25 min). Abra 02_classificacao.ipynb. Não mostre o gabarito antes."></section>
+<section class="s lab" data-b="4" data-lab="02|Mesmos dados. Três algoritmos|02_classificacao.ipynb|20|pk" data-steps="00–04|Explorar o Iris e separar treino/teste com estratificação;04–10|KNN × Árvore × Random Forest com validação cruzada no treino;10–15|Variar K e profundidade e desenhar a árvore;15–20|Avaliar o escolhido no teste: matriz de confusão e métricas" data-q="O modelo que foi melhor no treino deve necessariamente ser o escolhido?" data-notes="LAB 02 (20 min). Abra 02_classificacao.ipynb. Não mostre o gabarito antes. Para quem terminar: classificar uma flor nova e ver as importâncias da floresta (desafios 5.1 e 5.2)."></section>
 
 <!-- D1END -->
 <section class="s" data-b="4" data-nochrome="1" data-notes="FIM DO DIA 1 (5 min). Recapitule em uma frase cada módulo e pergunte o que ficou mais claro e o que ficou confuso. Amanhã: aprender sem rótulos, visão computacional e LLMs. Peça que salvem os notebooks no Drive.">

@@ -60,15 +60,14 @@ MÓDULO 01 · DADOS & DATASETS
      Tópicos:
        1. Features e target
        2. Dados bagunçados
-       3. EDA: olhar antes de modelar
-       4. Encoding e escala
-       5. Vazamento e overfitting
-       6. Validação cruzada
-       7. Lab 00
+       3. Olhar antes de modelar
+       4. Categorias viram números
+       5. Treino × teste sem vazamento
+       6. Lab 00
      Pergunta-guia: O que um modelo realmente recebe para aprender?
      Fala: Agora começamos a falar de dados. Todo modelo, da regressão ao LLM, depende de
-     como os dados são coletados, limpos, transformados, divididos e avaliados. É o módulo
-     mais longo do dia — e o mais importante na prática.
+     como os dados são coletados, limpos e divididos. Neste módulo ainda não há modelo: só
+     pandas e bom senso.
 
 [09] Os datasets que vamos usar hoje
      Fala: Apresente os conjuntos de dados que aparecem ao longo do curso. Cada linha é um
@@ -91,163 +90,93 @@ MÓDULO 01 · DADOS & DATASETS
      valores diferentes para o computador. Último passo: a tabela limpa. Registre cada
      decisão de limpeza.
 
-[12] As ferramentas do Lab 00  [no notebook]
+[12] Encontrar os problemas com pandas  [no notebook]
      Comandos:
-       1. numpy as np — números e vetores
-       2. pandas as pd — tabelas
-       3. matplotlib.pyplot as plt — gráficos
-       4. sklearn.model_selection — separar os dados
-       5. compose · pipeline — organizar o preparo
-       6. impute · preprocessing — preencher, escalar, codificar
-       7. ajustes de exibição — opcional
-     Fala: Os problemas já foram mostrados; agora, com que ferramentas vamos resolvê-los.
-     Esta é a primeira célula do notebook, linha por linha. numpy, pandas e matplotlib com
-     seus apelidos de sempre; do scikit-learn, importamos só as peças. Reforce: no Colab
-     tudo já vem instalado. Use → para passar de comando em comando (ou clique na lista); os
-     controles mudam o parâmetro destacado no código.
-
-[13] Encontrar os problemas com pandas  [no notebook]
-     Comandos:
-       1. pd.read_csv() · head() — ler e espiar a tabela
-       2. df.shape — tamanho da tabela
+       1. import pandas as pd — a primeira célula
+       2. pd.read_csv() · head() — ler e espiar a tabela
        3. df.info() — tipos e não nulos
        4. df.describe() — estatísticas
        5. df.isna().sum() — faltantes por coluna
        6. df['turno'].value_counts() — contar categorias
-     Fala: Os mesmos 8 alunos do slide anterior, agora como o pandas mostra. head(n) muda o
-     n ao vivo; shape sem parênteses (atributo); info() denuncia os faltantes pelo Non-Null;
-     describe() mostra o máximo de 80 h; isna() e depois .sum() mostra o encadeamento;
-     value_counts revela 4 grafias de manhã. Cada item traz o número real do notebook. Use →
-     para passar de comando em comando (ou clique na lista); os controles mudam o parâmetro
-     destacado no código.
-
-[14] Limpar com pandas, passo a passo  [no notebook]
-     Comandos:
-       1. df.duplicated() — achar linhas repetidas
-       2. df.drop_duplicates() — remover as cópias
-       3. .str.strip().str.lower() — padronizar texto
-       4. plt.boxplot() — ver o outlier
-       5. df.loc[cond, col] = np.nan — apagar valores impossíveis
-       6. df.dropna(subset=[…]) — tirar quem não tem alvo
-     Fala: As operações são cumulativas, na ordem do Lab 00. Destaque: (1) sem “df = …” o
-     resultado não fica salvo; (2) o índice não é renumerado; (3) monte a cadeia
-     .str.strip().str.lower() botão por botão; (4) no df.loc, arraste o limite para 6 e
-     mostre que horas normais viram NaN; (5) no dropna, compare com e sem subset. Use → para
-     passar de comando em comando (ou clique na lista); os controles mudam o parâmetro
-     destacado no código.
-
-[15] Olhe os dados antes de modelar
-     Fala: Antes de modelar, olhe os dados. O histograma mostra as horas de estudo de 200
-     alunos (sintéticos); o boxplot resume quartis e marca pontos extremos. Clique em
-     “Adicionar outliers”: a média se desloca, a mediana quase não muda — por isso a mediana
-     é boa para imputar faltantes. À direita, horas × nota: a correlação r mede relação
-     linear (de −1 a 1). Correlação não é causalidade.
-
-[16] Explorar no código  [no notebook]
-     Comandos:
-       1. df.hist(bins=…) — histogramas
-       2. .mean() × .median() — média e mediana
-       3. plt.scatter(x, y, alpha=…) — dispersão
-       4. df.corr(numeric_only=True) — correlação
-       5. groupby(…)['nota_final'].mean() — média por grupo
-       6. .agg(['min', 'max']) — várias contas por grupo
-     Fala: bins do histograma ao vivo; média × mediana na renda (valores reais do Lab 00);
-     alpha do scatter; matriz de correlação real; groupby com uma ou duas colunas; agg
-     mostrando que situacao entrega a nota (gancho para vazamento). Use → para passar de
+     Fala: Primeiro a célula de imports: os três apelidos de sempre e uma peça do scikit-
+     learn. Depois, os mesmos 8 alunos do slide anterior, agora como o pandas mostra:
+     head(n) muda o n ao vivo; info() denuncia os faltantes pelo Non-Null; describe() mostra
+     o máximo de 80 h; isna() e depois .sum() mostra o encadeamento; value_counts revela 4
+     grafias de manhã. As dicas trazem os números reais do notebook. Use → para passar de
      comando em comando (ou clique na lista); os controles mudam o parâmetro destacado no
      código.
 
-[17] Categorias precisam virar números
+[13] Limpar com pandas, passo a passo  [no notebook]
+     Comandos:
+       1. df.drop_duplicates() — remover linhas repetidas
+       2. .str.strip().str.lower() — padronizar texto
+       3. df.loc[cond, col] = np.nan — apagar valores impossíveis
+       4. df.dropna(subset=[…]) — tirar quem não tem alvo
+     Fala: As operações são cumulativas, na ordem do Lab 00. Destaque: (1) sem “df = …” o
+     resultado não fica salvo, e o índice não é renumerado; (2) monte a cadeia
+     .str.strip().str.lower() botão por botão; (3) no df.loc, arraste o limite para 6 e
+     mostre que horas normais viram NaN; (4) no dropna, compare com e sem subset. Use → para
+     passar de comando em comando (ou clique na lista); os controles mudam o parâmetro
+     destacado no código.
+
+[14] Olhe os dados antes de modelar
+     Fala: Antes de modelar, olhe os dados. O histograma mostra as horas de estudo de 200
+     alunos (sintéticos); o boxplot resume quartis e marca pontos extremos. Clique em
+     “Adicionar outliers”: a média se desloca, a mediana quase não muda — por isso a mediana
+     é boa para preencher faltantes (é o que o Lab 01 vai fazer). À direita, horas × nota: a
+     correlação r mede relação linear (de −1 a 1). Correlação não é causalidade.
+
+[15] Olhar no código  [no notebook]
+     Comandos:
+       1. df.hist(bins=…) — histogramas
+       2. plt.scatter(x, y, alpha=…) — dispersão
+       3. sns.heatmap(df.corr(…)) — mapa de correlação
+     Fala: Três comandos, um gráfico cada: bins do histograma ao vivo; alpha do scatter; a
+     matriz de correlação real do Lab 00 (horas × nota = 0,62; faltas = −0,31). Use → para
+     passar de comando em comando (ou clique na lista); os controles mudam o parâmetro
+     destacado no código.
+
+[16] Categorias precisam virar números
      Fala: Modelos fazem contas, então categorias precisam virar números. Label encoding
      (noite = 0, manhã = 1, tarde = 2) cria uma ordem falsa: para o modelo, “tarde” seria
      maior que “manhã”. One-hot cria uma coluna 0/1 por categoria, sem ordem. Quando a ordem
      é real (fundamental < médio < superior), o encoding ordinal faz sentido. Cuidado com
      categorias muito numerosas (ex.: CEP): one-hot gera colunas demais.
 
-[18] Quem é mais parecido com você?
-     Fala: Quatro passos com a seta. (1) Unidades originais: “você” tem 25 anos e R$ 3.000;
-     A tem 62 anos e R$ 3.200; B tem 27 anos e R$ 4.500. Faça a conta da distância no
-     quadro: até A dá √(37² + 200²) ≈ 203, até B dá √(2² + 1.500²) ≈ 1.500. A renda responde
-     por 97% de d² de A e praticamente 100% de B: A “ganha”, mesmo com 37 anos de diferença.
-     No gráfico, na mesma régua (1 ano = R$ 1), os 37 anos viram poucos pixels. (2) Cada
-     coluna tem sua régua: média e desvio (do treino). Idade: μ = 40, σ = 15; renda: μ =
-     4.000, σ = 2.000. Mostre as pessoas nas duas réguas. (3) z = (x − μ)/σ célula por
-     célula: o gráfico se transforma. (4) Distância de novo, em z: até A ≈ 2,47, até B ≈
-     0,76 — B é o mais parecido. Feche: KNN, K-Means, redes neurais, descida do gradiente e
-     regularização dependem de escala; árvores não.
+[17] O teste não pode contar o futuro
+     Fala: Dois jeitos de “colar” na prova. (1) Usar o teste para preparar os dados: se a
+     mediana, a média ou qualquer outra conta usa treino e teste juntos, o teste já
+     influenciou o modelo antes da prova. Certo: separar primeiro, aprender o preparo só com
+     o treino e só aplicá-lo no teste. No Lab 01, o Pipeline do scikit-learn garante essa
+     ordem sozinho. (2) Uma feature que só existe depois da resposta: a coluna situacao
+     (aprovado/reprovado) é calculada a partir da nota. “O teste é uma prova inédita, não
+     uma cola para o estudo.”
 
-[19] Encoding, faltantes e escala no código  [no notebook]
+[18] Separar features, alvo, treino e teste  [no notebook]
      Comandos:
-       1. pd.get_dummies() — one-hot no pandas
-       2. OneHotEncoder(handle_unknown=…) — one-hot no scikit-learn
-       3. SimpleImputer(strategy=…) — preencher faltantes
-       4. StandardScaler() — padronizar
-       5. pd.concat([…], axis=1) — juntar colunas lado a lado
-     Fala: get_dummies × map (a ordem falsa do slide de encoding); OneHotEncoder com
-     handle_unknown: troque para error e mostre o erro com a categoria nova; SimpleImputer
-     com as três estratégias; StandardScaler nas 3 pessoas do slide anterior, com mean_ e
-     scale_. Use → para passar de comando em comando (ou clique na lista); os controles
-     mudam o parâmetro destacado no código.
-
-[20] O teste não pode contar o futuro
-     Fala: Padronizar o dataset inteiro antes de separar vaza média e desvio do teste para o
-     treino. Certo: separar; ajustar (fit) o scaler só no treino; transformar treino e teste
-     com ele. O Pipeline do Scikit-learn garante essa ordem, inclusive na validação cruzada.
-     “O teste é uma prova inédita, não uma cola para o estudo.”
-
-[21] Separar, preparar e encadear  [no notebook]
-     Comandos:
-       1. df.drop(columns=[…]) — separar features e alvo
-       2. train_test_split() — separar treino e teste
-       3. fit × transform — quem aprende com quem
-       4. ColumnTransformer([…]) — um preparo por tipo de coluna
-       5. Pipeline([…]) — encadear preparo e modelo
-     Fala: train_test_split: mude test_size e random_state (None sorteia diferente a cada
-     clique). fit × transform: alterne certo/errado — o μ muda porque o teste entrou no fit.
-     ColumnTransformer: num, cat e as 9 colunas de saída reais. Pipeline: fit (fit_transform
-     em cada etapa) × predict (só transform). to_csv com e sem index. Use → para passar de
-     comando em comando (ou clique na lista); os controles mudam o parâmetro destacado no
-     código.
-
-[22] Conferir o que o fit aprendeu e salvar  [no notebook]
-     Comandos:
-       1. Z_tr[:, :4].mean(axis=0) — conferir a padronização
-       2. named_transformers_[…].mean_ — ler o que o fit aprendeu
-       3. fillna(X.median()) — o jeito errado, de propósito
+       1. df.drop(columns=[…]) — features × alvo
+       2. pd.get_dummies(X, columns=[…]) — categorias viram 0/1
+       3. train_test_split() — separar treino e teste
        4. df.to_csv(…, index=False) — salvar os dados limpos
-       5. iloc · np.sqrt · idxmin() — desafio: quem é mais parecido
-     Fala: Etapas 4.4 a 5.1 do Lab 00. Fatiamento de array e mean(axis=0) para conferir a
-     padronização (o teste fica perto de 0, não exato); named_transformers_ para ler o μ
-     aprendido; fillna + scaler no dataset inteiro para mostrar o jeito errado; to_csv; e o
-     desafio da distância com iloc, np.sqrt e idxmin — alterne sem/com padronização. Use →
-     para passar de comando em comando (ou clique na lista); os controles mudam o parâmetro
-     destacado no código. O cartão à esquerda descreve o comando por escrito.
+     Fala: Etapa 4 do Lab 00. drop: a coluna situacao sai junto com o alvo (vazamento).
+     get_dummies: as categorias viram colunas 0/1; 6 colunas entram e 9 saem (são as 5
+     primeiras linhas reais). train_test_split: mude test_size e random_state (None sorteia
+     diferente a cada clique). to_csv com e sem index. Use → para passar de comando em
+     comando (ou clique na lista); os controles mudam o parâmetro destacado no código.
 
-[23] Acertar tudo no treino é sempre bom sinal?
-     Fala: Arraste a complexidade (grau do polinômio). Pontos brancos = treino; anéis âmbar
-     = validação. Com grau alto, o erro de treino vai a quase zero e o de validação explode.
-     “Qual curva vocês escolheriam?” A decisão precisa de dados de validação, não do olho.
-
-[24] Uma divisão pode dar sorte. Cinco, nem tanto
-     Fala: Um único corte de validação pode dar sorte ou azar. Na validação cruzada k-fold
-     (aqui k = 5), o treino é dividido em 5 partes e cada parte vira validação uma vez.
-     Avance para ver as 5 rodadas. O resultado é a média e o desvio das 5 notas — mais
-     confiável para comparar modelos e escolher hiperparâmetros. O teste continua guardado
-     até o fim. Notas ilustrativas.
-
-[25] Lab 00 · Arrume a casa antes de modelar
+[19] Lab 00 · Arrume a casa antes de modelar
      Notebook: 00_dados_e_datasets.ipynb
      Passos:
-       1. Carregar e inspecionar: formato, tipos, describe() e faltantes
-       2. Limpar: duplicados, categorias, outliers e faltantes
-       3. Explorar: histogramas, boxplot e correlação
-       4. Preparar: features × alvo, split, one-hot, padronização e Pipeline sem vazamento
+       1. Inspecionar: tipos, describe(), faltantes e categorias
+       2. Limpar: duplicados, categorias, outliers e alvo faltante
+       3. Olhar: histogramas, dispersão e correlação
+       4. Separar: features × alvo, one-hot e treino/teste
      Para discutir: Qual decisão de limpeza muda os dados que o modelo vai receber?
      Fala: Abra notebooks/00_dados_e_datasets.ipynb (versão do aluno). O dataset é gerado
      dentro do notebook (não depende de download) e reproduz os problemas do slide “dados
      bagunçados”. O gabarito está em 00_dados_e_datasets_gabarito.ipynb — não mostre antes.
 
-[26] Pausa
+[20] Pausa
      Na tela: Deixe o Notebook 01 aberto
      Fala: Clique em Iniciar.
 
@@ -255,44 +184,44 @@ MÓDULO 01 · DADOS & DATASETS
 MÓDULO 02 · REGRESSÃO LINEAR
 --------------------------------------------------------------------------------------------
 
-[27] Capa do módulo 02 · Regressão Linear
+[21] Capa do módulo 02 · Regressão Linear
      Tópicos:
        1. ŷ = w·x + b
        2. Resíduos e MSE
        3. Descida do gradiente
        4. Regressão múltipla
-       5. Regularização
-       6. MAE, MSE e R²
+       5. Overfitting e regularização
+       6. Métricas e validação cruzada
        7. Lab 01
      Pergunta-guia: Como uma reta aprende com os próprios erros?
      Fala: Primeiro modelo do curso: a regressão linear. A ideia de perda + descida do
      gradiente vai reaparecer nas redes neurais e nos LLMs amanhã.
 
-[28] A primeira previsão pode ser uma reta
+[22] A primeira previsão pode ser uma reta
      Fala: ŷ = wx + b. w = inclinação, b = intercepto, x = entrada. Mova os controles.
      Exemplo: x = 6, w = 5, b = 20 → ŷ = 50 (exemplo matemático, não uma escala real de
      nota). O modelo precisa descobrir w e b a partir dos dados.
 
-[29] Como uma reta sabe que está errada?
+[23] Como uma reta sabe que está errada?
      Fala: A distância vertical entre ponto real e previsão é o resíduo. MSE = média dos
      quadrados: os quadrados no gráfico são literalmente cada erro ao quadrado. Pergunte:
      “Se eu deslocar a reta, o erro melhora ou piora?” — e mova os controles. Depois clique
      em “Ajuste ótimo” (mínimos quadrados).
 
-[30] As ferramentas do Lab 01  [no notebook]
+[24] As ferramentas do Lab 01  [no notebook]
      Comandos:
        1. numpy · pandas · plt — as mesmas do Lab 00
        2. model_selection — + cross_val_score
-       3. compose · pipeline · impute — o preparo do Lab 00
-       4. preprocessing — + PolynomialFeatures
+       3. pipeline · impute — preparo + modelo
+       4. preprocessing — escala e potências
        5. linear_model — os modelos
        6. metrics — MAE, MSE e R²
      Fala: Depois da reta e do erro, as ferramentas para calculá-los. Mostre só o que é novo
-     em relação ao Lab 00: cross_val_score, PolynomialFeatures, LinearRegression/Ridge e as
-     métricas. Use → para passar de comando em comando (ou clique na lista); os controles
-     mudam o parâmetro destacado no código.
+     em relação ao Lab 00: cross_val_score, Pipeline com SimpleImputer e StandardScaler,
+     PolynomialFeatures, LinearRegression/Ridge e as métricas. Use → para passar de comando
+     em comando (ou clique na lista); os controles mudam o parâmetro destacado no código.
 
-[31] NumPy: a reta e o erro em uma linha  [no notebook]
+[25] NumPy: a reta e o erro em uma linha  [no notebook]
      Comandos:
        1. os.path.exists() · to_numpy() — carregar e separar
        2. x_tr[:10] — um array
@@ -307,27 +236,33 @@ MÓDULO 02 · REGRESSÃO LINEAR
      de comando em comando (ou clique na lista); os controles mudam o parâmetro destacado no
      código.
 
-[32] Aprender é caminhar ladeira abaixo
+[26] Aprender é caminhar ladeira abaixo
      Fala: Gradiente = direção de maior crescimento do erro; a descida vai no sentido
      contrário: w ← w − α·∂L/∂w. Rode com α pequeno (lento), bom (converge), grande (oscila)
      e grande demais (diverge). Cada passo aqui é uma atualização; uma época é uma passada
      por todos os dados de treino.
 
-[33] A descida do gradiente, linha por linha  [no notebook]
+[27] A descida do gradiente, linha por linha  [no notebook]
      Fala: É a função do Lab 01, executada como o Python faz. Clique “Próxima linha” algumas
      vezes na primeira época: w e b começam em 0, y_hat e erro viram arrays, dw e db são os
      gradientes, e w e b dão um passo contra eles. Depois use “Próxima época” e “100
      épocas”. Troque alpha: 0,001 lento; 0,02 desce bem; 0,023 oscila; 0,03 diverge — os
      mesmos valores do item 4 do notebook.
 
-[34] Mais de uma feature, um peso para cada
+[28] Mais de uma feature, um peso para cada
      Fala: Com várias features, cada uma ganha seu peso: ŷ = w₁·horas + w₂·faltas + b. Mova
      os controles: as barras mostram quanto cada termo soma ou subtrai da previsão. Avance:
      um coeficiente é o efeito de uma feature mantendo as outras fixas; com 2 features o
      modelo é um plano, com 100 um hiperplano. Coeficientes ilustrativos — e coeficiente não
      prova causa.
 
-[35] Regularização: freando um modelo complexo
+[29] Acertar tudo no treino é sempre bom sinal?
+     Fala: Com várias features (ou potências de x), o modelo fica mais flexível. Arraste a
+     complexidade (grau do polinômio). Pontos brancos = treino; anéis âmbar = validação. Com
+     grau alto, o erro de treino vai a quase zero e o de validação explode. “Qual curva
+     vocês escolheriam?” A decisão precisa de dados de validação, não do olho.
+
+[30] Regularização: freando um modelo complexo
      Fala: Mesmos dados do slide de overfitting, agora com um polinômio de grau 11 fixo. A
      regularização L2 (Ridge) soma à perda uma penalidade λ·Σw²: pesos grandes custam caro.
      Arraste λ: perto de zero a curva decora o treino; com λ moderado ela suaviza e o erro
@@ -335,12 +270,12 @@ MÓDULO 02 · REGRESSÃO LINEAR
      coeficientes encolhendo. Lasso (L1) pode zerar coeficientes e serve também para
      selecionar features.
 
-[36] Um modelo erra. Quanto, e em qual unidade?
+[31] Um modelo erra. Quanto, e em qual unidade?
      Fala: MAE: erro absoluto médio, na unidade original. MSE: penaliza mais os desvios
      grandes (unidade ao quadrado). R²: compara com prever sempre a média; 1 é perfeito, 0 é
      igual à média, pode ser negativo fora do treino. Nunca interprete uma métrica sozinha.
 
-[37] Scikit-learn: criar, treinar, prever, medir  [no notebook]
+[32] Scikit-learn: criar, treinar, prever, medir  [no notebook]
      Comandos:
        1. LinearRegression() — criar o modelo
        2. reg.fit(X, y) — treinar
@@ -354,19 +289,30 @@ MÓDULO 02 · REGRESSÃO LINEAR
      Use → para passar de comando em comando (ou clique na lista); os controles mudam o
      parâmetro destacado no código.
 
-[38] Validação cruzada, polinômios e Ridge  [no notebook]
-     Comandos:
-       1. cross_val_score(…, cv=5) — validação cruzada
-       2. PolynomialFeatures(degree=…) — potências de x
-       3. Ridge(alpha=…) — regularização
-       4. named_steps['regressao'].coef_ — os pesos de cada feature
-     Fala: cross_val_score: troque cv=3/5/10 e alterne o sinal — explique o neg_ (o scikit-
-     learn sempre maximiza). PolynomialFeatures com x = 2 mostra as potências. Ridge: alpha
-     é o λ do slide de regularização, não a taxa de aprendizado. Coeficientes reais da
-     regressão múltipla via named_steps. Use → para passar de comando em comando (ou clique
-     na lista); os controles mudam o parâmetro destacado no código.
+[33] Uma divisão pode dar sorte. Cinco, nem tanto
+     Fala: Um único corte de validação pode dar sorte ou azar. Na validação cruzada k-fold
+     (aqui k = 5), o treino é dividido em 5 partes e cada parte vira validação uma vez.
+     Avance para ver as 5 rodadas. O resultado é a média e o desvio das 5 notas — mais
+     confiável para comparar modelos e escolher hiperparâmetros. O teste continua guardado
+     até o fim. Notas ilustrativas; no código, é o cross_val_score dos próximos slides.
 
-[39] Lab 01 · Faça a reta aprender
+[34] Pipeline, validação cruzada e Ridge  [no notebook]
+     Comandos:
+       1. Pipeline([…]) — preencher → padronizar → treinar
+       2. cross_val_score(…, cv=5) — validação cruzada
+       3. PolynomialFeatures(degree=…) — potências de x
+       4. Ridge(alpha=…) — regularização
+       5. named_steps['regressao'].coef_ — os pesos de cada feature
+     Fala: Pipeline: alterne fit × predict. No fit, cada etapa aprende só com o treino (a
+     mediana, a média e o desvio, os pesos); no predict, o teste só é transformado. É aqui
+     que os faltantes deixados no Lab 00 são preenchidos — a ordem certa do slide “o teste
+     não pode contar o futuro”. cross_val_score: troque cv=3/5/10 e alterne o sinal —
+     explique o neg_ (o scikit-learn sempre maximiza). PolynomialFeatures com x = 2 mostra
+     as potências. Ridge: alpha é o λ do slide de regularização, não a taxa de aprendizado.
+     Coeficientes reais da regressão múltipla via named_steps. Use → para passar de comando
+     em comando (ou clique na lista); os controles mudam o parâmetro destacado no código.
+
+[35] Lab 01 · Faça a reta aprender
      Notebook: 01_regressao_linear.ipynb
      Passos:
        1. Carregar os dados limpos do Lab 00 e visualizar horas × nota
@@ -378,7 +324,7 @@ MÓDULO 02 · REGRESSÃO LINEAR
      Fala: Abra 01_regressao_linear.ipynb (versão do aluno). Não mostre o gabarito antes da
      atividade.
 
-[40] Pausa
+[36] Pausa
      Na tela: Deixe o Notebook 02 aberto
      Fala: Clique em Iniciar.
 
@@ -386,130 +332,140 @@ MÓDULO 02 · REGRESSÃO LINEAR
 MÓDULO 03 · KNN, ÁRVORES & RANDOM FOREST
 --------------------------------------------------------------------------------------------
 
-[41] Capa do módulo 03 · KNN, Árvores & Random Forest
+[37] Capa do módulo 03 · KNN, Árvores & Random Forest
      Tópicos:
-       1. KNN e distâncias
-       2. Árvore de decisão e Gini
-       3. Random Forest
-       4. Matriz de confusão
-       5. Precision × recall e limiar
+       1. KNN e escala
+       2. Árvore: a melhor pergunta
+       3. Random Forest: o voto
+       4. Os três lado a lado
+       5. Matriz de confusão
        6. Lab 02
      Pergunta-guia: Como decidir a classe de algo que nunca vimos?
-     Fala: Classificação: o KNN decide pela vizinhança; as árvores fazem perguntas; a Random
-     Forest junta várias árvores. Depois, como medir se a classificação está boa de verdade
-     — e como escolher o limiar.
+     Fala: Classificação: como cada modelo decide. O KNN vota com os vizinhos, a árvore faz
+     perguntas e a floresta junta várias árvores. Depois, os três no código e como medir se
+     a classificação está boa de verdade.
 
-[42] Seus vizinhos podem decidir quem você é
-     Fala: Clique no gráfico para mover o ponto novo; troque K. As cores de fundo mostram
-     como cada região seria classificada. K pequeno é sensível a ruído (fronteira
-     recortada); K grande suaviza. Normalizar muda as distâncias. O KNN não ajusta pesos:
-     ele guarda os exemplos e compara.
+[38] Em qual playlist entra esta música?
+     Fala: Um app de música descreve cada faixa por números, como a energia (de 0 a 1) e o
+     andamento (BPM, batidas por minuto). Cada ponto é uma música que já está numa playlist:
+     ● Relaxar ou ▲ Festa. A ★ é uma música nova: em qual playlist ela entra? O KNN olha as
+     K músicas mais parecidas e faz uma votação. Clique no gráfico para mover a ★; troque K.
+     O fundo mostra a playlist que cada ponto do plano receberia. K pequeno é sensível a
+     ruído (fronteira recortada); K grande suaviza. O KNN não ajusta pesos: ele guarda os
+     exemplos e compara. Gancho: o que é “parecido” quando uma medida vai de 0 a 1 e a outra
+     de 60 a 180? É o próximo slide.
 
-[43] “Perto” depende de como você mede
-     Fala: O KNN depende de como medimos “perto”. Clique no gráfico para mover o ponto B.
-     Euclidiana = linha reta (Pitágoras); Manhattan = soma dos deslocamentos em cada eixo,
-     como andar por quarteirões. Troque a métrica e veja a região de raio 3 ao redor de A:
-     na Manhattan ela vira um losango — e os pontos considerados vizinhos mudam. Para textos
-     e embeddings usamos muito a similaridade do cosseno, que compara direções (dia 2).
+[39] Qual música é mais parecida com a nova?
+     Fala: A mesma música nova do slide anterior: energia 0,30 (calma) e 120 BPM. Compare
+     com duas músicas da biblioteca: A, de festa (energia 0,90, 122 BPM), e B, calma
+     (energia 0,35, 100 BPM). Quatro passos com a seta. (1) Unidades originais: pela
+     distância, A “ganha” (≈ 2,09 contra ≈ 20). O BPM, em dezenas, esmaga a energia, em
+     décimos: a diferença enorme de energia (0,60) quase não conta. O KNN mandaria a música
+     calma para a festa! (2) Cada coluna tem sua régua: média e desvio do treino (energia: μ
+     = 0,5, σ = 0,25; BPM: μ = 110, σ = 25). (3) z = (x − μ)/σ célula por célula: o gráfico
+     se transforma. (4) Distância de novo, em z: até A ≈ 2,40, até B ≈ 0,82 — B é a mais
+     parecida. Feche: é por isso que no Lab 02 o KNN vai num Pipeline com StandardScaler.
+     Árvores não ligam para escala.
 
-[44] Que pergunta separa melhor estas flores?
+[40] Que pergunta separa melhor estas flores?
      Fala: Avance: cada divisão procura grupos mais homogêneos; o Gini (calculado ao vivo
-     nos pontos do gráfico) cai a cada pergunta. 0 = nó puro. Árvore profunda demais decora
-     o treino (overfitting). Dados sintéticos no estilo Iris; regras didáticas.
+     nos pontos do gráfico) cai a cada pergunta. 0 = nó puro, todo de uma espécie. Árvore
+     profunda demais decora o treino (overfitting). No próximo slide, a turma escolhe a
+     pergunta. Dados sintéticos no estilo Iris; regras didáticas.
 
-[45] E se várias árvores votassem juntas?
-     Fala: Random Forest: muitas árvores, cada uma treinada com amostras e features
-     sorteadas. Avance para ver a votação. A combinação tende a reduzir a variância em
-     relação a uma árvore só, mas não garante acerto. Troca: perde-se interpretabilidade.
+[41] Como a árvore escolhe a pergunta?
+     Fala: Agora a turma faz o trabalho da árvore. Escolha a medida e arraste o corte: à
+     direita, quantas flores de cada espécie caem de cada lado e o Gini de cada grupo. O
+     Gini ponderado (a média dos dois lados, pesada pelo tamanho) é a nota do corte: quanto
+     menor, melhor. A curva embaixo mostra essa nota para todos os cortes possíveis.
+     Pergunte: “onde vocês cortariam?”. Depois clique em “Melhor corte”: é exatamente o que
+     o algoritmo faz — testa todos os cortes de todas as medidas, fica com o menor e repete
+     a busca dentro de cada lado.
 
-[46] As ferramentas do Lab 02  [no notebook]
+[42] E se várias árvores votassem juntas?
+     Fala: Uma árvore sozinha muda muito se os dados mudam um pouco. A Random Forest treina
+     muitas árvores, cada uma com uma amostra sorteada das linhas (com repetição) e um
+     sorteio de features em cada pergunta; depois, todas votam. Avance para ver a votação. A
+     combinação tende a reduzir a variância, mas não garante acerto. Troca: perde-se
+     interpretabilidade.
+
+[43] Mesmos dados, três jeitos de decidir
+     Fala: Mesmas flores, três jeitos de decidir. O fundo mostra a espécie que o modelo
+     daria para cada ponto do plano. KNN: a fronteira segue os vizinhos, em curvas. Árvore:
+     só cortes retos (perguntas sim/não), em degraus. Floresta: a soma de muitos degraus.
+     Clique em “Sortear outro treino” algumas vezes: cada clique treina com 60 das 90
+     flores, sorteadas, e o mapa muda. O número ao lado é a variação típica na região das
+     flores (média de vários sorteios): a árvore troca cerca de 10% do mapa; a floresta com
+     100 árvores, cerca de 6%; uma “floresta” de 1 árvore, 18% — sozinha, ela vê só uma
+     amostra sorteada. Mais árvores votando = decisão mais estável. Feche com o quadro: não
+     existe o melhor modelo, existe o melhor para o problema — e quem decide é a validação.
+
+[44] As peças e os dados do Lab 02  [no notebook]
      Comandos:
-       1. datasets — dados prontos
-       2. model_selection · pipeline — separar, validar, encadear
-       3. neighbors — KNN
-       4. tree — árvore de decisão
-       5. ensemble — Random Forest
-       6. metrics — avaliar a classificação
-     Fala: Depois de KNN, árvore e floresta, as peças que os implementam: datasets (Iris e
-     câncer de mama), os três classificadores (neighbors, tree, ensemble) e as métricas de
-     classificação. Use → para passar de comando em comando (ou clique na lista); os
-     controles mudam o parâmetro destacado no código.
-
-[47] Carregar e separar o Iris  [no notebook]
-     Comandos:
-       1. load_iris(as_frame=True) — carregar o dataset
-       2. X.head() — as 4 medidas
+       1. from sklearn… import … — as peças do Lab 02
+       2. load_iris(as_frame=True) — carregar o dataset
        3. y.value_counts() — as classes
        4. plt.scatter(…, c=y) — pétalas por espécie
        5. train_test_split(…, stratify=y) — separar com estratificação
-     Fala: as_frame=True × arrays; as 4 medidas; classes 0/1/2 e target_names; o scatter das
+     Fala: A célula de imports: cada modelo mora num módulo do scikit-learn (neighbors,
+     tree, ensemble). as_frame=True × arrays; classes 0/1/2 e target_names; o scatter das
      pétalas (dados reais); stratify=y × None com as contagens reais do split. Use → para
      passar de comando em comando (ou clique na lista); os controles mudam o parâmetro
      destacado no código.
 
-[48] Três classificadores, a mesma interface  [no notebook]
+[45] Três classificadores, a mesma interface  [no notebook]
      Comandos:
        1. modelos = {…} · .items() — avaliar os três de uma vez
        2. KNeighborsClassifier(n_neighbors=…) — KNN
        3. DecisionTreeClassifier(max_depth=…) — árvore
        4. RandomForestClassifier(n_estimators=…) — floresta
-     Fala: Todas as acurácias são reais do Lab 02. KNN: K = 1 dá 100% no treino, mas a
+     Fala: Todas as acurácias são reais do Lab 02. O dicionário de modelos mostra a
+     interface comum: um único for avalia os três. KNN: K = 1 dá 100% no treino, mas a
      validação não melhora; K = 61 despenca. Árvore: max_depth=None decora. Floresta: mais
-     árvores, menor desvio. plot_tree real com profundidade 2. predict × predict_proba nas 5
-     primeiras flores do teste. Use → para passar de comando em comando (ou clique na
-     lista); os controles mudam o parâmetro destacado no código.
+     árvores, voto mais estável (as barrinhas de desvio encolhem). Use → para passar de
+     comando em comando (ou clique na lista); os controles mudam o parâmetro destacado no
+     código.
 
-[49] Comparar, desenhar e prever  [no notebook]
+[46] Ajustar, desenhar e prever  [no notebook]
      Comandos:
        1. .fit(…).score(…) — treino × validação
-       2. plt.subplots(1, 2) — dois gráficos lado a lado
-       3. plot_tree(arvore, …) — desenhar a árvore
-       4. .predict() · .predict_proba() — usar o modelo treinado
-     Fala: Etapas 3 e 4 do Lab 02. score no treino × validação cruzada (valores reais);
-     plt.subplots com ax[0]/ax[1] — alterne set_xscale log/linear; plot_tree real; predict ×
-     predict_proba nas 5 primeiras flores. Use → para passar de comando em comando (ou
-     clique na lista); os controles mudam o parâmetro destacado no código. O cartão à
-     esquerda descreve o comando por escrito.
+       2. plot_tree(arvore, …) — desenhar a árvore
+       3. .predict() · .predict_proba() — classificar uma flor nova
+       4. .feature_importances_ — o que a floresta olhou
+     Fala: Etapas 3 e 5 do Lab 02, com valores reais. treino_vs_cv: alterne KNN e árvore e
+     leia a coluna diferença. plot_tree com profundidade 2: compare com o slide da melhor
+     pergunta. Uma flor nova: predict × predict_proba (na floresta, a fração de árvores que
+     votou em cada espécie). feature_importances_: as pétalas fazem quase todo o trabalho.
+     Use → para passar de comando em comando (ou clique na lista); os controles mudam o
+     parâmetro destacado no código. O cartão à esquerda descreve o comando por escrito.
 
-[50] 95% de acurácia pode ser péssimo
+[47] 95% de acurácia pode ser péssimo
      Fala: Matriz ilustrativa: 95 negativos corretos, 5 positivos perdidos, nenhum positivo
      previsto. Acurácia 95%, mas recall positivo = 0. Precisão positiva é indefinida (0/0).
      A classe minoritária pode importar mais que o percentual total. Precision: dos que
      previ positivos, quantos eram? Recall: dos positivos reais, quantos achei? F1: média
      harmônica.
 
-[51] Precision × recall: quem escolhe é o limiar
-     Fala: Um classificador costuma devolver uma probabilidade; nós escolhemos o limiar a
-     partir do qual dizemos “positivo”. Cada ponto é um paciente (ilustrativo): na linha de
-     cima, os realmente positivos; embaixo, os negativos; a posição horizontal é o score do
-     modelo. Arraste o limiar: baixando, o recall sobe (achamos mais positivos), mas a
-     precision cai (mais alarmes falsos); subindo, o contrário. Não existe limiar certo:
-     depende do custo de cada erro (triagem de câncer × filtro de spam).
-
-[52] Avaliar a classificação no código  [no notebook]
+[48] Avaliar no teste  [no notebook]
      Comandos:
        1. ConfusionMatrixDisplay — matriz de confusão
        2. classification_report() — métricas por classe
-       3. load_breast_cancer() — o problema médico
-       4. predict_proba(X)[:, 1] — probabilidade do positivo
-       5. (proba >= limiar).astype(int) — escolher o limiar
-     Fala: Matriz de confusão e classification_report reais do Random Forest no Iris.
-     predict_proba(...)[:, 1] pega a coluna da classe positiva. No limiar, arraste: são os
-     números reais do desafio 5.1 (câncer de mama). Use → para passar de comando em comando
-     (ou clique na lista); os controles mudam o parâmetro destacado no código.
+     Fala: Matriz de confusão e classification_report reais do Random Forest no Iris: 3
+     virginicas confundidas com versicolor, por isso o recall de virginica é 0,77. Use →
+     para passar de comando em comando (ou clique na lista).
 
-[53] Lab 02 · Mesmos dados. Três algoritmos
+[49] Lab 02 · Mesmos dados. Três algoritmos
      Notebook: 02_classificacao.ipynb
      Passos:
        1. Explorar o Iris e separar treino/teste com estratificação
-       2. KNN × Árvore × Random Forest com validação cruzada no treino (pipeline ao
-          padronizar)
-       3. Variar K e profundidade: qualidade e variância
+       2. KNN × Árvore × Random Forest com validação cruzada no treino
+       3. Variar K e profundidade e desenhar a árvore
        4. Avaliar o escolhido no teste: matriz de confusão e métricas
      Para discutir: O modelo que foi melhor no treino deve necessariamente ser o escolhido?
-     Fala: Abra 02_classificacao.ipynb. Não mostre o gabarito antes.
+     Fala: Abra 02_classificacao.ipynb. Não mostre o gabarito antes. Para quem terminar:
+     classificar uma flor nova e ver as importâncias da floresta (desafios 5.1 e 5.2).
 
-[54] Hoje a máquina aprendeu com respostas. Amanhã, sem elas.
+[50] Hoje a máquina aprendeu com respostas. Amanhã, sem elas.
      Fala: Recapitule em uma frase cada módulo e pergunte o que ficou mais claro e o que
      ficou confuso. Amanhã: aprender sem rótulos, visão computacional e LLMs. Peça que
      salvem os notebooks no Drive.

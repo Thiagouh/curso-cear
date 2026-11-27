@@ -144,8 +144,8 @@ FX.tblx={step:k=>{$('#tbl').classList.toggle('c0',k>=1);$('#tbl').classList.togg
 
 /* ---------- 07 leakage rows ---------- */
 if($('#wrongRow')){const row=(steps,col)=>steps.map((t,i)=>{const x=34+i*345;return `<rect x="${x}" y="90" width="300" height="90" rx="14" fill="${COL.p2}"/><text x="${x+150}" y="143" text-anchor="middle" font-size="22" ${/\(/.test(t)?'font-family="JetBrains Mono,monospace"':''}>${t}</text>`+(i<3?`<path d="M${x+305} 135 H${x+338}" stroke="${COL.mu}" stroke-width="3" marker-end="url(#ar)"/>`:'')}).join('');
- $('#wrongRow').innerHTML=row(['scaler.fit(X)','dividir treino/teste','treinar','avaliar']);
- $('#rightRow').innerHTML=row(['dividir treino/teste','scaler.fit(X_treino)','transform(treino, teste)','treinar e avaliar'])}
+ $('#wrongRow').innerHTML=row(['preparar com tudo','dividir treino/teste','treinar','avaliar']);
+ $('#rightRow').innerHTML=row(['dividir treino/teste','preparar com o treino','aplicar no teste','treinar e avaliar'])}
 
 /* ---------- 08 polynomial fit ---------- */
 {const r=rng(7),g=x=>0.8*Math.sin(2.6*x)+0.35*x;
@@ -158,7 +158,7 @@ if($('#wrongRow')){const row=(steps,col)=>steps.map((t,i)=>{const x=34+i*345;ret
  const fits=[];for(let d=1;d<=11;d++){const c=polyfit(d);fits[d]={c,tr:mse(c,tr),va:mse(c,va)}}
  const best=fits.reduce((b,f,d)=>f&&(!b||f.va<fits[b].va)?d:b,0);
  const m=mapper(70,20,730,470,-1,1,-1.8,1.8);
- function draw(d){const f=fits[d];let h=axes(m,70,20,730,470,'x','y');
+ function draw(d){const f=fits[d];let h=axes(m,70,20,730,470,'entrada x','saída y');
   let p='';for(let i=0;i<=300;i++){const x=-1+2*i/300;let y=ev(f.c,x);y=Math.max(-3,Math.min(3,y));p+=(i?'L':'M')+m.X(x).toFixed(1)+' '+m.Y(y).toFixed(1)}
   const tag=d<=2?['underfitting',COL.am]:(f.va<=fits[best].va*1.6&&f.tr>fits[best].tr*0.3?['bom ajuste',COL.gr]:['overfitting',COL.rd]);
   h+=`<path d="${p}" fill="none" stroke="${tag[1]}" stroke-width="4" clip-path="url(#clipFit)"/>`;
@@ -192,7 +192,7 @@ if($('#wrongRow')){const row=(steps,col)=>steps.map((t,i)=>{const x=34+i*345;ret
 {const D=[[1,2.1],[2,3.9],[3,3.2],[4,5.6],[5,5.0],[6,7.1],[7,6.4],[8,8.6],[9,8.9]];
  const m=mapper(70,20,720,470,0,10,0,11);let showR=0,showQ=0;
  function draw(){const w=+$('#rw').value,b=+$('#rb').value;$('#rwv').textContent=fmt(w);$('#rbv').textContent=fmt(b,1);
-  let h=axes(m,70,20,720,470,'x','y'),mse=0;const px=m.X(1)-m.X(0),py=m.Y(0)-m.Y(1);
+  let h=axes(m,70,20,720,470,'entrada x','resposta real y'),mse=0;const px=m.X(1)-m.X(0),py=m.Y(0)-m.Y(1);
   D.forEach(([x,y])=>{const yh=w*x+b,e=y-yh;mse+=e*e;const a=m.Y(y),c=m.Y(yh);
    if(showQ){const s=Math.abs(a-c);h+=`<rect x="${m.X(x)}" y="${Math.min(a,c)}" width="${s}" height="${s}" fill="${COL.am}" fill-opacity=".18" stroke="${COL.am}" stroke-opacity=".5"/>`}
    if(showR)h+=`<line x1="${m.X(x)}" y1="${a}" x2="${m.X(x)}" y2="${c}" stroke="${COL.am}" stroke-width="3.5"/>`});
@@ -204,36 +204,70 @@ if($('#wrongRow')){const row=(steps,col)=>steps.map((t,i)=>{const x=34+i*345;ret
  FX.resid={init(){$('#rw').oninput=draw;$('#rb').oninput=draw;$('#rOpt').onclick=opt;$('#rRst').onclick=()=>anim(0.4,4);draw()},step(k){showR=1;showQ=k>=1;draw()}}}
 
 /* ---------- 11 gradient descent ---------- */
-{const m=mapper(70,20,760,470,-4.2,4.2,0,18),L=w=>w*w+0.5;let a=0.3,w=-2.6,k=0,trail=[],timer=null;
- function draw(){let h=axes(m,70,20,760,470,'parâmetro w','perda L(w)');let p='';for(let i=0;i<=200;i++){const x=-4.2+8.4*i/200;p+=(i?'L':'M')+m.X(x)+' '+m.Y(L(x))}
-  h+=`<path d="${p}" fill="none" stroke="${COL.cy}" stroke-width="4"/>`;h+=`<circle cx="${m.X(0)}" cy="${m.Y(.5)}" r="9" fill="${COL.gr}"/><text x="${m.X(0)}" y="${m.Y(.5)+34}" text-anchor="middle" font-size="18" fill="${COL.gr}">mínimo</text>`;
-  const vis=trail.filter(v=>Math.abs(v)<=4.2);for(let i=1;i<vis.length;i++)h+=`<line x1="${m.X(vis[i-1])}" y1="${m.Y(L(vis[i-1]))-14}" x2="${m.X(vis[i])}" y2="${m.Y(L(vis[i]))-14}" stroke="${COL.am}" stroke-width="2.5" marker-end="url(#ara)" opacity=".8"/>`;
+{/* um aluno (x = 6 h, y = 4,6), b fixo em 0: L(w) = (y − w·x)², ∂L/∂w = −2·x·(y − w·x). Mínimo em w* = y/x ≈ 0,767; α limite = 1/x² ≈ 0,028 */
+ const X=6,Y=4.6,WS=Y/X,W0=-0.5,W1=2.05,m=mapper(70,20,760,470,W0,W1,0,62),L=w=>(Y-w*X)**2,G=w=>-2*X*(Y-w*X);
+ let a=0.01,w=0,k=0,trail=[],timer=null,last=null;
+ const br=v=>String(v).replace('.',',');
+ const nf=(v,d=2)=>br((Math.abs(v)<5e-4?0:v).toFixed(d)),ps=(v,d=2)=>v<0?`(${nf(v,d)})`:nf(v,d);
+ let anim=null;
+ const FR='\\cy{\\frac{\\partial L}{\\partial w}}';
+ const fb=s=>s.replace(/\\text\{([^}]*)\}/g,'$1').replace(/w_\{novo\}/g,'w novo').replace(/\\frac\{\\partial L\}\{\\partial w\}/g,'∂L/∂w').replace(/\\cdot/g,'·').replace(/\\alpha/g,'α').replace(/\\(cy|am|mathbf)\{/g,'{').replace(/\{,\}/g,',').replace(/\\;/g,' ').replace(/[{}]/g,'').replace(/-/g,'−');
+ const rowsOf=c=>{const t=v=>tn(v),pt=(v,d)=>v<0?`(${t(nf(v,d))})`:t(nf(v,d)),W=pt(c.w,2),E=pt(c.e,2),Gs=pt(c.g,1),A=`\\am{${t(br(String(c.a)))}}`;
+  return [[`\\text{erro} = y - w\\cdot x`,`\\text{erro} = 4{,}6 - ${W}\\cdot 6`,`\\text{erro} = 4{,}6 - ${W}\\cdot 6 = \\mathbf{${t(nf(c.e))}}`],
+   [`${FR} = -2\\cdot x\\cdot \\text{erro}`,`${FR} = -2\\cdot 6\\cdot ${E}`,`${FR} = -2\\cdot 6\\cdot ${E} = \\cy{\\mathbf{${t(nf(c.g,1))}}}`],
+   [`w_{\\text{novo}} = w - \\am{\\alpha}\\cdot ${FR}`,`w_{\\text{novo}} = ${t(nf(c.w))} - ${A}\\cdot ${Gs}`,`w_{\\text{novo}} = ${t(nf(c.w))} - ${A}\\cdot ${Gs} = \\am{\\mathbf{${t(nf(c.w1))}}}`]]};
+ const sym=[`\\text{erro} = y - w\\cdot x`,`${FR} = -2\\cdot x\\cdot \\text{erro}`,`w_{\\text{novo}} = w - \\am{\\alpha}\\cdot ${FR}`];
+ const put=(d,tex,fade)=>{if(!fade){d.innerHTML=TX(tex,fb(tex));return}d.style.opacity=.1;setTimeout(()=>{d.innerHTML=TX(tex,fb(tex));d.style.opacity=1},260)};
+ function calc(){const el=$('#gdCalc');if(!el||anim)return;
+  const R=last?rowsOf(last).map(r=>r[2]):sym;
+  el.innerHTML=R.map(()=>`<div class="gdl" style="transition:opacity .26s;min-height:46px;display:flex;align-items:center"></div>`).join('');[...el.children].forEach((d,i)=>put(d,R[i]))}
+ /* anima: para cada linha, fórmula → valores substituídos → resultado; no fim aplica o passo */
+ function animStep(c,done){const el=$('#gdCalc'),R=rowsOf(c),D=1150;anim=[];
+  el.innerHTML=R.map(()=>`<div class="gdl" style="transition:opacity .26s;min-height:46px;display:flex;align-items:center;opacity:.25"></div>`).join('');
+  const ds=[...el.children];ds.forEach((d,i)=>put(d,sym[i]));
+  let t=400;R.forEach((r,i)=>{anim.push(setTimeout(()=>{ds[i].style.opacity=1},t));t+=D*.8;
+   anim.push(setTimeout(()=>put(ds[i],r[1],1),t));t+=D;anim.push(setTimeout(()=>put(ds[i],r[2],1),t));t+=D});
+  anim.push(setTimeout(()=>{anim=null;done()},t))}
+ function cancelAnim(){if(anim){anim.forEach(clearTimeout);anim=null}}
+ function draw(){let h=axes(m,70,20,760,470,'peso w','perda L(w)');let p='';for(let i=0;i<=200;i++){const x=W0+(W1-W0)*i/200;p+=(i?'L':'M')+m.X(x)+' '+m.Y(Math.min(62,L(x)))}
+  h+=`<path d="${p}" fill="none" stroke="${COL.cy}" stroke-width="4"/>`;h+=`<circle cx="${m.X(WS)}" cy="${m.Y(0)}" r="9" fill="${COL.gr}"/><text x="${m.X(WS)}" y="${m.Y(0)+34}" text-anchor="middle" font-size="18" fill="${COL.gr}">mínimo (w ≈ 0,77)</text>`;
+  const inR=v=>v>=W0&&v<=W1&&L(v)<=62,vis=trail.filter(inR);for(let i=1;i<vis.length;i++)h+=`<line x1="${m.X(vis[i-1])}" y1="${m.Y(L(vis[i-1]))-14}" x2="${m.X(vis[i])}" y2="${m.Y(L(vis[i]))-14}" stroke="${COL.am}" stroke-width="2.5" marker-end="url(#ara)" opacity=".8"/>`;
   vis.forEach((v,i)=>h+=`<circle cx="${m.X(v)}" cy="${m.Y(L(v))-14}" r="${i===vis.length-1?14:6}" fill="${COL.am}" opacity="${i===vis.length-1?1:.5}"/>`);
-  if(Math.abs(w)<=4.2){const g=2*w;h+=`<line x1="${m.X(w-0.8)}" y1="${m.Y(L(w)-g*0.8)}" x2="${m.X(w+0.8)}" y2="${m.Y(L(w)+g*0.8)}" stroke="${COL.tx}" stroke-width="2" stroke-dasharray="6 5"/>`}
-  $('#gdPlot').innerHTML=h;$('#gdK').textContent=k;$('#gdL').textContent=Math.abs(w)>50?'∞':fmt(L(w))}
- function reset(){clearInterval(timer);timer=null;w=-2.6;k=0;trail=[w];$('#gdMsg').textContent='';$('#gdGo').textContent='▶ Descer';draw()}
- function stepOnce(){w=w-a*2*w;k++;trail.push(w);draw();
-  const msg=$('#gdMsg');if(Math.abs(w)>4.2){msg.innerHTML='<span class="rd">Divergiu: cada passo piora o erro</span>';stop()}
-  else if(Math.abs(w)<0.02){msg.innerHTML='<span class="gr">Convergiu para o mínimo</span>';stop()}
-  else if(k>=40){msg.innerHTML='<span class="mu">Ainda descendo… α pequeno é lento</span>';stop()}
-  else if(a>0.5)msg.innerHTML='<span class="am">Oscila de um lado para o outro</span>'}
+  if(inR(w)){const g=G(w),d=0.2;h+=`<line x1="${m.X(w-d)}" y1="${m.Y(L(w)-g*d)}" x2="${m.X(w+d)}" y2="${m.Y(L(w)+g*d)}" stroke="${COL.tx}" stroke-width="2" stroke-dasharray="6 5"/>`}
+  $('#gdPlot').innerHTML=h;$('#gdK').textContent=k;$('#gdW').textContent=Math.abs(w)>50?'∞':nf(w);$('#gdL').textContent=Math.abs(w)>50?'∞':fmt(L(w));calc()}
+ function reset(){cancelAnim();clearInterval(timer);timer=null;w=0;k=0;last=null;trail=[w];hist=[];$('#gdMsg').textContent='';$('#gdGo').textContent='▶ Descer';draw()}
+ const next=()=>{const g=G(w);return{w,e:Y-w*X,g,w1:w-a*g,a}};let pend=null;
+ function stepOnce(){apply(next())}
+ let hist=[];
+ function apply(c){hist.push({w,k,last,trail:[...trail],msg:$('#gdMsg').innerHTML});last=c;w=c.w1;k++;trail.push(w);draw();
+  const msg=$('#gdMsg');if(w<W0||w>W1){msg.innerHTML='<span class="rd">Divergiu: cada passo piora o erro</span>';stop()}
+  else if(Math.abs(w-WS)<0.004){msg.innerHTML='<span class="gr">Convergiu para o mínimo</span>';stop()}
+  else if(k>=40){msg.innerHTML=a*X*X>0.5?'<span class="am">Oscila e demora a assentar</span>':'<span class="mu">Ainda descendo… α pequeno é lento</span>';stop()}
+  else if(a*X*X>0.5)msg.innerHTML='<span class="am">Oscila de um lado para o outro</span>'}
  function stop(){clearInterval(timer);timer=null;$('#gdGo').textContent='▶ Descer'}
  FX.gd={init(){$$('#gdA button').forEach(b=>b.onclick=()=>{$$('#gdA button').forEach(x=>x.classList.toggle('on',x===b));a=+b.dataset.a;reset()});
-  $('#gdGo').onclick=()=>{if(timer){stop();return}if(Math.abs(w)>4.2||Math.abs(w)<0.02||k>=40)reset();$('#gdGo').textContent='❚❚ Pausar';timer=setInterval(stepOnce,a<0.1?180:550)};$('#gdRst').onclick=reset;reset()},leave:stop}}
+  $('#gdStep').onclick=()=>{if(anim){cancelAnim();apply(pend);return}stop();if(w<W0||w>W1||Math.abs(w-WS)<0.004)reset();pend=next();animStep(pend,()=>apply(pend))};
+  $('#gdGo').onclick=()=>{if(anim){cancelAnim();apply(pend)}if(timer){stop();return}if(w<W0||w>W1||Math.abs(w-WS)<0.004||k>=40)reset();$('#gdGo').textContent='❚❚ Pausar';timer=setInterval(stepOnce,a<0.005?160:600)};$('#gdRst').onclick=reset;reset();addEventListener('mathjax-ready',()=>{if(!anim)draw()},{once:true})},leave(){stop();if(anim){cancelAnim();apply(pend)}}}}
 
-/* ---------- 14 KNN ---------- */
-{const r=rng(3),P=[];for(let i=0;i<26;i++)P.push([2.8+gauss(r)*1.3,2.8+gauss(r)*1.1,0].map((v,j)=>j<2?Math.max(.3,Math.min(j?6.7:9.7,v)):v));for(let i=0;i<26;i++)P.push([6.6+gauss(r)*1.3,4.2+gauss(r)*1.1,1].map((v,j)=>j<2?Math.max(.3,Math.min(j?6.7:9.7,v)):v));
- const m=mapper(70,20,760,470,0,10,0,7);let K=3,q=[5.1,3.5];
- const pred=(x,y,k)=>{const d=P.map(p=>[(p[0]-x)**2+(p[1]-y)**2,p[2]]).sort((a,b)=>a[0]-b[0]).slice(0,k);const v=d.reduce((s,a)=>s+a[1],0);return[v>k/2?1:0,k-v,v,d]};
- function draw(){let h='';const nx=50,ny=30;for(let i=0;i<nx;i++)for(let j=0;j<ny;j++){const x=(i+.5)/nx*10,y=(j+.5)/ny*7,c=pred(x,y,K)[0];h+=`<rect x="${70+i*760/nx}" y="${20+(ny-1-j)*470/ny}" width="${760/nx+.5}" height="${470/ny+.5}" fill="${c?COL.am:COL.cy}" opacity=".1"/>`}
-  h+=axes(m,70,20,760,470,'feature 1','feature 2');const [c,n0,n1,d]=pred(q[0],q[1],K);const qx=m.X(q[0]),qy=m.Y(q[1]);
-  const R=Math.sqrt(d[d.length-1][0]);h+=`<ellipse cx="${qx}" cy="${qy}" rx="${R*76+12}" ry="${R*470/7+12}" fill="${COL.tx}" fill-opacity=".05" stroke="${COL.tx}" stroke-dasharray="8 7" stroke-width="2"/>`;
-  P.forEach(p=>{if(d.some(z=>Math.abs(z[0]-((p[0]-q[0])**2+(p[1]-q[1])**2))<1e-12))h+=`<line x1="${qx}" y1="${qy}" x2="${m.X(p[0])}" y2="${m.Y(p[1])}" stroke="${COL.mu}" stroke-width="2" stroke-dasharray="5 5"/>`});
+/* ---------- 14 KNN: músicas em playlists (energia × BPM) ---------- */
+{const r=rng(3),P=[],cl=(v,a,b)=>Math.max(a,Math.min(b,v));
+ for(let i=0;i<26;i++)P.push([cl(.3+gauss(r)*.13,.03,.97),cl(95+gauss(r)*15,64,176),0]);    /* ● Relaxar */
+ for(let i=0;i<26;i++)P.push([cl(.74+gauss(r)*.13,.03,.97),cl(128+gauss(r)*15,64,176),1]);  /* ▲ Festa */
+ const SD=[.25,25],m=mapper(70,20,760,470,0,1,60,180);let K=3,q=[.55,112];
+ const d2=(a,x,y)=>((a[0]-x)/SD[0])**2+((a[1]-y)/SD[1])**2;   /* distância com as duas medidas padronizadas */
+ const pred=(x,y,k)=>{const d=P.map(p=>[d2(p,x,y),p[2]]).sort((a,b)=>a[0]-b[0]).slice(0,k);const v=d.reduce((s,a)=>s+a[1],0);return[v>k/2?1:0,k-v,v,d]};
+ function draw(){let h='';const nx=50,ny=30;for(let i=0;i<nx;i++)for(let j=0;j<ny;j++){const x=(i+.5)/nx,y=60+(j+.5)/ny*120,c=pred(x,y,K)[0];h+=`<rect x="${70+i*760/nx}" y="${20+(ny-1-j)*470/ny}" width="${760/nx+.5}" height="${470/ny+.5}" fill="${c?COL.am:COL.cy}" opacity=".1"/>`}
+  h+=axes(m,70,20,760,470,'energia (0 a 1) →','↑ BPM');[0,.25,.5,.75].forEach(v=>h+=`<text x="${m.X(v)}" y="510" text-anchor="middle" font-size="15" fill="${COL.dim}">${fmt(v,2)}</text>`);[60,90,120,150,180].forEach(v=>h+=`<text x="60" y="${m.Y(v)+5}" text-anchor="end" font-size="15" fill="${COL.dim}">${v}</text>`);
+  const [c,n0,n1,d]=pred(q[0],q[1],K),qx=m.X(q[0]),qy=m.Y(q[1]),R=Math.sqrt(d[d.length-1][0]);
+  h+=`<ellipse cx="${qx}" cy="${qy}" rx="${R*SD[0]*760+12}" ry="${R*SD[1]*470/120+12}" fill="${COL.tx}" fill-opacity=".05" stroke="${COL.tx}" stroke-dasharray="8 7" stroke-width="2"/>`;
+  P.forEach(p=>{if(d.some(z=>Math.abs(z[0]-d2(p,q[0],q[1]))<1e-12))h+=`<line x1="${qx}" y1="${qy}" x2="${m.X(p[0])}" y2="${m.Y(p[1])}" stroke="${COL.mu}" stroke-width="2" stroke-dasharray="5 5"/>`});
   P.forEach(p=>{const X=m.X(p[0]),Y=m.Y(p[1]);h+=p[2]?`<path d="M${X} ${Y-11}L${X+11} ${Y+8}L${X-11} ${Y+8}Z" fill="${COL.am}"/>`:`<circle cx="${X}" cy="${Y}" r="9" fill="${COL.cy}"/>`});
-  h+=`<text x="${qx}" y="${qy+13}" text-anchor="middle" font-size="40" fill="${COL.tx}">★</text>`;$('#knnPlot').innerHTML=h;
-  $('#knnVote').innerHTML=`<span class="cy">● ${n0}</span> &nbsp; <span class="am">▲ ${n1}</span>`;$('#knnRes').innerHTML=c?'<span class="am">→ classe ▲</span>':'<span class="cy">→ classe ●</span>'}
+  h+=`<text x="${qx}" y="${qy+13}" text-anchor="middle" font-size="40" fill="${COL.tx}">★</text>`;
+  h+=`<rect x="84" y="30" width="190" height="64" rx="10" fill="${COL.bg}" opacity=".85"/><circle cx="102" cy="50" r="8" fill="${COL.cy}"/><text x="118" y="56" font-size="17">Relaxar</text><path d="M102 67L112 84L92 84Z" fill="${COL.am}"/><text x="118" y="84" font-size="17">Festa</text><text x="196" y="56" font-size="17" fill="${COL.mu}">★ nova</text>`;
+  $('#knnPlot').innerHTML=h;
+  $('#knnVote').innerHTML=`<span class="cy">● Relaxar ${n0}</span> &nbsp; <span class="am">▲ Festa ${n1}</span>`;$('#knnRes').innerHTML=c?'<span class="am">→ playlist Festa</span>':'<span class="cy">→ playlist Relaxar</span>'}
  FX.knn={init(){$$('#knnK button').forEach(b=>b.onclick=()=>{$$('#knnK button').forEach(x=>x.classList.toggle('on',x===b));K=+b.dataset.k;draw()});
-  $('#knnPlot').addEventListener('click',e=>{const pt=$('#knnPlot').createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;const p=pt.matrixTransform($('#knnPlot').getScreenCTM().inverse());const x=m.ix(p.x),y=m.iy(p.y);if(x>0&&x<10&&y>0&&y<7){q=[x,y];draw()}});draw()}}}
+  $('#knnPlot').addEventListener('click',e=>{const pt=$('#knnPlot').createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;const p=pt.matrixTransform($('#knnPlot').getScreenCTM().inverse());const x=m.ix(p.x),y=m.iy(p.y);if(x>0&&x<1&&y>60&&y<180){q=[x,y];draw()}});draw()}}}
 
 /* ---------- 15 tree ---------- */
 {const r=rng(11),D=[];const sp=[[1.46,.17,.25,.1,0],[4.26,.47,1.33,.2,1],[5.55,.55,2.03,.27,2]];
@@ -282,7 +316,7 @@ function kmeansFull(P,k,r){let best=null;for(let rep=0;rep<8;rep++){const C=[P[M
   const inr=P.reduce((s,p,i)=>s+d2(p,C[A[i]]),0);if(!best||inr<best.inr)best={inr,A,C:C.map(c=>[...c])}}return best}
 function silhouette(P,A,k){let s=0;P.forEach((p,i)=>{const dist=j=>{const g=P.filter((_,t)=>A[t]===j&&t!==i);return g.length?g.reduce((a,q)=>a+Math.sqrt(d2(p,q)),0)/g.length:0};const a=dist(A[i]);let b=Infinity;for(let j=0;j<k;j++)if(j!==A[i])b=Math.min(b,dist(j));const same=A.filter(x=>x===A[i]).length;s+=same>1?(b-a)/Math.max(a,b):0});return s/P.length}
 {const m=mapper(60,20,680,470,0,8.5,0,8.5),CC=[COL.cy,COL.am,COL.vi,COL.pk,COL.gr];let K=3,C=[],A=null,phase=0,it=0,trail=[],timer=null,r=rng(5);
- function draw(){let h=axes(m,60,20,680,470);KD.forEach((p,i)=>h+=`<circle cx="${m.X(p[0])}" cy="${m.Y(p[1])}" r="8" fill="${A?CC[A[i]]:COL.mu}" style="transition:fill .4s"/>`);
+ function draw(){let h=axes(m,60,20,680,470,'feature 1','feature 2');KD.forEach((p,i)=>h+=`<circle cx="${m.X(p[0])}" cy="${m.Y(p[1])}" r="8" fill="${A?CC[A[i]]:COL.mu}" style="transition:fill .4s"/>`);
   trail.forEach((tr,j)=>{for(let i=1;i<tr.length;i++)h+=`<line x1="${m.X(tr[i-1][0])}" y1="${m.Y(tr[i-1][1])}" x2="${m.X(tr[i][0])}" y2="${m.Y(tr[i][1])}" stroke="${CC[j]}" stroke-width="2.5" stroke-dasharray="6 5"/>`});
   C.forEach((c,j)=>h+=`<g transform="translate(${m.X(c[0])},${m.Y(c[1])})"><circle r="20" fill="${COL.bg}" stroke="${CC[j]}" stroke-width="4"/><path d="M-10 0H10M0 -10V10" stroke="${CC[j]}" stroke-width="4"/></g>`);$('#kmPlot').innerHTML=h}
  function init(){stop();C=[];for(let j=0;j<K;j++)C.push([0.8+r()*7,0.8+r()*7]);A=null;phase=0;it=0;trail=C.map(c=>[[...c]]);$('#kmPhase').innerHTML='<span class="gr">1</span> Centroides sorteados';$('#kmIt').textContent='iteração 0';draw()}
@@ -496,7 +530,7 @@ if($('#edaHist')){const r=rng(31),Hs=[],Ns=[];for(let i=0;i<200;i++){const h=Mat
  const q=(a,p)=>{const s=[...a].sort((x,y)=>x-y),i=(s.length-1)*p,lo=Math.floor(i);return s[lo]+(s[Math.ceil(i)]-s[lo])*(i-lo)};
  function draw(){const H=out?[...Hs,...OH]:Hs,N=out?[...Ns,...ON]:Ns,mu=mean(H),md=med(H);
   const bins=Array(16).fill(0);Hs.forEach(v=>bins[Math.min(15,Math.floor(v))]++);
-  const m=mapper(50,40,640,260,0,16,0,Math.max(...bins)*1.08);let h=axes(m,50,40,640,260,'','alunos');
+  const m=mapper(50,40,640,260,0,16,0,Math.max(...bins)*1.08);let h=axes(m,50,40,640,260,'horas de estudo por semana','nº de alunos');
   bins.forEach((c,i)=>h+=`<rect x="${m.X(i)+1}" y="${m.Y(c)}" width="${m.X(1)-m.X(0)-2}" height="${m.Y(0)-m.Y(c)}" rx="3" fill="${COL.cy}" opacity=".55"/>`);
   for(let v=0;v<=16;v+=4)h+=`<text x="${m.X(v)}" y="322" text-anchor="middle" font-size="15" fill="${COL.dim}">${v}${v===16?' h':''}</text>`;
   const ln=(v,c,t,dy)=>`<line x1="${m.X(Math.min(16,v))}" y1="40" x2="${m.X(Math.min(16,v))}" y2="300" stroke="${c}" stroke-width="3" stroke-dasharray="${c===COL.am?'8 6':'0'}"/><text x="${m.X(Math.min(16,v))+8}" y="${40+dy}" font-size="16" font-weight="700" fill="${c}">${t}</text>`;
@@ -527,7 +561,7 @@ if($('#encTbl')){const R=[['Ana','noite','médio'],['Bruno','manhã','superior']
 
 /* ---------- escala: passo a passo ---------- */
 if($('#scPlot')){
- const P=[['Você',25,3000,'tx'],['A',62,3200,'pk'],['B',27,4500,'cy']],MU=[40,4000],SD=[15,2000],CI=COL.vi,CR=COL.am;
+ const P=[['Nova',.30,120,'tx','?'],['A',.90,122,'pk','▲ Festa'],['B',.35,100,'cy','● Relaxar']],MU=[.5,110],SD=[.25,25],CI=COL.vi,CR=COL.am;   /* x = energia, y = BPM */
  const RAW=P.map(p=>[p[1],p[2]]),ZZ=P.map(p=>[(p[1]-MU[0])/SD[0],(p[2]-MU[1])/SD[1]]);
  const W=620,H=480,br=v=>v.toLocaleString('pt-BR'),sg=v=>(v>0?'+':'')+fmt(v);
  const view=pts=>{const xs=pts.map(p=>p[0]),ys=pts.map(p=>p[1]),x0=Math.min(...xs),x1=Math.max(...xs),y0=Math.min(...ys),y1=Math.max(...ys),
@@ -539,49 +573,49 @@ if($('#scPlot')){
    for(let y=lo(V.cy-H/2/V.s-1);y<V.cy+H/2/V.s+1;y+=u){const Y=H/2+10-(y-V.cy)*V.s;g+=`<line x1="0" y1="${Y}" x2="${W}" y2="${Y}" stroke="${COL.ln}" stroke-width="1"/>`}return g};
  const T=(x,y,s,c,a='start',fs=19,w=700)=>`<text x="${x}" y="${y}" fill="${c}" font-size="${fs}" font-weight="${w}" text-anchor="${a}" font-family="JetBrains Mono,monospace">${s}</text>`;
  function plot(){const S=SR.map((p,i)=>[p[0]+(SZ[i][0]-p[0])*t,p[1]+(SZ[i][1]-p[1])*t]),V=S[0],raw=t===0,z=t===1;let h='';
-  if(raw)h+=grid(VR,500);if(z)h+=grid(VZ,.5);
+  if(raw)h+=grid(VR,5);if(z)h+=grid(VZ,.5);
   const tri=raw||(z&&stp>=3);
   if(tri)[1,2].forEach(i=>{const Q=S[i],c=COL[P[i][3]];
     h+=`<line x1="${V[0]}" y1="${V[1]}" x2="${Q[0]}" y2="${V[1]}" stroke="${CI}" stroke-width="6" stroke-linecap="round"/><line x1="${Q[0]}" y1="${V[1]}" x2="${Q[0]}" y2="${Q[1]}" stroke="${CR}" stroke-width="6" stroke-linecap="round"/><line x1="${V[0]}" y1="${V[1]}" x2="${Q[0]}" y2="${Q[1]}" stroke="${c}" stroke-width="2.5" stroke-dasharray="7 6"/>`});
   S.forEach((p,i)=>{const c=COL[P[i][3]];h+=`<circle cx="${p[0]}" cy="${p[1]}" r="11" fill="${c}" stroke="${COL.bg}" stroke-width="3"/>`});
   if(raw){const [a,b]=[S[1],S[2]];
-   h+=T(a[0]+22,a[1]+6,'A','#F472B6','start',24)+T(b[0]+22,b[1]+6,'B',COL.cy,'start',24)+T(V[0]-22,V[1]+8,'Você',COL.tx,'end',22);
-   h+=T(a[0]+22,(a[1]+V[1])/2+30,'Δrenda = 200',CR,'start',17)+T(b[0]-20,(b[1]+V[1])/2,'Δrenda = 1.500',CR,'end',17);
-   h+=T(b[0]+22,b[1]+34,'d ≈ 1.500','#cfe3ff','start',17,600)+T(a[0]+22,a[1]-16,'d ≈ 203','#cfe3ff','start',17,600);
-   h+=`<path d="M${V[0]} ${V[1]+26} v10 h${a[0]-V[0]} v-10" fill="none" stroke="${CI}" stroke-width="2"/>`+T(V[0]-24,V[1]+42,`Δidade = 37 anos → só ${Math.round(37*VR.s)} px`,CI,'end',17)}
+   h+=T(a[0]+22,a[1]+2,'A','#F472B6','start',24)+T(b[0]+22,b[1]+6,'B',COL.cy,'start',24)+T(V[0]-22,V[1]+8,'Nova',COL.tx,'end',22);
+   h+=T(a[0]+22,V[1]+26,'ΔBPM = 2',CR,'start',17)+T(b[0]-20,(b[1]+V[1])/2,'ΔBPM = 20',CR,'end',17);
+   h+=T(b[0]+22,b[1]+34,'d ≈ 20','#cfe3ff','start',17,600)+T(a[0]+22,a[1]-24,'d ≈ 2,09','#cfe3ff','start',17,600);
+   h+=`<path d="M${V[0]} ${V[1]-26} v-10 h${a[0]-V[0]} v10" fill="none" stroke="${CI}" stroke-width="2"/>`+T(V[0]-24,V[1]-42,`Δenergia = 0,60 → só ${Math.round(.6*VR.s)} px`,CI,'end',17)}
   if(z){const [a,b]=[S[1],S[2]];
-   h+=T(a[0]+20,a[1]+7,'A','#F472B6','start',24)+T(b[0]+20,b[1]-8,'B',COL.cy,'start',24)+T(V[0]-20,V[1]+8,'Você',COL.tx,'end',22);
-   if(stp>=3){h+=T((V[0]+a[0])/2,V[1]+34,'Δidade = 2,47',CI,'middle',17)+T(a[0]+12,a[1]+42,'Δrenda = 0,10',CR,'end',16)+T(b[0]+20,(b[1]+V[1])/2+8,'Δrenda = 0,75',CR,'start',17)+T((V[0]+b[0])/2,V[1]+30,'0,13',CI,'middle',16);
-    h+=T((V[0]+a[0])/2+30,(V[1]+a[1])/2-28,'d ≈ 2,47','#cfe3ff','middle',17,600)+T((V[0]+b[0])/2-26,(V[1]+b[1])/2-4,'d ≈ 0,76','#cfe3ff','end',17,600)}
-   else S.forEach((p,i)=>{h+=T(p[0],p[1]+(i===2?-34:40),`(${fmt(ZZ[i][0])}; ${fmt(ZZ[i][1])})`,COL.mu,'middle',16,500)})}
-  h+=T(W-8,H-10,'idade →',CI,'end',16)+`<text x="14" y="22" fill="${CR}" font-size="16" font-weight="700" font-family="JetBrains Mono,monospace">↑ renda</text>`;
+   h+=T(a[0]+20,a[1]+7,'A','#F472B6','start',24)+T(b[0]+20,b[1]+24,'B',COL.cy,'start',24)+T(V[0]-20,V[1]+8,'Nova',COL.tx,'end',22);
+   if(stp>=3){h+=T((V[0]+a[0])/2,V[1]+34,'Δenergia = 2,40',CI,'middle',17)+T(a[0]-14,a[1]-14,'ΔBPM = 0,08',CR,'end',16)+T(b[0]+20,(b[1]+V[1])/2+6,'ΔBPM = 0,80',CR,'start',17)+T((V[0]+b[0])/2,V[1]-14,'0,20',CI,'middle',16);
+    h+=T((V[0]+a[0])/2+30,(V[1]+a[1])/2-34,'d ≈ 2,40','#cfe3ff','middle',17,600)+T((V[0]+b[0])/2-26,(V[1]+b[1])/2+14,'d ≈ 0,82','#cfe3ff','end',17,600)}
+   else S.forEach((p,i)=>{h+=T(p[0],p[1]+(i===2?48:-30),`(${fmt(ZZ[i][0])}; ${fmt(ZZ[i][1])})`,COL.mu,'middle',16,500)})}
+  h+=T(W-8,H-10,'energia →',CI,'end',16)+`<text x="14" y="22" fill="${CR}" font-size="16" font-weight="700" font-family="JetBrains Mono,monospace">↑ BPM</text>`;
   $('#scPlot').innerHTML=h;
-  $('#scCap').innerHTML=raw?'<b>Mesma régua</b>: 1 ano vale o mesmo que R$ 1 · cada quadrado = 500':z?'<b>Mesma régua</b>, agora em desvios-padrão · cada quadrado = 0,5 σ':'padronizando…'}
+  $('#scCap').innerHTML=raw?'<b>Mesma régua</b>: 1 ponto de energia vale o mesmo que 1 BPM · cada quadrado = 5':z?'<b>Mesma régua</b>, agora em desvios-padrão · cada quadrado = 0,5 σ':'padronizando…'}
  const anim=to=>{cancelAnimationFrame(raf);const t0=t,st=performance.now(),D=900;const f=n=>{const k=Math.min(1,(n-st)/D),e=k<.5?2*k*k:1-(-2*k+2)**2/2;t=t0+(to-t0)*e;if(k<1){t=Math.min(Math.max(t,0),1);plot();raf=requestAnimationFrame(f)}else{t=to;plot()}};if(t0===to)plot();else raf=requestAnimationFrame(f)};
- const pc=v=>v>99.5?'≈100':v<.5?'<1':Math.round(v);const share=(rows)=>rows.map(([n,c,a,b])=>{const pa=a/(a+b)*100;return `<div class="scsh"><b style="color:${c}">${n}</b><div class="bar"><i style="width:${pa}%;background:${CI}"></i><i style="width:${100-pa}%;background:${CR}"></i></div><span><span style="color:${CI}">idade ${pc(pa)}%</span> · <span style="color:${CR}">renda ${pc(100-pa)}%</span></span></div>`}).join('');
+ const pc=v=>v>99.5?'≈100':v<.5?'<1':Math.round(v);const share=(rows)=>rows.map(([n,c,a,b])=>{const pa=a/(a+b)*100;return `<div class="scsh"><b style="color:${c}">${n}</b><div class="bar"><i style="width:${pa}%;background:${CI}"></i><i style="width:${100-pa}%;background:${CR}"></i></div><span><span style="color:${CI}">energia ${pc(pa)}%</span> · <span style="color:${CR}">BPM ${pc(100-pa)}%</span></span></div>`}).join('');
  const X=(tex,fb)=>`<div class="sceq">${TX(tex,fb)}</div>`;
- const STEPS=['unidades originais','a régua de cada coluna','z de cada pessoa','distância em z'];
+ const STEPS=['unidades originais','a régua de cada coluna','z de cada música','distância em z'];
  const ruler=(nm,c,mu,sd,vals,lab)=>{const x=v=>40+(v-(mu-2*sd))/(4*sd)*640;let s=`<line x1="40" y1="34" x2="680" y2="34" stroke="${COL.mu}" stroke-width="2"/>`;
    for(let k=-2;k<=2;k++){const X=x(mu+k*sd);s+=`<line x1="${X}" y1="26" x2="${X}" y2="42" stroke="${COL.mu}" stroke-width="2"/>`+T(X,64,lab(mu+k*sd),COL.mu,'middle',15,500)+T(X,88,k?(k>0?'+':'−')+Math.abs(k)+'σ':'μ',k?COL.tx:c,'middle',16)}
    vals.forEach((v,i)=>{s+=`<circle cx="${x(v)}" cy="34" r="9" fill="${COL[P[i][3]]}" stroke="${COL.bg}" stroke-width="2.5"/>`});
    return `<div class="scru"><b style="color:${c}">${nm}</b><svg viewBox="0 0 720 96">${s}</svg></div>`};
  function panel(){let h=`<div class="scst">${STEPS.map((s,i)=>`<span class="${i===stp?'on':i<stp?'done':''}">${i+1} · ${s}</span>`).join('')}</div>`;
-  if(stp===0)h+=`<table class="dt sctb"><tr><th></th><th style="color:${CI}">idade</th><th style="color:${CR}">renda</th></tr>${P.map(p=>`<tr><td style="color:${COL[p[3]]};font-weight:700">${p[0]}</td><td>${p[1]} anos</td><td>R$ ${br(p[2])}</td></tr>`).join('')}</table>`
-   +X('d_A=\\sqrt{\\vi{(62-25)^2}+\\am{(3200-3000)^2}}=\\sqrt{\\vi{1369}+\\am{40000}}\\approx 203','d(você,A) = √(37² + 200²) ≈ 203')
-   +X('d_B=\\sqrt{\\vi{(27-25)^2}+\\am{(4500-3000)^2}}=\\sqrt{\\vi{4}+\\am{2250000}}\\approx 1500','d(você,B) = √(2² + 1500²) ≈ 1500')
-   +`<div class="lbl mu" style="font-size:13px;margin-top:4px">quem pesa dentro de d² (a soma dentro da raiz)</div>`+share([['A','#F472B6',1369,40000],['B',COL.cy,4,2250000]])
-   +`<div class="scv rd">Mais perto: A, de 62 anos?! <span>a renda (milhares) esmaga a idade (dezenas)</span></div>`;
+  if(stp===0)h+=`<table class="dt sctb"><tr><th></th><th style="color:${CI}">energia</th><th style="color:${CR}">BPM</th><th>playlist</th></tr>${P.map(p=>`<tr><td style="color:${COL[p[3]]};font-weight:700">${p[0]}</td><td>${fmt(p[1],2)}</td><td>${p[2]} bpm</td><td style="color:${p[4]==='?'?COL.mu:p[4][0]==='▲'?COL.am:COL.cy}">${p[4]}</td></tr>`).join('')}</table>`
+   +X('d_A=\\sqrt{\\vi{(0{,}90-0{,}30)^2}+\\am{(122-120)^2}}=\\sqrt{\\vi{0{,}36}+\\am{4}}\\approx 2{,}09','d(nova,A) = √(0,60² + 2²) ≈ 2,09')
+   +X('d_B=\\sqrt{\\vi{(0{,}35-0{,}30)^2}+\\am{(100-120)^2}}=\\sqrt{\\vi{0{,}0025}+\\am{400}}\\approx 20','d(nova,B) = √(0,05² + 20²) ≈ 20')
+   +`<div class="lbl mu" style="font-size:13px;margin-top:4px">quem pesa dentro de d² (a soma dentro da raiz)</div>`+share([['A','#F472B6',.36,4],['B',COL.cy,.0025,400]])
+   +`<div class="scv rd">Mais perto: A, a de festa?! <span>o BPM (dezenas) esmaga a energia (décimos)</span></div>`;
   if(stp===1)h+=`<p class="scp">Cada coluna tem a sua régua: a <b style="color:${CI}">média μ</b> diz onde fica o centro e o <b style="color:${CR}">desvio σ</b> diz o tamanho de um “passo típico”. Valores do treino:</p>`
-   +`<table class="dt sctb"><tr><th></th><th>média μ</th><th>desvio σ</th></tr><tr><td style="color:${CI};font-weight:700">idade</td><td>40 anos</td><td>15 anos</td></tr><tr><td style="color:${CR};font-weight:700">renda</td><td>R$ 4.000</td><td>R$ 2.000</td></tr></table>`
-   +ruler('idade',CI,40,15,P.map(p=>p[1]),v=>v+' a')+ruler('renda',CR,4000,2000,P.map(p=>p[2]),v=>'R$'+br(v))
+   +`<table class="dt sctb"><tr><th></th><th>média μ</th><th>desvio σ</th></tr><tr><td style="color:${CI};font-weight:700">energia</td><td>0,50</td><td>0,25</td></tr><tr><td style="color:${CR};font-weight:700">BPM</td><td>110 bpm</td><td>25 bpm</td></tr></table>`
+   +ruler('energia',CI,.5,.25,P.map(p=>p[1]),v=>fmt(v,2))+ruler('BPM',CR,110,25,P.map(p=>p[2]),v=>v+'')
    +X('z=\\frac{x-\\mu}{\\sigma}\\quad\\Rightarrow\\quad\\text{quantos desvios a pessoa está da média}','z = (x − μ) / σ');
-  if(stp===2)h+=`<p class="scp">Aplicando <b>z = (x − μ) / σ</b> em cada célula:</p><div class="scz"><span></span><b style="color:${CI}">idade: μ = 40, σ = 15</b><b style="color:${CR}">renda: μ = 4.000, σ = 2.000</b>`
-   +P.map((p,i)=>`<b style="color:${COL[p[3]]}">${p[0]}</b><span>${TX(`\\frac{${p[1]}-40}{15}=${tn(sg(ZZ[i][0]))}`,`(${p[1]}−40)/15 = ${sg(ZZ[i][0])}`)}</span><span>${TX(`\\frac{${p[2]}-4000}{2000}=${tn(sg(ZZ[i][1]))}`,`(${p[2]}−4000)/2000 = ${sg(ZZ[i][1])}`)}</span>`).join('')+`</div>`
-   +`<div class="scv" style="color:${COL.tx}">Agora as duas colunas falam a mesma língua: <span>“quantos desvios da média”, sem anos nem reais</span></div>`;
-  if(stp===3)h+=X('d_A=\\sqrt{\\vi{(1{,}47+1{,}00)^2}+\\am{(-0{,}40+0{,}50)^2}}=\\sqrt{\\vi{6{,}08}+\\am{0{,}01}}\\approx 2{,}47','d(você,A) ≈ 2,47')
-   +X('d_B=\\sqrt{\\vi{(-0{,}87+1{,}00)^2}+\\am{(0{,}25+0{,}50)^2}}=\\sqrt{\\vi{0{,}02}+\\am{0{,}56}}\\approx 0{,}76','d(você,B) ≈ 0,76')
-   +`<div class="lbl mu" style="font-size:13px;margin-top:4px">quem pesa dentro de d² (a soma dentro da raiz)</div>`+share([['A','#F472B6',6.0844,.01],['B',COL.cy,.01778,.5625]])
-   +`<div class="scv gr">Mais perto: B <span>cada feature pesa pelo quanto realmente difere</span></div>`
+  if(stp===2)h+=`<p class="scp">Aplicando <b>z = (x − μ) / σ</b> em cada célula:</p><div class="scz"><span></span><b style="color:${CI}">energia: μ = 0,5, σ = 0,25</b><b style="color:${CR}">BPM: μ = 110, σ = 25</b>`
+   +P.map((p,i)=>`<b style="color:${COL[p[3]]}">${p[0]}</b><span>${TX(`\\frac{${tn(fmt(p[1],2))}-0{,}5}{0{,}25}=${tn(sg(ZZ[i][0]))}`,`(${fmt(p[1],2)}−0,5)/0,25 = ${sg(ZZ[i][0])}`)}</span><span>${TX(`\\frac{${p[2]}-110}{25}=${tn(sg(ZZ[i][1]))}`,`(${p[2]}−110)/25 = ${sg(ZZ[i][1])}`)}</span>`).join('')+`</div>`
+   +`<div class="scv" style="color:${COL.tx}">Agora as duas colunas falam a mesma língua: <span>“quantos desvios da média”, sem BPM nem escala de 0 a 1</span></div>`;
+  if(stp===3)h+=X('d_A=\\sqrt{\\vi{(1{,}60+0{,}80)^2}+\\am{(0{,}48-0{,}40)^2}}=\\sqrt{\\vi{5{,}76}+\\am{0{,}0064}}\\approx 2{,}40','d(nova,A) ≈ 2,40')
+   +X('d_B=\\sqrt{\\vi{(-0{,}60+0{,}80)^2}+\\am{(-0{,}40-0{,}40)^2}}=\\sqrt{\\vi{0{,}04}+\\am{0{,}64}}\\approx 0{,}82','d(nova,B) ≈ 0,82')
+   +`<div class="lbl mu" style="font-size:13px;margin-top:4px">quem pesa dentro de d² (a soma dentro da raiz)</div>`+share([['A','#F472B6',5.76,.0064],['B',COL.cy,.04,.64]])
+   +`<div class="scv gr">Mais perto: B, a calma <span>cada medida pesa pelo quanto realmente difere: a nova vai para Relaxar</span></div>`
    +`<div class="note" style="font-size:17px;margin-top:6px">Árvores não ligam para escala · KNN, K-Means, redes neurais, descida do gradiente e regularização ligam</div>`;
   $('#scPanel').innerHTML=h}
  FX.scale={init(){addEventListener('mathjax-ready',()=>panel(),{once:true})},step(k){stp=k;panel();anim(k>=2?1:0)}}}
@@ -600,7 +634,7 @@ if($('#cvSvg')){const S=[.82,.79,.85,.80,.83],m=S.reduce((a,b)=>a+b)/5,sd=Math.s
 if($('#mrSvg')){const W1=.6,W2=-.35,B0=4;
  function draw(){const hs=+$('#mrH').value,fa=+$('#mrF').value,a=W1*hs,b=W2*fa,y=B0+a+b;$('#mrHv').textContent=hs;$('#mrFv').textContent=fa;
   $('#mrCalc').innerHTML=TX(`\\am{\\hat{y}} = \\cy{0{,}6\\cdot ${tn(fmt(hs,1))}}\\;\\rd{-\\,0{,}35\\cdot ${fa}} + \\vi{4{,}0} = \\am{${tn(fmt(y))}}`,`ŷ = <span class="cy">0,6·${fmt(hs,1)}</span> <span class="rd">− 0,35·${fa}</span> + <span class="vi">4,0</span> = <span class="am">${fmt(y)}</span>`);
-  const m=mapper(80,20,640,440,0,4,0,12);let h=axes(m,80,20,640,440);for(let v=0;v<=12;v+=2)h+=`<text x="68" y="${m.Y(v)+5}" text-anchor="end" font-size="15" fill="${COL.dim}">${v}</text><line x1="80" y1="${m.Y(v)}" x2="720" y2="${m.Y(v)}" stroke="${COL.ln}" stroke-width="1" opacity=".5"/>`;
+  const m=mapper(80,20,640,440,0,4,0,12);let h=axes(m,80,20,640,440,'','nota (pontos)');for(let v=0;v<=12;v+=2)h+=`<text x="68" y="${m.Y(v)+5}" text-anchor="end" font-size="15" fill="${COL.dim}">${v}</text><line x1="80" y1="${m.Y(v)}" x2="720" y2="${m.Y(v)}" stroke="${COL.ln}" stroke-width="1" opacity=".5"/>`;
   const bars=[['b',0,B0,COL.vi,'4,0'],['horas',B0,B0+a,COL.cy,'+'+fmt(a)],['faltas',B0+a,y,COL.rd,fmt(b)],['ŷ',0,y,COL.am,fmt(y)]];
   bars.forEach(([t,y0,y1,c,l],i)=>{const x=m.X(i+.18),w=m.X(.64)-m.X(0),top=m.Y(Math.max(y0,y1));h+=`<rect x="${x}" y="${top}" width="${w}" height="${Math.max(2,Math.abs(m.Y(y0)-m.Y(y1)))}" rx="8" fill="${c}" fill-opacity="${i===3?.9:.75}"/><text x="${x+w/2}" y="${top-12}" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="21" font-weight="700" fill="${c}">${l}</text><text x="${x+w/2}" y="492" text-anchor="middle" font-size="19" font-weight="700">${t}</text>`;
    if(i<2)h+=`<line x1="${x+w}" y1="${m.Y(y1)}" x2="${m.X(i+1.18)}" y2="${m.Y(y1)}" stroke="${COL.mu}" stroke-dasharray="5 5" stroke-width="2"/>`});
@@ -612,7 +646,7 @@ if($('#regPlot')&&FITD){const {tr,va,solve,ev,mse}=FITD,D=11,m=mapper(70,20,730,
  function ridge(lam){const n=D+1,A=Array.from({length:n},()=>Array(n).fill(0)),b=Array(n).fill(0);for(const[x,y]of tr){const p=[];for(let k=0;k<n;k++)p.push(x**k);for(let i=0;i<n;i++){b[i]+=p[i]*y;for(let j=0;j<n;j++)A[i][j]+=p[i]*p[j]}}for(let i=0;i<n;i++)A[i][i]+=i?lam:1e-9;return solve(A,b)}
  const grid=[];for(let l=-7;l<=2.001;l+=.1)grid.push([l,mse(ridge(10**l),va)]);const best=grid.reduce((a,b)=>b[1]<a[1]?b:a);
  const c0=ridge(1e-7),cmax=Math.max(...c0.slice(1).map(Math.abs));
- function draw(){const L=+$('#regL').value,c=ridge(10**L),ftr=mse(c,tr),fva=mse(c,va);let h=axes(m,70,20,730,470,'','y'),p='';
+ function draw(){const L=+$('#regL').value,c=ridge(10**L),ftr=mse(c,tr),fva=mse(c,va);let h=axes(m,70,20,730,470,'entrada x','saída y'),p='';
   for(let i=0;i<=300;i++){const x=-1+2*i/300,y=Math.max(-3,Math.min(3,ev(c,x)));p+=(i?'L':'M')+m.X(x).toFixed(1)+' '+m.Y(y).toFixed(1)}
   const tag=fva<=best[1]*1.3?['bom ajuste',COL.gr]:L<best[0]?['overfitting',COL.rd]:['underfitting',COL.am];
   h+=`<path d="${p}" fill="none" stroke="${tag[1]}" stroke-width="4" clip-path="url(#clipFit)"/>`;
@@ -622,35 +656,80 @@ if($('#regPlot')&&FITD){const {tr,va,solve,ev,mse}=FITD,D=11,m=mapper(70,20,730,
   let g='';const lg=v=>Math.max(0,(Math.log10(v+1e-3)+3)/(Math.log10(cmax+1e-3)+3));c.slice(1).forEach((w,k)=>{const hh=lg(Math.abs(w))*120;g+=`<rect x="${10+k*46}" y="${130-hh}" width="34" height="${Math.max(2,hh)}" rx="4" fill="${COL.am}" opacity=".8"/><text x="${27+k*46}" y="148" text-anchor="middle" font-size="12" fill="${COL.dim}">w${k+1}</text>`});$('#regCoef').innerHTML=g}
  FX.reg={init(){$('#regL').oninput=draw;draw()}}}
 
-/* ---------- distâncias ---------- */
-if($('#distSvg')){const r=rng(17),P=[];for(let i=0;i<34;i++)P.push([.4+r()*9.2,.4+r()*6.4]);const A=[4,3.6],m=mapper(30,10,700,500,0,10,0,500/70);let B=[7.5,5.6],M='e';
- function draw(){const R=3,s=70;let h=`<rect x="30" y="10" width="700" height="500" rx="14" fill="${COL.p1}" opacity=".5"/>`;
-  for(let x=0;x<=10;x++)h+=`<line x1="${m.X(x)}" y1="10" x2="${m.X(x)}" y2="510" stroke="${COL.ln}" opacity=".45"/>`;for(let y=0;y<=7;y++)h+=`<line x1="30" y1="${m.Y(y)}" x2="730" y2="${m.Y(y)}" stroke="${COL.ln}" opacity=".45"/>`;
-  const c=M==='e'?COL.cy:COL.am,ax=m.X(A[0]),ay=m.Y(A[1]);
-  h+=M==='e'?`<circle cx="${ax}" cy="${ay}" r="${R*s}" fill="${c}" fill-opacity=".1" stroke="${c}" stroke-width="2.5" stroke-dasharray="9 7"/>`:`<path d="M${ax} ${ay-R*s} L${ax+R*s} ${ay} L${ax} ${ay+R*s} L${ax-R*s} ${ay}Z" fill="${c}" fill-opacity=".1" stroke="${c}" stroke-width="2.5" stroke-dasharray="9 7"/>`;
-  const inside=p=>M==='e'?Math.hypot(p[0]-A[0],p[1]-A[1])<=R:Math.abs(p[0]-A[0])+Math.abs(p[1]-A[1])<=R;let n=0;
-  P.forEach(p=>{const k=inside(p);n+=k;h+=`<circle cx="${m.X(p[0])}" cy="${m.Y(p[1])}" r="7" fill="${k?c:COL.dim}" opacity="${k?1:.7}"/>`});
-  const bx=m.X(B[0]),by=m.Y(B[1]);h+=`<path d="M${ax} ${ay} H${bx} V${by}" fill="none" stroke="${COL.am}" stroke-width="4" stroke-dasharray="${M==='m'?'0':'10 6'}" opacity="${M==='m'?1:.6}"/><line x1="${ax}" y1="${ay}" x2="${bx}" y2="${by}" stroke="${COL.cy}" stroke-width="4" stroke-dasharray="${M==='e'?'0':'10 6'}" opacity="${M==='e'?1:.6}"/>`;
-  h+=`<circle cx="${ax}" cy="${ay}" r="13" fill="${COL.tx}"/><text x="${ax-22}" y="${ay-16}" font-size="24" font-weight="700">A</text><circle cx="${bx}" cy="${by}" r="13" fill="${COL.vi}"/><text x="${bx+16}" y="${by-14}" font-size="24" font-weight="700" fill="${COL.vi}">B</text>`;
-  $('#distSvg').innerHTML=h;const dx=B[0]-A[0],dy=B[1]-A[1];$('#dE').textContent=fmt(Math.hypot(dx,dy));$('#dM').textContent=fmt(Math.abs(dx)+Math.abs(dy));$('#dCnt').innerHTML=`pontos na região: <b style="color:${c}">${n}</b>`}
- FX.dist={init(){$$('#distM button').forEach(b=>b.onclick=()=>{$$('#distM button').forEach(x=>x.classList.toggle('on',x===b));M=b.dataset.m;draw()});
-  $('#distSvg').addEventListener('click',e=>{const svg=$('#distSvg'),pt=svg.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;const p=pt.matrixTransform(svg.getScreenCTM().inverse());const x=m.ix(p.x),y=m.iy(p.y);if(x>0&&x<10&&y>0&&y<7.14){B=[x,y];draw()}});draw()}}}
+/* ---------- flores sintéticas no estilo Iris (as mesmas do slide da árvore) ---------- */
+const FLW=(()=>{const r=rng(11),D=[];[[1.46,.17,.25,.1,0],[4.26,.47,1.33,.2,1],[5.55,.55,2.03,.27,2]].forEach(([ml,sl,mw,sw,c])=>{for(let i=0;i<30;i++)D.push([Math.max(1,ml+gauss(r)*sl),Math.max(.1,mw+gauss(r)*sw),c])});return D})();
+const FCC=[COL.pk,COL.gr,COL.vi],FNM=['Setosa','Versicolor','Virginica'];
+const fcnt=S=>[0,1,2].map(c=>S.filter(d=>d[2]===c).length),fgini=S=>{const n=S.length;return n?1-fcnt(S).reduce((a,k)=>a+(k/n)**2,0):0};
+/* melhor corte de um grupo S numa feature f: testa os pontos médios entre valores vizinhos */
+function fsplit(S,f){const v=[...new Set(S.map(d=>d[f]))].sort((a,b)=>a-b);let best=null;
+ for(let i=1;i<v.length;i++){const t=(v[i-1]+v[i])/2,L=S.filter(d=>d[f]<t),R=S.filter(d=>d[f]>=t),g=(L.length*fgini(L)+R.length*fgini(R))/S.length;if(!best||g<best.g-1e-12)best={f,t,g}}return best}
 
-/* ---------- limiar ---------- */
-if($('#thrSvg')){const r=rng(23),S=[];for(let i=0;i<22;i++)S.push([Math.max(.03,Math.min(.97,.68+gauss(r)*.17)),1,r()]);for(let i=0;i<22;i++)S.push([Math.max(.03,Math.min(.97,.33+gauss(r)*.17)),0,r()]);
- const X=v=>220+v*1150;
- function draw(){const t=+$('#thrT').value;let h=`<rect x="${X(t)}" y="20" width="${X(1)-X(t)}" height="250" rx="10" fill="${COL.pk}" opacity=".08"/>`;
-  h+=`<text x="0" y="98" font-size="20" font-weight="700" fill="${COL.pk}">real positivo</text><text x="0" y="214" font-size="20" font-weight="700" fill="${COL.cy}">real negativo</text>`;
-  h+=`<line x1="${X(0)}" y1="270" x2="${X(1)}" y2="270" stroke="${COL.dim}" stroke-width="2"/>`;[0,.25,.5,.75,1].forEach(v=>h+=`<text x="${X(v)}" y="296" text-anchor="middle" font-size="16" fill="${COL.dim}">${fmt(v,2)}</text>`);h+=`<text x="${X(1)}" y="318" text-anchor="end" font-size="16" fill="${COL.mu}">score do modelo →</text>`;
-  let tp=0,fp=0,fn=0,tn=0;S.forEach(([s,c,j])=>{const p=s>=t;if(c&&p)tp++;else if(c)fn++;else if(p)fp++;else tn++;const y=(c?92:208)+(j-.5)*56,col=c?COL.pk:COL.cy;h+=p?`<circle cx="${X(s)}" cy="${y}" r="9" fill="${col}"/>`:`<circle cx="${X(s)}" cy="${y}" r="8" fill="none" stroke="${col}" stroke-width="2.5"/>`});
-  h+=`<line x1="${X(t)}" y1="10" x2="${X(t)}" y2="276" stroke="${COL.tx}" stroke-width="4"/><text x="${X(t)+10}" y="34" font-size="17" font-weight="700">previsto positivo →</text><text x="${X(t)-10}" y="34" text-anchor="end" font-size="17" fill="${COL.mu}">← previsto negativo</text>`;
-  $('#thrSvg').innerHTML=h;$('#thrTv').textContent=fmt(t);
-  const P=tp+fp?tp/(tp+fp):0,R=tp/(tp+fn),F=P+R?2*P*R/(P+R):0,card=(l,v,c,s)=>`<div class="card" style="flex:1;padding:18px 22px"><div class="lbl" style="font-size:14px;color:${c}">${l}</div><div class="big mono" style="font-size:44px;margin-top:6px;color:${c}">${v}</div><div class="mu" style="font-size:16px;margin-top:4px">${s}</div></div>`;
-  $('#thrStats').innerHTML=card('VP · FN',tp+' · '+fn,COL.pk,'positivos achados · perdidos')+card('FP · VN',fp+' · '+tn,COL.cy,'alarmes falsos · negativos certos')+card('Precision',Math.round(P*100)+'%',COL.gr,'dos previstos ✓, quantos eram')+card('Recall',Math.round(R*100)+'%',COL.am,'dos ✓ reais, quantos achei')+card('F1',fmt(F),COL.vi,'equilíbrio entre os dois')}
- FX.thr={init(){$('#thrT').oninput=draw;draw()}}}
+/* ---------- a melhor pergunta da árvore ---------- */
+if($('#spPlot')){const D=FLW,RG=[[0.6,7.4],[0.05,2.75]],FN=['comprimento da pétala (cm)','largura da pétala (cm)'],g0=fgini(D);
+ const m=mapper(70,20,660,470,0.5,7.5,0,2.8);let F=0,T=3.6;
+ const at=(f,t)=>{const L=D.filter(d=>d[f]<t),R=D.filter(d=>d[f]>=t);return {L,R,g:(L.length*fgini(L)+R.length*fgini(R))/D.length}};
+ const bestOf=f=>{const v=[...new Set(D.map(d=>d[f]))].sort((a,b)=>a-b),c=[];for(let i=1;i<v.length;i++){const t=(v[i-1]+v[i])/2;c.push([t,at(f,t).g])}
+  const mn=Math.min(...c.map(x=>x[1])),tie=c.filter(x=>x[1]<mn+1e-9);return {t:(tie[0][0]+tie[tie.length-1][0])/2,g:mn,n:c.length}};
+ const BEST=[bestOf(0),bestOf(1)];
+ const bar=(S,lbl)=>{const c=fcnt(S),n=S.length||1;return `<div class="card" style="flex:1;padding:14px 16px"><div class="lbl mu" style="font-size:13px">${lbl} · ${S.length} flores</div><div style="display:flex;height:26px;border-radius:6px;overflow:hidden;margin:10px 0 8px;background:${COL.p2}">${c.map((k,i)=>k?`<i style="flex:${k};background:${FCC[i]}"></i>`:'').join('')}</div><div class="mono" style="font-size:15px">${c.map((k,i)=>`<span style="color:${FCC[i]}">${k}</span>`).join(' · ')}</div><div class="mono" style="font-size:22px;margin-top:6px">gini <b>${fmt(fgini(S))}</b></div></div>`};
+ function draw(){const {L,R,g}=at(F,T),B=BEST[F];let h='';
+  h+=F===0?`<rect x="${m.X(.5)}" y="20" width="${m.X(T)-m.X(.5)}" height="470" fill="${COL.cy}" opacity=".07"/>`:`<rect x="70" y="${m.Y(T)}" width="660" height="${m.Y(0)-m.Y(T)}" fill="${COL.cy}" opacity=".07"/>`;
+  h+=axes(m,70,20,660,470,FN[0],FN[1]);
+  D.forEach(d=>{const on=F===0?d[0]<T:d[1]<T;h+=`<circle cx="${m.X(d[0])}" cy="${m.Y(d[1])}" r="7.5" fill="${FCC[d[2]]}" opacity="${on?.95:.75}" stroke="${on?COL.tx:'none'}" stroke-width="1.2"/>`});
+  if(F===0)h+=`<line x1="${m.X(T)}" y1="20" x2="${m.X(T)}" y2="490" stroke="${COL.tx}" stroke-width="3.5" stroke-dasharray="10 6"/><text x="${m.X(T)-10}" y="46" text-anchor="end" font-size="18" font-weight="700" fill="${COL.cy}">sim</text><text x="${m.X(T)+10}" y="46" font-size="18" font-weight="700" fill="${COL.mu}">não</text>`;
+  else h+=`<line x1="70" y1="${m.Y(T)}" x2="730" y2="${m.Y(T)}" stroke="${COL.tx}" stroke-width="3.5" stroke-dasharray="10 6"/><text x="720" y="${m.Y(T)+26}" text-anchor="end" font-size="18" font-weight="700" fill="${COL.cy}">sim</text><text x="720" y="${m.Y(T)-12}" text-anchor="end" font-size="18" font-weight="700" fill="${COL.mu}">não</text>`;
+  $('#spPlot').innerHTML=h;$('#spTv').textContent=`< ${fmt(T)}`;
+  $('#spSides').innerHTML=bar(L,'sim')+bar(R,'não');
+  const W=560,H=150,cm=mapper(40,8,W-56,H-34,RG[F][0],RG[F][1],0,.7);let c=`<path d="M40 8 V${H-26} H${W-16}" fill="none" stroke="${COL.dim}" stroke-width="1.5"/>`;
+  [0,.35,.7].forEach(v=>c+=`<text x="34" y="${cm.Y(v)+5}" text-anchor="end" font-size="12" fill="${COL.dim}">${fmt(v,2)}</text>`);
+  let pth='';for(let i=0;i<=160;i++){const t=RG[F][0]+(RG[F][1]-RG[F][0])*i/160;pth+=(i?'L':'M')+cm.X(t).toFixed(1)+' '+cm.Y(at(F,t).g).toFixed(1)}
+  c+=`<path d="${pth}" fill="none" stroke="${COL.am}" stroke-width="2.5"/><line x1="${cm.X(B.t)}" y1="8" x2="${cm.X(B.t)}" y2="${H-26}" stroke="${COL.gr}" stroke-width="2" stroke-dasharray="5 4"/><circle cx="${cm.X(T)}" cy="${cm.Y(g)}" r="7" fill="${COL.tx}"/>`;
+  c+=`<text x="${W-16}" y="${H-6}" text-anchor="end" font-size="13" fill="${COL.mu}">corte →</text><text x="${cm.X(B.t)+6}" y="20" font-size="13" fill="${COL.gr}">melhor</text>`;
+  $('#spCurve').innerHTML=c;$('#spG').innerHTML=`<span class="mu">${fmt(g0)} →</span> <b class="am">${fmt(g)}</b>`;
+  const ok=g<B.g+1e-9;$('#spMsg').innerHTML=ok?`<span class="gr" style="font-weight:700">✓ Melhor corte para esta medida</span> <span class="mu">(${B.n} cortes testados)</span>`:`<span class="mu">Gini ponderado ${fmt(g)} · o melhor chega a ${fmt(B.g)}</span>`}
+ const setF=f=>{F=f;const sl=$('#spT');sl.min=RG[f][0];sl.max=RG[f][1];sl.step=f?.02:.05;T=f?1.0:3.6;sl.value=T;$$('#spF button').forEach(b=>b.classList.toggle('on',+b.dataset.f===f));draw()};
+ FX.split={init(){$('#spT').oninput=e=>{T=+e.target.value;draw()};$$('#spF button').forEach(b=>b.onclick=()=>setF(+b.dataset.f));$('#spBest').onclick=()=>{T=BEST[F].t;$('#spT').value=T;draw()};setF(0)}}}
+
+/* ---------- KNN × árvore × floresta nos mesmos dados ---------- */
+if($('#c3Plot')){const D=FLW,mu=[0,1].map(f=>D.reduce((a,d)=>a+d[f],0)/D.length),sd=[0,1].map(f=>Math.sqrt(D.reduce((a,d)=>a+(d[f]-mu[f])**2,0)/D.length));
+ const z=(p,f)=>(p[f]-mu[f])/sd[f];
+ /* árvore de decisão (Gini); rnd != null sorteia 1 feature por pergunta, como a Random Forest */
+ function grow(S,dep,maxD,rnd){const c=fcnt(S),maj=c.indexOf(Math.max(...c));if(dep>=maxD||fgini(S)===0||S.length<2)return {leaf:maj};
+  const fs=rnd?[Math.floor(rnd()*2)]:[0,1];let b=null;for(const f of [...fs,...(rnd?[1-fs[0]]:[])]){const s=fsplit(S,f);if(s&&(!b||s.g<b.g-1e-12))b=s;if(rnd&&b)break}
+  if(!b)return {leaf:maj};const L=S.filter(d=>d[b.f]<b.t),R=S.filter(d=>d[b.f]>=b.t);return {f:b.f,t:b.t,l:grow(L,dep+1,maxD,rnd),r:grow(R,dep+1,maxD,rnd)}}
+ const walk=(n,p)=>{while(n.leaf===undefined)n=p[n.f]<n.t?n.l:n.r;return n.leaf};
+ const knnP=(S,K,p)=>{const ds=S.map(d=>[(z(d,0)-z(p,0))**2+(z(d,1)-z(p,1))**2,d[2]]).sort((a,b)=>a[0]-b[0]).slice(0,K),v=[0,0,0];ds.forEach(([_,c])=>v[c]++);const mx=Math.max(...v);return ds.find(([_,c])=>v[c]===mx)[1]};   /* empate: vence a classe do vizinho mais próximo */
+ const PR={knn:{l:'Número de vizinhos K',o:[1,5,15],d:5},tree:{l:'Profundidade máxima',o:[2,3,'sem limite'],d:'sem limite'},rf:{l:'Número de árvores',o:[1,10,100],d:100}};
+ const INFO={knn:[['Como decide','votação dos K vizinhos mais próximos'],['O que aprende','nada: guarda os exemplos e compara'],['Precisa de escala?','sim, usa distâncias'],['Dá para explicar?','“parecido com estes exemplos”'],['Cuidado','K pequeno decora; lento com muitos dados']],
+  tree:[['Como decide','uma sequência de perguntas sim/não'],['O que aprende','as perguntas que mais baixam o Gini'],['Precisa de escala?','não: só compara com um corte'],['Dá para explicar?','sim: dá para desenhar as regras'],['Cuidado','profunda demais decora; muda muito com outra amostra']],
+  rf:[['Como decide','voto de muitas árvores diferentes'],['O que aprende','cada árvore vê uma amostra e features sorteadas'],['Precisa de escala?','não'],['Dá para explicar?','pouco: são dezenas ou centenas de árvores'],['Cuidado','mais pesada; ainda pode errar na fronteira']]};
+ const mix=(h,a)=>{const c=k=>parseInt(h.slice(k,k+2),16),b=k=>parseInt(COL.bg.slice(k,k+2),16);return '#'+[1,3,5].map(k=>Math.round(b(k)+(c(k)-b(k))*a).toString(16).padStart(2,'0')).join('')},FMIX=FCC.map(c=>mix(c,.22));
+ const NX=60,NY=45,m=mapper(60,14,640,480,0.5,7.5,0,2.8),cw=640/NX,chh=480/NY;
+ let M='knn',P={knn:5,tree:'sem limite',rf:100},seed=1;
+ const sample=sd0=>{const r=rng(sd0*7919+13),idx=[...D.keys()];for(let i=idx.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[idx[i],idx[j]]=[idx[j],idx[i]]}return new Set(idx.slice(0,60))};
+ function model(S,sd){const v=P[M];if(M==='knn')return p=>knnP(S,v,p);
+  if(M==='tree'){const t=grow(S,0,v==='sem limite'?99:v,null);return p=>walk(t,p)}
+  const r=rng(sd*104729+v),T=[];for(let k=0;k<v;k++){const B=Array.from({length:S.length},()=>S[Math.floor(r()*S.length)]);T.push(grow(B,0,99,r))}
+  return p=>{const c=[0,0,0];T.forEach(t=>c[walk(t,p)]++);return c.indexOf(Math.max(...c))}}
+ const fit=sd=>{const tr=sample(sd);return {tr,f:model(D.filter((_,i)=>tr.has(i)),sd)}};
+ /* centros das células; NEAR = células perto de alguma flor (onde a variação importa: longe dos dados, todo modelo chuta) */
+ const CEN=[];for(let j=0;j<NY;j++)for(let i=0;i<NX;i++)CEN.push([m.ix(60+(i+.5)*cw),m.iy(14+(j+.5)*chh)]);
+ const NEAR=CEN.map((p,k)=>D.some(d=>(z(d,0)-z(p,0))**2+(z(d,1)-z(p,1))**2<.2)?k:-1).filter(k=>k>=0);
+ /* variação típica: média, em 8 pares de sorteios, da fração das células NEAR que trocam de espécie */
+ const VAR={},variation=()=>{const key=M+'|'+P[M];if(VAR[key]===undefined){const G=[];for(let k=0;k<9;k++){const {f}=fit(500+k);G.push(NEAR.map(c=>f(CEN[c])))}let n=0;for(let a=0;a<8;a++)for(let q=0;q<NEAR.length;q++)n+=G[a][q]!==G[a+1][q];VAR[key]=n/(8*NEAR.length)}return VAR[key]};
+ function draw(){const {tr,f}=fit(seed);let h='';
+  CEN.forEach((p,k)=>{const c=f(p),i=k%NX,j=(k-i)/NX;h+=`<rect x="${(60+i*cw).toFixed(1)}" y="${(14+j*chh).toFixed(1)}" width="${(cw+.6).toFixed(1)}" height="${(chh+.6).toFixed(1)}" fill="${FMIX[c]}" shape-rendering="crispEdges"/>`});
+  h+=axes(m,60,14,640,480,'comprimento da pétala (cm)','largura (cm)');
+  D.forEach((d,i)=>{const on=tr.has(i);h+=`<circle cx="${m.X(d[0])}" cy="${m.Y(d[1])}" r="${on?7.5:4}" fill="${on?FCC[d[2]]:'none'}" stroke="${FCC[d[2]]}" stroke-width="${on?0:1.5}" opacity="${on?.95:.55}"/>`});
+  $('#c3Plot').innerHTML=h;
+  const v=Math.round(variation()*100);$('#c3Chg').innerHTML=`<span class="mu">varia entre sorteios:</span> <b class="am mono">${v}%</b> <span class="mu">do mapa perto das flores</span>`;
+  $('#c3PL').textContent=PR[M].l;$('#c3P').innerHTML=PR[M].o.map(v=>`<button class="b${String(v)===String(P[M])?' on':''}" data-v="${v}">${v}</button>`).join('');
+  $$('#c3P button').forEach(b=>b.onclick=()=>{const v=b.dataset.v;P[M]=isNaN(+v)?v:+v;draw()});
+  $('#c3Info').innerHTML=INFO[M].map(([k,v],i)=>`<div class="row" style="gap:14px;font-size:19px;padding:7px 0;border-bottom:1px solid ${COL.ln}"><b style="min-width:178px;color:${i===4?COL.am:COL.tx}">${k}</b><span class="mu">${v}</span></div>`).join('')+`<div class="note" style="font-size:15px;margin-top:4px">● treino (60 flores) · ○ fora do treino${M==='knn'?' · distâncias com padronização':''}</div>`}
+ FX.cmp3={init(){$$('#c3M button').forEach(b=>b.onclick=()=>{$$('#c3M button').forEach(x=>x.classList.toggle('on',x===b));M=b.dataset.m;draw()});$('#c3S').onclick=()=>{seed++;draw()};draw()}}}
 
 /* ---------- fim do dia 1 ---------- */
-if($('#d1recap')){const T={2:'Limpar, explorar, transformar e dividir antes de tudo. O teste é uma prova inédita.',3:'A perda mede o erro, o gradiente diz para onde ajustar e a regularização segura a complexidade.',4:'O KNN vota, as árvores perguntam, as florestas combinam. A métrica e o limiar dependem do custo do erro.'};
+if($('#d1recap')){const T={2:'Inspecionar, limpar, olhar e separar antes de tudo. O teste é uma prova inédita.',3:'A perda mede o erro, o gradiente diz para onde ajustar; validação e regularização seguram o overfitting.',4:'O KNN vota, a árvore pergunta, a floresta combina. Cada um erra de um jeito: quem escolhe é a validação.'};
  $('#d1recap').innerHTML=[2,3,4].map(b=>`<div class="card" style="border-top:4px solid ${COL[BLK[b][2]]}"><span class="mono big" style="font-size:30px;color:${COL[BLK[b][2]]}">${BLK[b][0]}</span> <b style="font-size:24px">${BLK[b][3]}</b><div class="mu" style="font-size:20px;margin-top:12px">${T[b]}</div></div>`).join('');
  $('#d1next').innerHTML=`<span class="lbl mu" style="font-size:15px;margin-right:6px">Amanhã</span>`+[5,6,7,8].map(b=>`<span class="pill" style="color:${COL[BLK[b][2]]}">${BLK[b][0]} · ${BLK[b][3]}</span>`).join('')}
 
