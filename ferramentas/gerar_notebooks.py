@@ -584,31 +584,47 @@ nota('''
 - Repare no ponto isolado em **15 h com nota 0,4**, no canto inferior direito: é o erro de digitação (1,5 → 15) que a limpeza não pegou.
 '''),
 quadro('''
-Antes de rodar a descida do gradiente, faça **uma conta à mão** com 4 alunos inventados (números redondos de propósito):
+**Dados para o quadro** (4 alunos inventados, números redondos)
 
-| aluno | horas $x$ | nota $y$ |
+| aluno | horas (x) | nota (y) |
 |---|---|---|
 | A | 2 | 3 |
 | B | 4 | 4 |
 | C | 6 | 4 |
 | D | 8 | 8 |
 
-**1. Uma reta qualquer:** $\\hat y = 0{,}5\\,x + 1{,}5$ → previsões **2,5 · 3,5 · 4,5 · 5,5**
+**Parte 1 · O erro de uma reta.** Escreva a reta **ŷ = 0,5·x + 1,5** e preencha a tabela coluna por coluna:
 
-**2. O erro de cada aluno:** $y - \\hat y$ → **0,5 · 0,5 · −0,5 · 2,5**
-(positivo: o modelo previu baixo; negativo: previu alto)
+| aluno | x | y | ŷ = 0,5x + 1,5 | erro = y − ŷ | erro² |
+|---|---|---|---|---|---|
+| A | 2 | 3 | 2,5 | 0,5 | 0,25 |
+| B | 4 | 4 | 3,5 | 0,5 | 0,25 |
+| C | 6 | 4 | 4,5 | −0,5 | 0,25 |
+| D | 8 | 8 | 5,5 | **2,5** | **6,25** |
 
-**3. A MSE:** erros ao quadrado → 0,25 · 0,25 · 0,25 · **6,25**; soma 7; média **7 / 4 = 1,75**
-O aluno D sozinho responde por 6,25 dos 7 (quase 90%): **o quadrado faz o erro grande dominar.**
+**MSE** = (0,25 + 0,25 + 0,25 + 6,25) / 4 = 7 / 4 = **1,75**
 
-**4. Um passo do gradiente**, começando do zero ($w = b = 0$, $\\alpha = 0{,}01$):
-- com $w = b = 0$, o modelo prevê 0 para todos, então **erro = y** = 3 · 4 · 4 · 8
-- $x \\cdot \\text{erro}$ = 6 · 16 · 24 · 64 → média **27,5** → $\\partial L/\\partial w = -2 \\cdot 27{,}5 =$ **−55**
-- média do erro = **4,75** → $\\partial L/\\partial b = -2 \\cdot 4{,}75 =$ **−9,5**
-- $w = 0 - 0{,}01 \\cdot (-55) =$ **0,55** e $b = 0 - 0{,}01 \\cdot (-9{,}5) =$ **0,095**
-- com esse novo $w$ e $b$, a MSE cai de **26,25** para **≈ 4,70** num passo só.
+Para comentar:
+- erro positivo = o modelo previu **baixo**; negativo = previu **alto**.
+- o aluno D sozinho dá 6,25 dos 7: **o quadrado faz o erro grande mandar na MSE**.
 
-É exatamente o que a função abaixo faz, só que com 296 alunos e 3000 vezes. A célula a seguir confere as contas.
+**Parte 2 · Um passo do gradiente.** Comece do zero: **w = 0, b = 0, α = 0,01**. O modelo prevê 0 para todos, então **erro = y**.
+
+| aluno | x | erro | x · erro |
+|---|---|---|---|
+| A | 2 | 3 | 6 |
+| B | 4 | 4 | 16 |
+| C | 6 | 4 | 24 |
+| D | 8 | 8 | 64 |
+| **média** | | **4,75** | **27,5** |
+
+- dw = −2 · 27,5 = **−55** → w = 0 − 0,01 · (−55) = **0,55**
+- db = −2 · 4,75 = **−9,5** → b = 0 − 0,01 · (−9,5) = **0,095**
+
+Para comentar:
+- dw e db são **negativos**: aumentar w e b diminui o erro. Por isso os dois sobem.
+- depois desse único passo, a MSE cai de **26,25 para ≈ 4,7**.
+- a função abaixo faz exatamente essa conta, com 296 alunos e 3000 vezes.
 '''),
 gabcode('''
 # conferir as contas do quadro
@@ -710,24 +726,28 @@ md('''
 - **R²**: quanto melhor que sempre chutar a média (1 = perfeito, 0 = igual à média, pode ser negativo)
 '''),
 quadro('''
-Com os **mesmos 4 alunos** do quadro anterior e a reta $\\hat y = 0{,}5\\,x + 1{,}5$ (erros **0,5 · 0,5 · −0,5 · 2,5**):
+**Mesmos 4 alunos e mesma reta** (ŷ = 0,5·x + 1,5). Os erros já estão no quadro: **0,5 · 0,5 · −0,5 · 2,5**
 
-| métrica | conta | resultado |
-|---|---|---|
-| **MAE** | (0,5 + 0,5 + 0,5 + 2,5) / 4 | **1,0 ponto** |
-| **MSE** | (0,25 + 0,25 + 0,25 + 6,25) / 4 | **1,75 ponto²** |
-| **R²** | 1 − 7 / 14,75 | **0,53** |
+**Parte 1 · As três métricas**
 
-**Como sai o R²:** a média das notas é $\\bar y = 4{,}75$. Se o “modelo” chutasse sempre 4,75, os erros seriam −1,75 · −0,75 · −0,75 · 3,25, e a soma dos quadrados daria **14,75**. A reta erra **7** (soma dos quadrados). Então ela elimina 1 − 7/14,75 ≈ **53%** do erro de chutar a média.
+| métrica | conta | resultado | como ler |
+|---|---|---|---|
+| **MAE** | (0,5 + 0,5 + 0,5 + 2,5) / 4 | **1,0** | “erra 1 ponto, em média” |
+| **MSE** | (0,25 + 0,25 + 0,25 + 6,25) / 4 | **1,75** | em pontos², difícil de ler |
+| **R²** | 1 − 7 / 14,75 | **0,53** | “53% melhor do que chutar a média” |
 
-**O efeito do erro grande** (vale desenhar as duas linhas lado a lado):
+De onde vem o 14,75 do R²: a média das notas é **4,75**. Se o modelo chutasse 4,75 para todos, os erros seriam −1,75 · −0,75 · −0,75 · 3,25, e a soma dos quadrados daria **14,75**. A reta erra só **7**.
+
+**Parte 2 · O efeito do erro grande.** Troque a nota do aluno D de 8 para 6 e refaça:
 
 | | erros | MAE | MSE |
 |---|---|---|---|
 | D tirou 8 | 0,5 · 0,5 · −0,5 · **2,5** | 1,0 | 1,75 |
 | D tirou 6 | 0,5 · 0,5 · −0,5 · **0,5** | 0,5 | 0,25 |
 
-Um único erro 5× maior **dobra** o MAE e **multiplica a MSE por 7**. É por isso que a MSE é usada para treinar (empurra forte contra erros grandes) e o MAE para comunicar (“erra 1 ponto, em média”).
+Para comentar:
+- um único erro 5× maior **dobra o MAE**, mas **multiplica a MSE por 7**.
+- por isso a MSE é usada para **treinar** (empurra forte contra erros grandes) e o MAE para **comunicar** (está na unidade da nota).
 '''),
 gabcode('''
 # conferir as métricas do quadro
